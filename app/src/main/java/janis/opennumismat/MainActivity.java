@@ -36,6 +36,7 @@ public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private static final String PREF_LAST_PATH = "last_path";
+    public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -57,6 +58,8 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        adapter = null;
+
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -68,6 +71,23 @@ public class MainActivity extends Activity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        ListView lView = (ListView) findViewById(R.id.lview);
+        lView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int pos, long id
+            ) {
+                if (adapter != null) {
+                    Coin coin = adapter.getFullItem(pos);
+
+                    Intent intent = new Intent(getApplicationContext(), CoinActivity.class);
+                    intent.putExtra(EXTRA_COIN_ID, coin);
+                    startActivity(intent);
+                }
+            }
+        });
+
         String path = pref.getString(PREF_LAST_PATH, "");
         if (!path.isEmpty()) {
             try {
@@ -77,10 +97,10 @@ public class MainActivity extends Activity
                         getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
                 );
                 toast.show();
-                return;
+
+                adapter = null;
             }
 
-            ListView lView = (ListView) findViewById(R.id.lview);
             lView.setAdapter(adapter);
         }
         else {
@@ -117,15 +137,18 @@ public class MainActivity extends Activity
                                     getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
                             );
                             toast.show();
-                            return;
+
+                            adapter = null;
                         }
 
                         ListView lView = (ListView) findViewById(R.id.lview);
                         lView.setAdapter(adapter);
 
-                        SharedPreferences.Editor ed = pref.edit();
-                        ed.putString(PREF_LAST_PATH, path);
-                        ed.commit();
+                        if (adapter != null) {
+                            SharedPreferences.Editor ed = pref.edit();
+                            ed.putString(PREF_LAST_PATH, path);
+                            ed.commit();
+                        }
                     }
                 }
                 break;

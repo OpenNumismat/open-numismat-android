@@ -27,6 +27,9 @@
             android:name=".AboutActivity"
             android:label="Abo"
             />
+        <activity
+            android:name=".CoinActivity"
+            />
 
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"

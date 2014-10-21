@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +46,8 @@ public class SqlAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        Coin nameOnPosition = getItem(position);
-        return nameOnPosition.getId();
+        Coin coin = getItem(position);
+        return coin.getId();
     }
 
     @Override
@@ -77,6 +78,25 @@ public class SqlAdapter extends BaseAdapter {
     public Coin getItem(int position) {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
+            return coin;
+        } else {
+            throw new CursorIndexOutOfBoundsException(
+                    "Cant move cursor to postion");
+        }
+    }
+
+    public Coin getFullItem(int position) {
+        if (cursor.moveToPosition(position)) {
+            Coin coin = new Coin(cursor);
+
+            Cursor extra_cursor = database.rawQuery("SELECT subject, obverseimg.image AS obverseimg," +
+                    " reverseimg.image AS reverseimg FROM coins" +
+                    " LEFT JOIN images AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                    " LEFT JOIN images AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                    " WHERE coins.id = ?", new String[] { Long.toString(coin.getId()) });
+            if (extra_cursor.moveToFirst())
+                coin.addExtra(extra_cursor);
+
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
