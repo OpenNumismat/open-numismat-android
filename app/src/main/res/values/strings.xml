@@ -14,7 +14,6 @@
     <string name="file_chooser">Select a file</string>
     <string name="could_not_open_database">Could not open database</string>
 
-    <string name="my_list">Мой список</string>
     <string-array name="animals_name">
         <item>Lion</item>
         <item>Fish</item>

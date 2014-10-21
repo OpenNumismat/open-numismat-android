@@ -19,11 +19,6 @@
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/my_list">
-        </TextView>
         <ListView
             android:id="@+id/lview"
             android:layout_width="match_parent"
