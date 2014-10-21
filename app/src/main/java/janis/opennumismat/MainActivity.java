@@ -35,6 +35,8 @@ import java.io.File;
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    private static final String PREF_LAST_PATH = "last_path";
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -66,29 +68,24 @@ public class MainActivity extends Activity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        ListView lView = (ListView) findViewById(R.id.lview);
-        animals = getResources().getStringArray(R.array.animals_name);
-
-        // создаем arrаy-адаптер
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, animals);
-
-        // присваиваем адаптер списку
-        lView.setAdapter(adapter);
-
-        lView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                                    int pos, long id
-            ) {
-
+        String path = pref.getString(PREF_LAST_PATH, "");
+        if (!path.isEmpty()) {
+            try {
+                adapter = new SqlAdapter(this, path);
+            } catch (SQLiteException e) {
                 Toast toast = Toast.makeText(
-                        getApplicationContext(), animals[pos], Toast.LENGTH_SHORT
+                        getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
                 );
                 toast.show();
+                return;
             }
-        });
+
+            ListView lView = (ListView) findViewById(R.id.lview);
+            lView.setAdapter(adapter);
+        }
+        else {
+            // TODO: Open download page
+        }
     }
 
     @Override
@@ -125,6 +122,10 @@ public class MainActivity extends Activity
 
                         ListView lView = (ListView) findViewById(R.id.lview);
                         lView.setAdapter(adapter);
+
+                        SharedPreferences.Editor ed = pref.edit();
+                        ed.putString(PREF_LAST_PATH, path);
+                        ed.commit();
                     }
                 }
                 break;

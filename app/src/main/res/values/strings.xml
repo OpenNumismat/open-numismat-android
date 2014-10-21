@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Open Numismat</string>
+    <string name="app_name">OpenNumismat</string>
+    <string name="app_title">Open Numismat</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section_about">About</string>
@@ -13,12 +14,4 @@
     <string name="action_about">About</string>
     <string name="file_chooser">Select a file</string>
     <string name="could_not_open_database">Could not open database</string>
-
-    <string-array name="animals_name">
-        <item>Lion</item>
-        <item>Fish</item>
-        <item>Cat</item>
-        <item>Dog</item>
-        <item>Snake</item>
-    </string-array>
 </resources>
