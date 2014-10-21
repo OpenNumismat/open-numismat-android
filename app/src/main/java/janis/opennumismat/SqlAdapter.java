@@ -5,10 +5,13 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -28,6 +31,7 @@ public class SqlAdapter extends BaseAdapter {
     private static final String KEY_MINTMARK = "mintmark";
     private static final String KEY_MINTAGE = "mintage";
     private static final String KEY_SERIES = "series";
+    private static final String KEY_IMAGE = "image";
 
     private Cursor cursor;
     private SQLiteDatabase database;
@@ -58,6 +62,8 @@ public class SqlAdapter extends BaseAdapter {
         title.setText(coin.getTitle());
         TextView description = (TextView) convertView.findViewById(R.id.description);
         description.setText(coin.getDescription());
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.coin_image);
+        imageView.setImageBitmap(coin.getImageBitmap());
 
         return convertView;
     }
@@ -82,13 +88,13 @@ public class SqlAdapter extends BaseAdapter {
 
     public Cursor getAllEntries() {
         //Список колонок базы, которые следует включить в результат
-        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES };
+        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_IMAGE };
         // составляем запрос к базе
         return database.query(TABLE_NAME, columnsToTake,
                 null, null, null, null, KEY_ID);
     }
 
-    //Прочие служебные методывфзеук
+    //Прочие служебные методы
 
     public void onDestroy() {
 //        dbOpenHelper.close();

@@ -1,6 +1,8 @@
 package janis.opennumismat;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * Created by v.ignatov on 20.10.2014.
@@ -15,6 +17,7 @@ public class Coin {
     private static final int MINTMARK_COLUMN = 6;
     private static final int MINTAGE_COLUMN = 7;
     private static final int SERIES_COLUMN = 8;
+    private static final int IMAGE_COLUMN = 9;
 
     private long id;
     private String title;
@@ -25,6 +28,7 @@ public class Coin {
     private String mintmark;
     private long mintage;
     private String series;
+    private byte[] image;
 
     public Coin(String title) {
         this.title = title;
@@ -45,6 +49,7 @@ public class Coin {
         mintmark = cursor.getString(MINTMARK_COLUMN);
         mintage = cursor.getLong(MINTAGE_COLUMN);
         series = cursor.getString(SERIES_COLUMN);
+        image = cursor.getBlob(IMAGE_COLUMN);
     }
 
     public long getId() {
@@ -70,6 +75,10 @@ public class Coin {
         if (!series.isEmpty())
             desc += ", " + series;
         return desc;
+    }
+
+    public Bitmap getImageBitmap() {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
     @Override
