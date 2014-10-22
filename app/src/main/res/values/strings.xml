@@ -14,5 +14,14 @@
     <string name="action_about">About</string>
     <string name="file_chooser">Select a file</string>
     <string name="could_not_open_database">Could not open database</string>
-    <string name="country">Country:</string>
+    <string name="country">Country</string>
+    <string name="mintage">Mintage</string>
+    <string name="subject_short">Subject</string>
+    <string name="denomination">Denomination</string>
+    <string name="series">Series</string>
+    <string name="date_of_issue">Date of issue</string>
+    <string name="year">Year</string>
+    <string name="mintmark">Mint</string>
+    <string name="price">Price</string>
+    <string name="material">Material</string>
 </resources>
