@@ -50,7 +50,8 @@ public class MainActivity extends Activity
 
     private String[] animals;
     private SharedPreferences pref;
-    private static final int REQUEST_CHOOSER = 1234;
+    private static final int REQUEST_CHOOSER = 1;
+    private static final int REQUEST_DOWNLOADER = 2;
     private SqlAdapter adapter;
 
     @Override
@@ -202,6 +203,12 @@ public class MainActivity extends Activity
 
             Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
             startActivityForResult(intent, REQUEST_CHOOSER);
+
+            return true;
+        }
+        else if (id == R.id.action_download) {
+            Intent intent = new Intent(this, DownloadActivity.class);
+            startActivityForResult(intent, REQUEST_DOWNLOADER);
 
             return true;
         }

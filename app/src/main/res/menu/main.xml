@@ -8,6 +8,10 @@
         android:title="@string/action_open"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/action_download"
+        android:title="@string/action_download"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="200"

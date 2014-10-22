@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -21,14 +22,18 @@
         </activity>
         <activity
             android:name=".PrefActivity"
-            android:label="Set"
+            android:label="@string/action_settings"
             />
         <activity
             android:name=".AboutActivity"
-            android:label="Abo"
+            android:label="@string/action_about"
             />
         <activity
             android:name=".CoinActivity"
+            />
+        <activity
+            android:name=".DownloadActivity"
+            android:label="@string/action_download"
             />
 
         <activity
