@@ -29,5 +29,6 @@
     <string name="material">Material</string>
     <string name="cancel">Cancel</string>
     <string name="overwrite">Overwrite</string>
+    <string name="downloading">Downloading</string>
     <string name="replace">File already exists. Overwrite it?</string>
 </resources>

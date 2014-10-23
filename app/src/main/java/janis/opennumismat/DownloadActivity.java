@@ -3,6 +3,7 @@ package janis.opennumismat;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
@@ -290,7 +293,28 @@ public class DownloadActivity extends Activity {
         startDownload(entry);
     }
 
+    ProgressDialog pd;
+    Handler h;
     private void startDownload(DownloadEntry entry) {
+        pd = new ProgressDialog(this);
+        pd.setMessage(getString(R.string.downloading));
+        // меняем стиль на индикатор
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        // включаем анимацию ожидания
+        pd.setIndeterminate(true);
+        pd.show();
+        h = new Handler() {
+            public void handleMessage(Message msg) {
+                // выключаем анимацию ожидания
+                pd.setIndeterminate(false);
+                if (msg.what < pd.getMax()) {
+                    pd.setProgress(msg.what);
+                } else {
+                    pd.dismiss();
+                }
+            }
+        };
+
         new DownloadFileTask().execute(entry);
     }
 
@@ -371,15 +395,11 @@ public class DownloadActivity extends Activity {
 
         private String downloadData(){
             try{
-                Log.v("TAG", "downloading data");
-
                 URL url  = new URL(entry.getUrl());
                 URLConnection connection = url.openConnection();
                 connection.connect();
 
                 int lenghtOfFile = connection.getContentLength();
-
-                Log.v("TAG", "lenghtOfFile = "+lenghtOfFile);
 
                 InputStream is = url.openStream();
 
@@ -388,29 +408,30 @@ public class DownloadActivity extends Activity {
                 byte data[] = new byte[1024];
 
                 int count = 0;
-                long total = 0;
+                int total = 0;
                 int progress = 0;
 
+                pd.setMax(lenghtOfFile);
+                h.sendEmptyMessage(progress);
                 while ((count=is.read(data)) != -1)
                 {
                     total += count;
-                    int progress_temp = (int)total*100/lenghtOfFile;
-                    if(progress_temp%10 == 0 && progress != progress_temp){
-                        progress = progress_temp;
-                        Log.v("TAG", "total = "+progress);
+                    int temp_progress = (int)total*100/lenghtOfFile;
+                    if (temp_progress != progress) {
+                        progress = temp_progress;
+                        h.sendEmptyMessage(total);
                     }
+
                     fos.write(data, 0, count);
                 }
+                h.sendEmptyMessage(lenghtOfFile);
 
                 is.close();
                 fos.close();
 
-                Log.v("TAG", "downloading finished");
-
                 return entry.getFile().getPath();
 
             }catch(Exception e){
-                Log.v("TAG", "exception in downloadData");
                 e.printStackTrace();
             }
 
