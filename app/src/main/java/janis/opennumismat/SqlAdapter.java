@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -34,6 +36,8 @@ public class SqlAdapter extends BaseAdapter {
     private static final String KEY_SERIES = "series";
     private static final String KEY_IMAGE = "image";
 
+    private String version;
+    private boolean isMobile;
     private Cursor cursor;
     private SQLiteDatabase database;
     private Context context;
@@ -64,6 +68,9 @@ public class SqlAdapter extends BaseAdapter {
         TextView description = (TextView) convertView.findViewById(R.id.description);
         description.setText(coin.getDescription());
         ImageView imageView = (ImageView) convertView.findViewById(R.id.coin_image);
+        if (!isMobile) {
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
         imageView.setImageBitmap(coin.getImageBitmap());
 
         return convertView;
@@ -129,6 +136,17 @@ public class SqlAdapter extends BaseAdapter {
     // Инициализация адаптера: открываем базу и создаем курсор
     private void init(String path) {
         database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+
+        Cursor version_cursor = database.rawQuery("SELECT value FROM settings" +
+                " WHERE title = 'Version'", new String[] {});
+        if (version_cursor.moveToFirst()) {
+            version = version_cursor.getString(0);
+            isMobile = version.startsWith("M");
+        }
+        else {
+            throw new SQLiteException("Wrong DB format");
+        }
+
         cursor = getAllEntries();
     }
 }
