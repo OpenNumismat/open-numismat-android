@@ -2,7 +2,9 @@ package janis.opennumismat;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,6 +40,7 @@ import java.util.List;
  */
 public class DownloadActivity extends Activity {
     private static final String XML_LIST_URL = "https://open-numismat-mobile.googlecode.com/files/collections.xml";
+    private static final String TARGET_DIR = "OpenNumismat";
 
     private ArrayAdapter adapter;
 
@@ -45,14 +48,17 @@ public class DownloadActivity extends Activity {
         private final String title;
         private final String date;
         private final String size;
-        private final String file;
+        private final String file_name;
         private final String url;
+        public File file;
+
+        final boolean[] answer = new boolean[1];
 
         private DownloadEntry(String title, String date, String size, String file, String url) {
             this.title = title;
             this.date = date;
             this.size = size;
-            this.file = file;
+            this.file_name = file;
             this.url = url;
         }
 
@@ -64,12 +70,12 @@ public class DownloadActivity extends Activity {
             return url;
         }
 
-        public String getFile() {
+        public File getFile() {
             return file;
         }
 
         public String getDescription() {
-            return file + ", " + size + ", " + date;
+            return file_name + ", " + size + ", " + date;
         }
     }
 
@@ -83,22 +89,7 @@ public class DownloadActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-/*
-        ListView lView = (ListView) findViewById(R.id.download_list);
-        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                                    int pos, long id
-            ) {
-                if (adapter != null) {
-                    DownloadEntry entry = (DownloadEntry) adapter.getItem(pos);
-
-                    new DownloadFileTask().execute(entry);
-                }
-            }
-        });
-*/
         new DownloadListTask().execute(XML_LIST_URL);
     }
 
@@ -266,6 +257,43 @@ public class DownloadActivity extends Activity {
         }
     }
 
+    private static DownloadEntry entry;
+    public void prepareFile(DownloadEntry entry) {
+        File targetDirectory = new File(Environment.getExternalStorageDirectory() + File.separator + TARGET_DIR);
+        if(!targetDirectory.exists()){
+            targetDirectory.mkdir();
+        }
+
+        entry.file = new File(targetDirectory, entry.file_name);
+
+        if (entry.file.exists()) {
+            this.entry = entry;
+
+            AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setMessage(R.string.replace);
+            ad.setPositiveButton(R.string.overwrite, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    startDownload(DownloadActivity.entry);
+                }
+            });
+            ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    dialog.dismiss();
+                }
+            });
+            ad.setCancelable(true);
+            ad.show();
+
+            return;
+        }
+
+        startDownload(entry);
+    }
+
+    private void startDownload(DownloadEntry entry) {
+        new DownloadFileTask().execute(entry);
+    }
+
     private class DownloadListTask extends AsyncTask<String, Void, List> {
         private String url;
 
@@ -307,7 +335,7 @@ public class DownloadActivity extends Activity {
                 ) {
                     if (adapter != null) {
                         DownloadEntry entry = (DownloadEntry) adapter.getItem(pos);
-                        new DownloadFileTask().execute(entry);
+                        prepareFile(entry);
                     }
                 }
             });
@@ -355,14 +383,7 @@ public class DownloadActivity extends Activity {
 
                 InputStream is = url.openStream();
 
-                File testDirectory = new File(Environment.getExternalStorageDirectory()+"/testDirectory");
-                if(!testDirectory.exists()){
-                    testDirectory.mkdir();
-                }
-
-                String file_name = testDirectory+"/"+entry.getFile();
-                Log.v("TAG", "file_name = "+file_name);
-                FileOutputStream fos = new FileOutputStream(file_name);
+                FileOutputStream fos = new FileOutputStream(entry.getFile());
 
                 byte data[] = new byte[1024];
 
@@ -386,7 +407,7 @@ public class DownloadActivity extends Activity {
 
                 Log.v("TAG", "downloading finished");
 
-                return file_name;
+                return entry.getFile().getPath();
 
             }catch(Exception e){
                 Log.v("TAG", "exception in downloadData");
