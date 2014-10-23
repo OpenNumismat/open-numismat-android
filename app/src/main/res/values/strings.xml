@@ -30,5 +30,8 @@
     <string name="cancel">Cancel</string>
     <string name="overwrite">Overwrite</string>
     <string name="downloading">Downloading</string>
+    <string name="download">Download from web</string>
+    <string name="where_first">Where from get collection for working?</string>
+    <string name="open">Open existent</string>
     <string name="replace">File already exists. Overwrite it?</string>
 </resources>

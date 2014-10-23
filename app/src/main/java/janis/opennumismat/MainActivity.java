@@ -3,9 +3,11 @@ package janis.opennumismat;
 import android.app.Activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.SQLException;
@@ -105,7 +107,20 @@ public class MainActivity extends Activity
             lView.setAdapter(adapter);
         }
         else {
-            // TODO: Open download page
+            AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setMessage(R.string.where_first);
+            ad.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    openDownloadDialog();
+                }
+            });
+            ad.setNeutralButton(R.string.open, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    openFileDialog();
+                }
+            });
+            ad.setCancelable(true);
+            ad.show();
         }
     }
 
@@ -192,6 +207,18 @@ public class MainActivity extends Activity
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void openFileDialog() {
+        Intent getContentIntent = FileUtils.createGetContentIntent();
+
+        Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
+        startActivityForResult(intent, REQUEST_CHOOSER);
+    }
+
+    private void openDownloadDialog() {
+        Intent intent = new Intent(this, DownloadActivity.class);
+        startActivityForResult(intent, REQUEST_DOWNLOADER);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -199,17 +226,12 @@ public class MainActivity extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_open) {
-            // Create the ACTION_GET_CONTENT Intent
-            Intent getContentIntent = FileUtils.createGetContentIntent();
-
-            Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
-            startActivityForResult(intent, REQUEST_CHOOSER);
+            openFileDialog();
 
             return true;
         }
         else if (id == R.id.action_download) {
-            Intent intent = new Intent(this, DownloadActivity.class);
-            startActivityForResult(intent, REQUEST_DOWNLOADER);
+            openDownloadDialog();
 
             return true;
         }
