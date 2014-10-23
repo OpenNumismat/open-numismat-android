@@ -16,11 +16,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by v.ignatov on 20.10.2014.
  */
 public class SqlAdapter extends BaseAdapter {
+    private static final int DB_VERSION = 2;
+
     private static final String TABLE_NAME = "coins";
     // Для удобства выполнения sql-запросов
     // создадим константы с именами полей таблицы
@@ -36,7 +39,7 @@ public class SqlAdapter extends BaseAdapter {
     private static final String KEY_SERIES = "series";
     private static final String KEY_IMAGE = "image";
 
-    private String version;
+    private int version;
     private boolean isMobile;
     private Cursor cursor;
     private SQLiteDatabase database;
@@ -140,8 +143,19 @@ public class SqlAdapter extends BaseAdapter {
         Cursor version_cursor = database.rawQuery("SELECT value FROM settings" +
                 " WHERE title = 'Version'", new String[] {});
         if (version_cursor.moveToFirst()) {
-            version = version_cursor.getString(0);
-            isMobile = version.startsWith("M");
+            String version_str = version_cursor.getString(0);
+            isMobile = version_str.startsWith("M");
+            if (isMobile)
+                version = Integer.parseInt(version_str.substring(1));
+            else
+                version = Integer.parseInt(version_str);
+
+            if (version > DB_VERSION) {
+                Toast toast = Toast.makeText(
+                        context, R.string.new_db_version, Toast.LENGTH_LONG
+                );
+                toast.show();
+            }
         }
         else {
             throw new SQLiteException("Wrong DB format");

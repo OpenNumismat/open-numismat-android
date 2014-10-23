@@ -34,4 +34,6 @@
     <string name="where_first">Where from get collection for working?</string>
     <string name="open">Open existent</string>
     <string name="replace">File already exists. Overwrite it?</string>
+    <string name="new_db_version">Catalog in a new format. Please update application.</string>
+    <string name="new_xml_version">Catalogs list in a new format. Please update application.</string>
 </resources>

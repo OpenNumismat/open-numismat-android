@@ -42,6 +42,7 @@ import java.util.List;
  * Created by v.ignatov on 22.10.2014.
  */
 public class DownloadActivity extends Activity {
+    private static final String XML_VERSION = "0.4";
     private static final String XML_LIST_URL = "https://open-numismat-mobile.googlecode.com/files/collections.xml";
     private static final String TARGET_DIR = "OpenNumismat";
 
