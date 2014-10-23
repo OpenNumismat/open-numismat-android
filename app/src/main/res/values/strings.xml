@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">OpenNumismat</string>
-    <string name="app_title">Open Numismat</string>
+    <string name="app_name">Open Numismat</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section_about">About</string>
