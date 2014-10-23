@@ -3,13 +3,18 @@ package janis.opennumismat;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,10 +23,13 @@ import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +38,8 @@ import java.util.List;
  */
 public class DownloadActivity extends Activity {
     private static final String XML_LIST_URL = "https://open-numismat-mobile.googlecode.com/files/collections.xml";
+
+    private ArrayAdapter adapter;
 
     private static class DownloadEntry {
         private final String title;
@@ -50,6 +60,14 @@ public class DownloadActivity extends Activity {
             return title;
         }
 
+        public String getUrl() {
+            return url;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
         public String getDescription() {
             return file + ", " + size + ", " + date;
         }
@@ -60,10 +78,27 @@ public class DownloadActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
 
+        adapter = null;
+
         ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+/*
+        ListView lView = (ListView) findViewById(R.id.download_list);
+        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int pos, long id
+            ) {
+                if (adapter != null) {
+                    DownloadEntry entry = (DownloadEntry) adapter.getItem(pos);
+
+                    new DownloadFileTask().execute(entry);
+                }
+            }
+        });
+*/
         new DownloadListTask().execute(XML_LIST_URL);
     }
 
@@ -224,13 +259,21 @@ public class DownloadActivity extends Activity {
 
             return convertView;
         }
+
+        @Override
+        public DownloadEntry getItem(int position) {
+            return (DownloadEntry)values.get(position);
+        }
     }
 
     private class DownloadListTask extends AsyncTask<String, Void, List> {
+        private String url;
+
         @Override
         protected List doInBackground(String... urls) {
+            url = urls[0];
             try {
-                return loadXmlFromNetwork(urls[0]);
+                return loadXmlFromNetwork(url);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (XmlPullParserException e) {
@@ -242,17 +285,115 @@ public class DownloadActivity extends Activity {
 
         @Override
         protected void onPostExecute(List result) {
+            setContentView(R.layout.activity_download);
             if (result != null) {
-                setContentView(R.layout.activity_download);
-                ListView lView = (ListView) findViewById(R.id.download_list);
-                lView.setAdapter(new DownloadListAdapter(DownloadActivity.this, result));
+                adapter = new DownloadListAdapter(DownloadActivity.this, result);
             }
             else {
                 Toast toast = Toast.makeText(
-                        DownloadActivity.this, getString(R.string.could_not_download_list) + '\n' + XML_LIST_URL, Toast.LENGTH_LONG
+                        DownloadActivity.this, getString(R.string.could_not_download_list) + '\n' + url, Toast.LENGTH_LONG
                 );
                 toast.show();
+
+                adapter = null;
             }
+
+            ListView lView = (ListView) findViewById(R.id.download_list);
+            lView.setAdapter(adapter);
+            lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1,
+                                        int pos, long id
+                ) {
+                    if (adapter != null) {
+                        DownloadEntry entry = (DownloadEntry) adapter.getItem(pos);
+                        new DownloadFileTask().execute(entry);
+                    }
+                }
+            });
+        }
+    }
+
+    private class DownloadFileTask extends AsyncTask<DownloadEntry, Void, String> {
+        private DownloadEntry entry;
+
+        @Override
+        protected String doInBackground(DownloadEntry... entries) {
+            entry = entries[0];
+            return downloadData();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                Uri uri = Uri.fromFile(new File(result));
+                setResult(RESULT_OK, new Intent().setData(uri));
+            }
+            else {
+                Toast toast = Toast.makeText(
+                        DownloadActivity.this, getString(R.string.could_not_download_file) + '\n' + entry.getUrl(), Toast.LENGTH_LONG
+                );
+                toast.show();
+
+                setResult(RESULT_CANCELED);
+            }
+
+            finish();
+        }
+
+        private String downloadData(){
+            try{
+                Log.v("TAG", "downloading data");
+
+                URL url  = new URL(entry.getUrl());
+                URLConnection connection = url.openConnection();
+                connection.connect();
+
+                int lenghtOfFile = connection.getContentLength();
+
+                Log.v("TAG", "lenghtOfFile = "+lenghtOfFile);
+
+                InputStream is = url.openStream();
+
+                File testDirectory = new File(Environment.getExternalStorageDirectory()+"/testDirectory");
+                if(!testDirectory.exists()){
+                    testDirectory.mkdir();
+                }
+
+                String file_name = testDirectory+"/"+entry.getFile();
+                Log.v("TAG", "file_name = "+file_name);
+                FileOutputStream fos = new FileOutputStream(file_name);
+
+                byte data[] = new byte[1024];
+
+                int count = 0;
+                long total = 0;
+                int progress = 0;
+
+                while ((count=is.read(data)) != -1)
+                {
+                    total += count;
+                    int progress_temp = (int)total*100/lenghtOfFile;
+                    if(progress_temp%10 == 0 && progress != progress_temp){
+                        progress = progress_temp;
+                        Log.v("TAG", "total = "+progress);
+                    }
+                    fos.write(data, 0, count);
+                }
+
+                is.close();
+                fos.close();
+
+                Log.v("TAG", "downloading finished");
+
+                return file_name;
+
+            }catch(Exception e){
+                Log.v("TAG", "exception in downloadData");
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }

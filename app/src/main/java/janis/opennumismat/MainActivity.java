@@ -122,6 +122,7 @@ public class MainActivity extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CHOOSER:
+            case REQUEST_DOWNLOADER:
                 if (resultCode == RESULT_OK) {
 
                     final Uri uri = data.getData();
