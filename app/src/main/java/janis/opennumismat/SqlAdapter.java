@@ -69,7 +69,7 @@ public class SqlAdapter extends BaseAdapter {
         TextView title = (TextView) convertView.findViewById(R.id.title);
         title.setText(coin.getTitle());
         TextView description = (TextView) convertView.findViewById(R.id.description);
-        description.setText(coin.getDescription());
+        description.setText(coin.getDescription(context));
         ImageView imageView = (ImageView) convertView.findViewById(R.id.coin_image);
         if (!isMobile) {
             imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));

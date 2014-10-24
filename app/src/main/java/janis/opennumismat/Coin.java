@@ -1,10 +1,20 @@
 package janis.opennumismat;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Formatter;
+import java.util.Locale;
 
 /**
  * Created by v.ignatov on 20.10.2014.
@@ -138,29 +148,35 @@ public class Coin implements Parcelable {
         return series;
     }
 
-    public String getDescription() {
+    public String getDescription(Context context) {
         String desc = value + " " + unit;
         if (year > 0)
             desc += ", " + year;
         if (!mintmark.isEmpty())
             desc += ", " + mintmark;
         if (mintage > 0)
-            desc += ", " + "Mintage: " + mintage;
+            desc += ", " + context.getString(R.string.mintage) + ": " + String.format(Locale.getDefault(), "%,d", mintage);
         if (!series.isEmpty())
             desc += ", " + series;
         return desc;
     }
 
     public String getMintage() {
-        // TODO: Format mintage string (only for details view)
-        return Long.toString(mintage);
+        return String.format(Locale.getDefault(), "%,d", mintage);
     }
     public String getDenomination() { return Long.toString(value) + ' ' + unit.toLowerCase(); }
     public String getYear() { return Long.toString(year); }
     public String getMaterial() { return material; }
-    public String getDate() {
-        // TODO: Format date string
-        return date;
+    public String getDate(Context context) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date_obj;
+        try {
+            date_obj = sdf.parse(date);
+        } catch (ParseException e) {
+            return date;
+        }
+        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
+        return dateFormat.format(date_obj);
     }
 
     public Bitmap getImageBitmap() {

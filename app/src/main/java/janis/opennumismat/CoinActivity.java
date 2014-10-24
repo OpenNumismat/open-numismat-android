@@ -77,14 +77,14 @@ public class CoinActivity extends Activity {
             text.setText(coin.getSeries());
             coin_details.addView(text);
         }
-        if (!coin.getDate().isEmpty()) {
+        if (!coin.getDate(this).isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.date_of_issue) + COIN_DETAILS_DELIMITER);
             coin_details.addView(text);
 
             text = new TextView(this);
             text.setTypeface(null, Typeface.BOLD);
-            text.setText(coin.getDate());
+            text.setText(coin.getDate(this));
             coin_details.addView(text);
         }
         else if (!coin.getYear().isEmpty()) {
