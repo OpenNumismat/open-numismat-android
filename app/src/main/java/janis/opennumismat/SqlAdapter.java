@@ -83,8 +83,10 @@ public class SqlAdapter extends BaseAdapter {
         TextView description = (TextView) convertView.findViewById(R.id.description);
         description.setText(coin.getDescription(context));
         TextView count = (TextView) convertView.findViewById(R.id.count);
+        count.setText(coin.getCount());
         if (coin.count > 0) {
             count.setText(coin.getCount());
+            count.setVisibility(View.VISIBLE);
         }
         else {
             count.setVisibility(View.GONE);
