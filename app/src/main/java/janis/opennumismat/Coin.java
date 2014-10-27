@@ -29,31 +29,34 @@ public class Coin implements Parcelable {
     private static final int MINTMARK_COLUMN = 6;
     private static final int MINTAGE_COLUMN = 7;
     private static final int SERIES_COLUMN = 8;
-    private static final int IMAGE_COLUMN = 9;
+    private static final int SUBJECT_SHORT_COLUMN = 9;
+    private static final int QUALITY_COLUMN = 10;
+    private static final int IMAGE_COLUMN = 11;
 
     private static final int SUBJECT_EX_COLUMN = 0;
-    private static final int SUBJECT_SHORT_EX_COLUMN = 1;
-    private static final int MATERIAL_EX_COLUMN = 2;
-    private static final int DATE_EX_COLUMN = 3;
-    private static final int OBVERSE_IMAGE_EX_COLUMN = 4;
-    private static final int REVERSE_IMAGE_EX_COLUMN = 5;
+    private static final int MATERIAL_EX_COLUMN = 1;
+    private static final int DATE_EX_COLUMN = 2;
+    private static final int OBVERSE_IMAGE_EX_COLUMN = 3;
+    private static final int REVERSE_IMAGE_EX_COLUMN = 4;
 
     private long id;
-    private String title;
-    private long value;
-    private String unit;
-    private String country;
-    private long year;
-    private String mintmark;
-    private long mintage;
-    private String series;
+    public String title;
+    public long value;
+    public String unit;
+    public String country;
+    public long year;
+    public String mintmark;
+    public long mintage;
+    public String series;
     private byte[] image;
     private String subject;
-    private String subject_short;
-    private String material;
-    private String date;
+    public String subject_short;
+    public String material;
+    public String date;
     private byte[] obverse_image;
     private byte[] reverse_image;
+    public String quality;
+    public long count;
 
     public Coin(Cursor cursor) {
         id = cursor.getLong(ID_COLUMN);
@@ -65,6 +68,8 @@ public class Coin implements Parcelable {
         mintmark = cursor.getString(MINTMARK_COLUMN);
         mintage = cursor.getLong(MINTAGE_COLUMN);
         series = cursor.getString(SERIES_COLUMN);
+        subject_short = cursor.getString(SUBJECT_SHORT_COLUMN);
+        quality = cursor.getString(QUALITY_COLUMN);
         image = cursor.getBlob(IMAGE_COLUMN);
     }
 
@@ -82,6 +87,8 @@ public class Coin implements Parcelable {
         subject_short = in.readString();
         material = in.readString();
         date = in.readString();
+        quality = in.readString();
+        count = in.readLong();
         obverse_image = new byte[in.readInt()];
         in.readByteArray(obverse_image);
         reverse_image = new byte[in.readInt()];
@@ -118,6 +125,8 @@ public class Coin implements Parcelable {
         out.writeString(subject_short);
         out.writeString(material);
         out.writeString(date);
+        out.writeString(quality);
+        out.writeLong(count);
         out.writeInt(obverse_image.length);
         out.writeByteArray(obverse_image);
         out.writeInt(reverse_image.length);
@@ -167,6 +176,9 @@ public class Coin implements Parcelable {
     public String getDenomination() { return Long.toString(value) + ' ' + unit.toLowerCase(); }
     public String getYear() { return Long.toString(year); }
     public String getMaterial() { return material; }
+    public String getCount() {
+        return String.format(Locale.getDefault(), "%d", count);
+    }
     public String getDate(Context context) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date_obj;
@@ -191,7 +203,6 @@ public class Coin implements Parcelable {
 
     public void addExtra(Cursor cursor) {
         subject = cursor.getString(SUBJECT_EX_COLUMN);
-        subject_short = cursor.getString(SUBJECT_SHORT_EX_COLUMN);
         material = cursor.getString(MATERIAL_EX_COLUMN);
         date = cursor.getString(DATE_EX_COLUMN);
         obverse_image = cursor.getBlob(OBVERSE_IMAGE_EX_COLUMN);
