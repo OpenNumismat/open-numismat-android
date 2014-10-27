@@ -2,6 +2,7 @@ package janis.opennumismat;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -47,6 +48,7 @@ public class SqlAdapter extends BaseAdapter {
     private static final String KEY_SERIES = "series";
     private static final String KEY_SUBJECT_SHORT = "subjectshort";
     private static final String KEY_QUALITY = "quality";
+    private static final String KEY_QUANTITY = "quantity";
     private static final String KEY_IMAGE = "image";
 
     private int version;
@@ -109,6 +111,7 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         public void onClick(View v) {
+            // TODO: Use count_dialog.xml
             RelativeLayout linearLayout = new RelativeLayout(context);
             final NumberPicker aNumberPicker = new NumberPicker(context);
             aNumberPicker.setMaxValue(1000);
@@ -139,9 +142,29 @@ public class SqlAdapter extends BaseAdapter {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int id) {
-                                    Log.e("","New Quantity Value : "+ aNumberPicker.getValue());
-                                    Log.e("","Old Quantity Value : "+ coin.getCount());
+                                    int new_count = aNumberPicker.getValue();
 
+                                    if (!isMobile) {
+                                        Toast toast = Toast.makeText(
+                                                context, R.string.not_implemented_for_desktop, Toast.LENGTH_LONG
+                                        );
+                                        toast.show();
+/*
+                                        int old_count = (int) coin.count;
+                                        if (new_count > old_count) {
+                                            for (int i = old_count; i < new_count; i++) {
+                                                addCoin();
+                                            }
+                                        } else if (new_count < old_count) {
+                                            for (int i = old_count; i < new_count; i--) {
+                                                removeCoin();
+                                            }
+                                        }
+*/
+                                    }
+                                    else {
+                                        setCoinCount(coin, new_count);
+                                    }
                                 }
                             })
                     .setNegativeButton(R.string.cancel,
@@ -153,40 +176,6 @@ public class SqlAdapter extends BaseAdapter {
                             });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-            /*
-            final NumberPicker np = null;
-
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-
-            // Inflate and set the layout for the dialog
-            // Pass null as the parent view because its going in the dialog layout
-            AlertDialog.Builder ad = new AlertDialog.Builder(context);
-            ad.setView(inflater.inflate( R.layout.count_dialog, null ));
-            ad.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    Log.e("qqq", Long.toString(coin.getId()));
-                    Log.e("qqq", Long.toString(np.getValue()));
-
-                    dialog.dismiss();
-                }
-            });
-            ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    dialog.dismiss();
-                }
-            });
-            ad.setCancelable(true);
-            ad.setTitle(coin.getTitle());
-
-            Dialog d = ad.show();
-            d.getContext();
-
-            np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-            np.setMaxValue(1000);
-            np.setMinValue(0);
-            np.setValue((int)coin.count);
-            np.setWrapSelectorWheel(false);
-            */
         }
     };
 
@@ -199,7 +188,8 @@ public class SqlAdapter extends BaseAdapter {
     public Coin getItem(int position) {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
-            coin.count = getCoinsCount(coin);
+            if (!isMobile)
+                coin.count = getCoinsCount(coin);
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
@@ -226,11 +216,21 @@ public class SqlAdapter extends BaseAdapter {
         }
     }
 
+    private void setCoinCount(Coin coin, int new_count) {
+        ContentValues cv = new ContentValues();
+        cv.put("quantity", Integer.toString(new_count));
+        database.update("coins", cv, "id = ?", new String[] { Long.toString(coin.getId()) });
+
+        coin.count = new_count;
+
+        refresh();
+    }
+
     //Методы для работы с базой данных
 
     public Cursor getAllEntries() {
         //Список колонок базы, которые следует включить в результат
-        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
+        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_QUANTITY, KEY_IMAGE };
         // составляем запрос к базе
         return database.query(TABLE_NAME, columnsToTake,
                 null, null, null, null, KEY_ID);
@@ -274,6 +274,7 @@ public class SqlAdapter extends BaseAdapter {
         cursor = getAllEntries();
     }
 
+    // Only for desktop version
     private long getCoinsCount(Coin coin) {
         String sql = "SELECT COUNT(*) FROM coins WHERE status='owned'" +
                     " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +

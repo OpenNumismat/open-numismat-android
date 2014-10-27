@@ -29,6 +29,7 @@
     <string name="overwrite">Overwrite</string>
     <string name="save">Save</string>
     <string name="change_count">Change coins count</string>
+    <string name="not_implemented_for_desktop">Not yet implemented for desktop version of collection</string>
     <string name="downloading">Downloading</string>
     <string name="download">Download from web</string>
     <string name="where_first">Where from get collection for working?</string>
