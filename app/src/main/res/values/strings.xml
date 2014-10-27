@@ -27,6 +27,8 @@
     <string name="material">Material</string>
     <string name="cancel">Cancel</string>
     <string name="overwrite">Overwrite</string>
+    <string name="save">Save</string>
+    <string name="change_count">Change coins count</string>
     <string name="downloading">Downloading</string>
     <string name="download">Download from web</string>
     <string name="where_first">Where from get collection for working?</string>

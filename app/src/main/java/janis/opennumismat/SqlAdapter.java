@@ -1,6 +1,9 @@
 package janis.opennumismat;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
@@ -13,8 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,8 +93,102 @@ public class SqlAdapter extends BaseAdapter {
         }
         imageView.setImageBitmap(coin.getImageBitmap());
 
+        LinearLayout count_layout = (LinearLayout) convertView.findViewById(R.id.CountLayout);
+        count_layout.setOnClickListener(new OnClickListener(coin));
+
         return convertView;
     }
+
+    private class OnClickListener implements
+            View.OnClickListener {
+
+        private Coin coin;
+
+        public OnClickListener(Coin coin) {
+            this.coin = coin;
+        }
+
+        public void onClick(View v) {
+            RelativeLayout linearLayout = new RelativeLayout(context);
+            final NumberPicker aNumberPicker = new NumberPicker(context);
+            aNumberPicker.setMaxValue(1000);
+            aNumberPicker.setMinValue(0);
+            aNumberPicker.setValue((int)coin.count);
+            aNumberPicker.setWrapSelectorWheel(false);
+            final TextView aTextView = new TextView(context);
+            aTextView.setText(coin.getTitle());
+            aTextView.setTextSize(18.f);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
+            RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            RelativeLayout.LayoutParams textPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            textPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            textPicerParams.setMargins(10, 10, 10, 10);
+
+            linearLayout.setLayoutParams(params);
+            linearLayout.addView(aTextView,textPicerParams);
+            linearLayout.addView(aNumberPicker,numPicerParams);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setTitle(R.string.change_count);
+            alertDialogBuilder.setView(linearLayout);
+            alertDialogBuilder
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.save,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int id) {
+                                    Log.e("","New Quantity Value : "+ aNumberPicker.getValue());
+                                    Log.e("","Old Quantity Value : "+ coin.getCount());
+
+                                }
+                            })
+                    .setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            /*
+            final NumberPicker np = null;
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
+            // Inflate and set the layout for the dialog
+            // Pass null as the parent view because its going in the dialog layout
+            AlertDialog.Builder ad = new AlertDialog.Builder(context);
+            ad.setView(inflater.inflate( R.layout.count_dialog, null ));
+            ad.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    Log.e("qqq", Long.toString(coin.getId()));
+                    Log.e("qqq", Long.toString(np.getValue()));
+
+                    dialog.dismiss();
+                }
+            });
+            ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    dialog.dismiss();
+                }
+            });
+            ad.setCancelable(true);
+            ad.setTitle(coin.getTitle());
+
+            Dialog d = ad.show();
+            d.getContext();
+
+            np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+            np.setMaxValue(1000);
+            np.setMinValue(0);
+            np.setValue((int)coin.count);
+            np.setWrapSelectorWheel(false);
+            */
+        }
+    };
 
     @Override
     public int getCount() {
