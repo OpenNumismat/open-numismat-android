@@ -124,10 +124,8 @@ public class SqlAdapter extends BaseAdapter {
                 null, null, null, null, KEY_ID);
     }
 
-    //Прочие служебные методы
-
     public void onDestroy() {
-//        dbOpenHelper.close();
+        database.close();
     }
 
     //Вызывает обновление вида
