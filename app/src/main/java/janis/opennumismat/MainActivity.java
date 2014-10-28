@@ -64,7 +64,7 @@ public class MainActivity extends Activity
         adapter = null;
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-
+/*
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -73,7 +73,7 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
+*/
         ListView lView = (ListView) findViewById(R.id.lview);
         lView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -187,21 +187,21 @@ public class MainActivity extends Activity
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+//        actionBar.setTitle(mTitle);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+//        if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             return true;
-        }
-        return super.onCreateOptionsMenu(menu);
+//        }
+//        return super.onCreateOptionsMenu(menu);
     }
 
     private void openFileDialog() {
@@ -231,7 +231,7 @@ public class MainActivity extends Activity
             openDownloadDialog();
 
             return true;
-        }
+        }/*
         else if (id == R.id.action_settings) {
             startActivity(new Intent(this, PrefActivity.class));
             return true;
@@ -239,7 +239,7 @@ public class MainActivity extends Activity
         else if (id == R.id.action_about) {
             startActivity(new Intent(this, AboutActivity.class));
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 
