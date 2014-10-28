@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="title_section1">Section 1</string>
+  <string name="title_section_about">О программе</string>
+  <string name="navigation_drawer_open">Открыть панель навигации</string>
+  <string name="navigation_drawer_close">Закрыть панель навигации</string>
+  <string name="action_open">Открыть</string>
+  <string name="action_download">Скачать</string>
+  <string name="action_settings">Настройки</string>
+  <string name="action_about">О программе</string>
+  <string name="file_chooser">Выбрать файл</string>
+  <string name="could_not_open_database">Не удалось открыть базу данных</string>
+  <string name="could_not_download_list">Не удалось скачать список каталогов</string>
+  <string name="could_not_download_file">Не удалось скачать каталог</string>
+  <string name="could_not_parse_list">Не удалось разобрать список каталогов</string>
+  <string name="country">Страна</string>
+  <string name="mintage">Тираж</string>
+  <string name="subject_short">Тема</string>
+  <string name="denomination">Номинал</string>
+  <string name="series">Серия</string>
+  <string name="date_of_issue">Дата выпуска</string>
+  <string name="year">Год</string>
+  <string name="mintmark">Буквы</string>
+  <string name="price">Цена</string>
+  <string name="material">Материал</string>
+  <string name="cancel">Отмена</string>
+  <string name="overwrite">Заменить</string>
+  <string name="save">Сохранить</string>
+  <string name="change_count">Изменить количество монет</string>
+  <string name="not_implemented_for_desktop">Не реализовано для настольной версии коллекции</string>
+  <string name="downloading">Скачивание</string>
+  <string name="download">Скачать из web</string>
+  <string name="where_first">Откуда взять коллекцию для работы?</string>
+  <string name="open">Открыть имеющуюся</string>
+  <string name="replace">Файл уже существует. Перезаписать его?</string>
+  <string name="new_db_version">Каталог в новом формате. Обновите приложение.</string>
+  <string name="new_xml_version">Список каталогов в новом формате. Обновите приложение.</string>
+</resources>
