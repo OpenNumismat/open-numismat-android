@@ -69,38 +69,57 @@ public class SqlAdapter extends BaseAdapter {
         return coin.getId();
     }
 
+    static class ViewHolder {
+        public ImageView image;
+        public TextView title;
+        public TextView count;
+        public TextView description;
+        public LinearLayout count_layout;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TextView textView;
+        ViewHolder holder;
+
+        View rowView = convertView;
         if (null == convertView) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_item, null);
+            rowView = inflater.inflate(R.layout.list_item, null);
+
+            holder = new ViewHolder();
+            holder.title = (TextView) rowView.findViewById(R.id.title);
+            holder.description = (TextView) rowView.findViewById(R.id.description);
+            holder.count = (TextView) rowView.findViewById(R.id.count);
+            holder.image = (ImageView) rowView.findViewById(R.id.coin_image);
+            if (!isMobile) {
+                holder.image.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            }
+            holder.count_layout = (LinearLayout) rowView.findViewById(R.id.CountLayout);
+
+            rowView.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder) rowView.getTag();
         }
 
         Coin coin = getItem(position);
-        TextView title = (TextView) convertView.findViewById(R.id.title);
-        title.setText(coin.getTitle());
-        TextView description = (TextView) convertView.findViewById(R.id.description);
-        description.setText(coin.getDescription(context));
-        TextView count = (TextView) convertView.findViewById(R.id.count);
-        count.setText(coin.getCount());
+
+        holder.title.setText(coin.getTitle());
+        holder.description.setText(coin.getDescription(context));
+
+        holder.image.setImageBitmap(coin.getImageBitmap());
+
         if (coin.count > 0) {
-            count.setText(coin.getCount());
-            count.setVisibility(View.VISIBLE);
+            holder.count.setText(coin.getCount());
+            holder.count.setVisibility(View.VISIBLE);
         }
         else {
-            count.setVisibility(View.GONE);
+            holder.count.setVisibility(View.GONE);
         }
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.coin_image);
-        if (!isMobile) {
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        }
-        imageView.setImageBitmap(coin.getImageBitmap());
 
-        LinearLayout count_layout = (LinearLayout) convertView.findViewById(R.id.CountLayout);
-        count_layout.setOnClickListener(new OnClickListener(coin));
+        holder.count_layout.setOnClickListener(new OnClickListener(coin));
 
-        return convertView;
+        return rowView;
     }
 
     private class OnClickListener implements
