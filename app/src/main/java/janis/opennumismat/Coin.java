@@ -54,8 +54,8 @@ public class Coin implements Parcelable {
     public String subject_short;
     public String material;
     public String date;
-    private byte[] obverse_image;
-    private byte[] reverse_image;
+    public byte[] obverse_image;
+    public byte[] reverse_image;
     public String quality;
     public long count;
 

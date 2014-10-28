@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,8 +33,10 @@ public class CoinActivity extends Activity {
 
         ImageView coin_obverse = (ImageView) findViewById(R.id.coin_obverse);
         coin_obverse.setImageBitmap(coin.getObverseImageBitmap());
+        coin_obverse.setOnClickListener(new OnClickListener(coin, true));
         ImageView coin_reverse = (ImageView) findViewById(R.id.coin_reverse);
         coin_reverse.setImageBitmap(coin.getReverseImageBitmap());
+        coin_reverse.setOnClickListener(new OnClickListener(coin, false));
 
         GridLayout coin_details = (GridLayout) findViewById(R.id.coin_details);
         TextView text;
@@ -155,4 +158,20 @@ public class CoinActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private class OnClickListener implements
+            View.OnClickListener {
+
+        private Coin coin;
+
+        public OnClickListener(Coin coin, boolean obverse) {
+            this.coin = coin;
+        }
+
+        public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
+            intent.putExtra(MainActivity.EXTRA_COIN_ID, coin);
+            startActivity(intent);
+        }
+    };
 }
