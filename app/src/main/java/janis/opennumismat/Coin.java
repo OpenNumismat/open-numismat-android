@@ -200,10 +200,25 @@ public class Coin implements Parcelable {
     }
 
     public String getMintage() {
-        return String.format(Locale.getDefault(), "%,d", mintage);
+        if (mintage > 0)
+            return String.format(Locale.getDefault(), "%,d", mintage);
+        else
+            return "";
     }
-    public String getDenomination() { return Long.toString(value) + ' ' + unit.toLowerCase(); }
-    public String getYear() { return Long.toString(year); }
+    public String getDenomination() {
+        if (value > 0 && !unit.isEmpty())
+            return Long.toString(value) + ' ' + unit.toLowerCase();
+        else if (value > 0)
+            return Long.toString(value);
+        else
+            return unit.toLowerCase();
+    }
+    public String getYear() {
+        if (year > 0)
+            return Long.toString(year);
+        else
+            return "";
+    }
     public String getMaterial() { return material; }
     public String getCount() {
         return String.format(Locale.getDefault(), "%d", count);
