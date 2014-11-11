@@ -32,6 +32,7 @@ import java.util.ArrayList;
  */
 public class SqlAdapter extends BaseAdapter {
     private static final int DB_VERSION = 2;
+    private static final int DB_NATIVE_VERSION = 3;
 
     private static final String TABLE_NAME = "coins";
     // Для удобства выполнения sql-запросов
@@ -209,8 +210,16 @@ public class SqlAdapter extends BaseAdapter {
     public Coin getItem(int position) {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
-            if (!isMobile)
+            if (isMobile) {
+                coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
+            }
+            else {
                 coin.count = getCoinsCount(coin);
+                Cursor extra_cursor = database.rawQuery("SELECT image FROM images WHERE id = ?",
+                        new String[] { Long.toString(cursor.getLong(Coin.IMAGE_COLUMN)) });
+                if (extra_cursor.moveToFirst())
+                    coin.image = extra_cursor.getBlob(0);
+            }
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
@@ -221,12 +230,22 @@ public class SqlAdapter extends BaseAdapter {
     public Coin getFullItem(int position) {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
+            Cursor extra_cursor;
 
-            Cursor extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
-                    " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
-                    " LEFT JOIN images AS obverseimg ON coins.obverseimg = obverseimg.id" +
-                    " LEFT JOIN images AS reverseimg ON coins.reverseimg = reverseimg.id" +
-                    " WHERE coins.id = ?", new String[] { Long.toString(coin.getId()) });
+            if (isMobile) {
+                extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
+                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                        " LEFT JOIN images AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                        " LEFT JOIN images AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                        " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
+            }
+            else {
+                extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
+                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                        " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                        " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                        " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
+            }
             if (extra_cursor.moveToFirst())
                 coin.addExtra(extra_cursor);
 
@@ -276,16 +295,29 @@ public class SqlAdapter extends BaseAdapter {
         if (version_cursor.moveToFirst()) {
             String version_str = version_cursor.getString(0);
             isMobile = version_str.startsWith("M");
-            if (isMobile)
+            if (isMobile) {
                 version = Integer.parseInt(version_str.substring(1));
-            else
+                if (version > DB_VERSION) {
+                    Toast toast = Toast.makeText(
+                            context, R.string.new_db_version, Toast.LENGTH_LONG
+                    );
+                    toast.show();
+                }
+            }
+            else {
                 version = Integer.parseInt(version_str);
-
-            if (version > DB_VERSION) {
-                Toast toast = Toast.makeText(
-                        context, R.string.new_db_version, Toast.LENGTH_LONG
-                );
-                toast.show();
+                if (version > DB_NATIVE_VERSION) {
+                    Toast toast = Toast.makeText(
+                            context, R.string.new_db_version, Toast.LENGTH_LONG
+                    );
+                    toast.show();
+                }
+                else if (version < DB_NATIVE_VERSION) {
+                    Toast toast = Toast.makeText(
+                            context, R.string.old_db_version, Toast.LENGTH_LONG
+                    );
+                    toast.show();
+                }
             }
         }
         else {

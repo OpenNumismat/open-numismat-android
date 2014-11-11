@@ -32,7 +32,7 @@ public class Coin implements Parcelable {
     private static final int SUBJECT_SHORT_COLUMN = 9;
     private static final int QUALITY_COLUMN = 10;
     private static final int QUANTITY_COLUMN = 11;
-    private static final int IMAGE_COLUMN = 12;
+    public static final int IMAGE_COLUMN = 12;
 
     private static final int SUBJECT_EX_COLUMN = 0;
     private static final int MATERIAL_EX_COLUMN = 1;
@@ -49,7 +49,7 @@ public class Coin implements Parcelable {
     public String mintmark;
     public long mintage;
     public String series;
-    private byte[] image;
+    public byte[] image;
     private String subject;
     public String subject_short;
     public String material;
@@ -72,7 +72,6 @@ public class Coin implements Parcelable {
         subject_short = cursor.getString(SUBJECT_SHORT_COLUMN);
         quality = cursor.getString(QUALITY_COLUMN);
         count = cursor.getLong(QUANTITY_COLUMN);
-        image = cursor.getBlob(IMAGE_COLUMN);
     }
 
     private Coin(Parcel in) {
