@@ -31,8 +31,7 @@ public class Coin implements Parcelable {
     private static final int SERIES_COLUMN = 8;
     private static final int SUBJECT_SHORT_COLUMN = 9;
     private static final int QUALITY_COLUMN = 10;
-    private static final int QUANTITY_COLUMN = 11;
-    public static final int IMAGE_COLUMN = 12;
+    public static final int IMAGE_COLUMN = 11;
 
     private static final int SUBJECT_EX_COLUMN = 0;
     private static final int MATERIAL_EX_COLUMN = 1;
@@ -61,17 +60,46 @@ public class Coin implements Parcelable {
 
     public Coin(Cursor cursor) {
         id = cursor.getLong(ID_COLUMN);
-        title = cursor.getString(TITLE_COLUMN);
-        value = cursor.getLong(VALUE_COLUMN);
-        unit = cursor.getString(UNIT_COLUMN);
-        country = cursor.getString(COUNTRY_COLUMN);
-        year = cursor.getLong(YEAR_COLUMN);
-        mintmark = cursor.getString(MINTMARK_COLUMN);
-        mintage = cursor.getLong(MINTAGE_COLUMN);
-        series = cursor.getString(SERIES_COLUMN);
-        subject_short = cursor.getString(SUBJECT_SHORT_COLUMN);
-        quality = cursor.getString(QUALITY_COLUMN);
-        count = cursor.getLong(QUANTITY_COLUMN);
+        if (cursor.isNull(TITLE_COLUMN))
+            title = "";
+        else
+            title = cursor.getString(TITLE_COLUMN);
+        if (cursor.isNull(VALUE_COLUMN))
+            value = 0;
+        else
+            value = cursor.getLong(VALUE_COLUMN);
+        if (cursor.isNull(UNIT_COLUMN))
+            unit = "";
+        else
+            unit = cursor.getString(UNIT_COLUMN);
+        if (cursor.isNull(COUNTRY_COLUMN))
+            country = "";
+        else
+            country = cursor.getString(COUNTRY_COLUMN);
+        if (cursor.isNull(YEAR_COLUMN))
+            year = 0;
+        else
+            year = cursor.getLong(YEAR_COLUMN);
+        if (cursor.isNull(MINTMARK_COLUMN))
+            mintmark = "";
+        else
+            mintmark = cursor.getString(MINTMARK_COLUMN);
+        if (cursor.isNull(MINTAGE_COLUMN))
+            mintage = 0;
+        else
+            mintage = cursor.getLong(MINTAGE_COLUMN);
+        if (cursor.isNull(SERIES_COLUMN))
+            series = "";
+        else
+            series = cursor.getString(SERIES_COLUMN);
+        if (cursor.isNull(SUBJECT_SHORT_COLUMN))
+            subject_short = "";
+        else
+            subject_short = cursor.getString(SUBJECT_SHORT_COLUMN);
+        if (cursor.isNull(QUALITY_COLUMN))
+            quality = "";
+        else
+            quality = cursor.getString(QUALITY_COLUMN);
     }
 
     private Coin(Parcel in) {
@@ -203,9 +231,18 @@ public class Coin implements Parcelable {
     }
 
     public void addExtra(Cursor cursor) {
-        subject = cursor.getString(SUBJECT_EX_COLUMN);
-        material = cursor.getString(MATERIAL_EX_COLUMN);
-        date = cursor.getString(DATE_EX_COLUMN);
+        if (cursor.isNull(SUBJECT_EX_COLUMN))
+            subject = "";
+        else
+            subject = cursor.getString(SUBJECT_EX_COLUMN);
+        if (cursor.isNull(MATERIAL_EX_COLUMN))
+            material = "";
+        else
+            material = cursor.getString(MATERIAL_EX_COLUMN);
+        if (cursor.isNull(DATE_EX_COLUMN))
+            date = "";
+        else
+            date = cursor.getString(DATE_EX_COLUMN);
         obverse_image = cursor.getBlob(OBVERSE_IMAGE_EX_COLUMN);
         reverse_image = cursor.getBlob(REVERSE_IMAGE_EX_COLUMN);
     }

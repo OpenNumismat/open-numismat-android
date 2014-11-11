@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -166,26 +167,18 @@ public class SqlAdapter extends BaseAdapter {
                                                     int id) {
                                     int new_count = aNumberPicker.getValue();
 
-                                    if (!isMobile) {
-                                        Toast toast = Toast.makeText(
-                                                context, R.string.not_implemented_for_desktop, Toast.LENGTH_LONG
-                                        );
-                                        toast.show();
-/*
-                                        int old_count = (int) coin.count;
-                                        if (new_count > old_count) {
-                                            for (int i = old_count; i < new_count; i++) {
-                                                addCoin();
-                                            }
-                                        } else if (new_count < old_count) {
-                                            for (int i = old_count; i < new_count; i--) {
-                                                removeCoin();
-                                            }
+                                    int old_count = (int) coin.count;
+                                    if (new_count > old_count) {
+                                        for (int i = old_count; i < new_count; i++) {
+                                            addCoin(coin);
                                         }
-*/
-                                    }
-                                    else {
-                                        setCoinCount(coin, new_count);
+
+//                                        coin.count = new_count;
+                                        refresh();
+                                    } else if (new_count < old_count) {
+                                        for (int i = old_count; i < new_count; i--) {
+//                                            removeCoin();
+                                        }
                                     }
                                 }
                             })
@@ -210,11 +203,11 @@ public class SqlAdapter extends BaseAdapter {
     public Coin getItem(int position) {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
+            coin.count = getCoinsCount(coin);
             if (isMobile) {
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
             }
             else {
-                coin.count = getCoinsCount(coin);
                 Cursor extra_cursor = database.rawQuery("SELECT image FROM images WHERE id = ?",
                         new String[] { Long.toString(cursor.getLong(Coin.IMAGE_COLUMN)) });
                 if (extra_cursor.moveToFirst())
@@ -223,7 +216,7 @@ public class SqlAdapter extends BaseAdapter {
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
-                    "Cant move cursor to postion");
+                    "Cant move cursor to position");
         }
     }
 
@@ -231,19 +224,23 @@ public class SqlAdapter extends BaseAdapter {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
 
-            Cursor extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
-                    " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
-                    " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
-                    " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
-                    " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
-            if (extra_cursor.moveToFirst())
-                coin.addExtra(extra_cursor);
-
-            return coin;
+            return fillExtra(coin);
         } else {
             throw new CursorIndexOutOfBoundsException(
                     "Cant move cursor to position");
         }
+    }
+
+    private Coin fillExtra(Coin coin) {
+        Cursor extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
+                " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
+        if (extra_cursor.moveToFirst())
+            coin.addExtra(extra_cursor);
+
+        return coin;
     }
 
     private void setCoinCount(Coin coin, int new_count) {
@@ -256,14 +253,68 @@ public class SqlAdapter extends BaseAdapter {
         refresh();
     }
 
+    private void addCoin(Coin coin) {
+        coin = fillExtra(coin);
+
+        ContentValues photos = new ContentValues();
+        photos.put("image", coin.obverse_image);
+        long obverse_image_id = database.insert("photos", null, photos);
+        photos.put("image", coin.reverse_image);
+        long reverse_image_id = database.insert("photos", null, photos);
+
+        long image_id = 0;
+        if (!isMobile) {
+            ContentValues image = new ContentValues();
+            image.put("image", coin.image);
+            image_id = database.insert("images", null, image);
+        }
+
+        Time now = new Time();
+        now.setToNow();
+
+        ContentValues values = new ContentValues();
+        values.put("status", "owned");
+        values.put("obverseimg", obverse_image_id);
+        values.put("reverseimg", reverse_image_id);
+        values.put("updatedat", now.format2445());
+        values.put("createdat", now.format2445());
+        values.put("title", coin.title);
+        values.put("subjectshort", coin.subject_short);
+        values.put("series", coin.series);
+        if (coin.value != 0)
+            values.put("value", coin.value);
+        values.put("country", coin.country);
+        values.put("unit", coin.unit);
+        if (coin.year != 0)
+            values.put("year", coin.year);
+        values.put("mintmark", coin.mintmark);
+        values.put("material", coin.material);
+        if (coin.mintage != 0)
+            values.put("mintage", coin.mintage);
+        values.put("quality", coin.quality);
+        values.put("date", coin.date);
+        if (isMobile)
+            values.put("image", coin.image);
+        else
+            if (image_id > 0)
+                values.put("image", image_id);
+
+        database.insert("coins", null, values);
+    }
+
+    private void removeCoin(Coin coin) {
+
+    }
+
     //Методы для работы с базой данных
 
     public Cursor getAllEntries() {
         //Список колонок базы, которые следует включить в результат
-        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_QUANTITY, KEY_IMAGE };
+        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
+        String selection = "status='demo'";
         // составляем запрос к базе
         return database.query(TABLE_NAME, columnsToTake,
-                null, null, null, null, KEY_ID);
+                selection, null, null, null, KEY_ID);
     }
 
     public void onDestroy() {
