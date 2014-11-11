@@ -50,7 +50,6 @@ public class SqlAdapter extends BaseAdapter {
     private static final String KEY_SERIES = "series";
     private static final String KEY_SUBJECT_SHORT = "subjectshort";
     private static final String KEY_QUALITY = "quality";
-    private static final String KEY_QUANTITY = "quantity";
     private static final String KEY_IMAGE = "image";
 
     private int version;
@@ -166,20 +165,14 @@ public class SqlAdapter extends BaseAdapter {
                                 public void onClick(DialogInterface dialog,
                                                     int id) {
                                     int new_count = aNumberPicker.getValue();
-
                                     int old_count = (int) coin.count;
-                                    if (new_count > old_count) {
-                                        for (int i = old_count; i < new_count; i++) {
-                                            addCoin(coin);
-                                        }
 
-//                                        coin.count = new_count;
-                                        refresh();
+                                    if (new_count > old_count) {
+                                        addCoin(coin, new_count - old_count);
                                     } else if (new_count < old_count) {
-                                        for (int i = old_count; i < new_count; i--) {
-//                                            removeCoin();
-                                        }
+                                        removeCoin(coin, old_count-new_count);
                                     }
+                                    refresh();
                                 }
                             })
                     .setNegativeButton(R.string.cancel,
@@ -243,67 +236,117 @@ public class SqlAdapter extends BaseAdapter {
         return coin;
     }
 
-    private void setCoinCount(Coin coin, int new_count) {
-        ContentValues cv = new ContentValues();
-        cv.put("quantity", Integer.toString(new_count));
-        database.update("coins", cv, "id = ?", new String[] { Long.toString(coin.getId()) });
-
-        coin.count = new_count;
-
-        refresh();
-    }
-
-    private void addCoin(Coin coin) {
+    private void addCoin(Coin coin, int count) {
         coin = fillExtra(coin);
-
-        ContentValues photos = new ContentValues();
-        photos.put("image", coin.obverse_image);
-        long obverse_image_id = database.insert("photos", null, photos);
-        photos.put("image", coin.reverse_image);
-        long reverse_image_id = database.insert("photos", null, photos);
-
-        long image_id = 0;
-        if (!isMobile) {
-            ContentValues image = new ContentValues();
-            image.put("image", coin.image);
-            image_id = database.insert("images", null, image);
-        }
 
         Time now = new Time();
         now.setToNow();
 
-        ContentValues values = new ContentValues();
-        values.put("status", "owned");
-        values.put("obverseimg", obverse_image_id);
-        values.put("reverseimg", reverse_image_id);
-        values.put("updatedat", now.format2445());
-        values.put("createdat", now.format2445());
-        values.put("title", coin.title);
-        values.put("subjectshort", coin.subject_short);
-        values.put("series", coin.series);
-        if (coin.value != 0)
-            values.put("value", coin.value);
-        values.put("country", coin.country);
-        values.put("unit", coin.unit);
-        if (coin.year != 0)
-            values.put("year", coin.year);
-        values.put("mintmark", coin.mintmark);
-        values.put("material", coin.material);
-        if (coin.mintage != 0)
-            values.put("mintage", coin.mintage);
-        values.put("quality", coin.quality);
-        values.put("date", coin.date);
-        if (isMobile)
-            values.put("image", coin.image);
-        else
-            if (image_id > 0)
+        ContentValues obverse = new ContentValues();
+        obverse.put("image", coin.obverse_image);
+        ContentValues reverse = new ContentValues();
+        reverse.put("image", coin.reverse_image);
+
+        ContentValues image = new ContentValues();
+        if (!isMobile)
+            image.put("image", coin.image);
+
+        int i;
+        for (i = 0; i < count; i++) {
+            long obverse_image_id = database.insert("photos", null, obverse);
+            long reverse_image_id = database.insert("photos", null, reverse);
+
+            long image_id = 0;
+            if (!isMobile)
+                image_id = database.insert("images", null, image);
+
+            ContentValues values = new ContentValues();
+            values.put("status", "owned");
+            values.put("obverseimg", obverse_image_id);
+            values.put("reverseimg", reverse_image_id);
+            values.put("updatedat", now.format2445());
+            values.put("createdat", now.format2445());
+            values.put("title", coin.title);
+            values.put("subjectshort", coin.subject_short);
+            values.put("series", coin.series);
+            if (coin.value != 0)
+                values.put("value", coin.value);
+            values.put("country", coin.country);
+            values.put("unit", coin.unit);
+            if (coin.year != 0)
+                values.put("year", coin.year);
+            values.put("mintmark", coin.mintmark);
+            values.put("material", coin.material);
+            if (coin.mintage != 0)
+                values.put("mintage", coin.mintage);
+            values.put("quality", coin.quality);
+            values.put("issuedate", coin.date);
+            if (isMobile)
+                values.put("image", coin.image);
+            else if (image_id > 0)
                 values.put("image", image_id);
 
-        database.insert("coins", null, values);
+            database.insert("coins", null, values);
+        }
     }
 
-    private void removeCoin(Coin coin) {
+    private void removeCoin(Coin coin, int count) {
+        String sql = "SELECT id, image, obverseimg, reverseimg FROM coins WHERE status='owned'" +
+                " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
+                " AND " + makeFilter(coin.series.isEmpty(), "series") +
+                " AND " + makeFilter(coin.value == 0, "value") +
+                " AND " + makeFilter(coin.country.isEmpty(), "country") +
+                " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
+                " AND " + makeFilter(coin.year == 0, "year") +
+                " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
+                " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
+                " ORDER BY id DESC" + " LIMIT " + Integer.toString(count);
+        ArrayList<String> params = new ArrayList<String>();
 
+        if (!coin.subject_short.isEmpty()) {
+            params.add(coin.subject_short);
+        }
+        if (!coin.series.isEmpty()) {
+            params.add(coin.series);
+        }
+        if (coin.value > 0) {
+            params.add(Long.toString(coin.value));
+        }
+        if (!coin.country.isEmpty()) {
+            params.add(coin.country);
+        }
+        if (!coin.unit.isEmpty()) {
+            params.add(coin.unit);
+        }
+        if (coin.year > 0) {
+            params.add(Long.toString(coin.year));
+        }
+        if (!coin.mintmark.isEmpty()) {
+            params.add(coin.mintmark);
+        }
+        if (!coin.quality.isEmpty()) {
+            params.add(coin.quality);
+        }
+
+        String[] params_arr = new String[params.size()];
+        params_arr = params.toArray(params_arr);
+        Cursor cursor = database.rawQuery(sql, params_arr);
+
+        while (cursor.moveToNext()) {
+            if (!isMobile) {
+                long image_id = cursor.getLong(1);
+                database.delete("images", "id = ?", new String[] {Long.toString(image_id)});
+            }
+
+            long photo_id;
+            photo_id = cursor.getLong(2);
+            database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
+            photo_id = cursor.getLong(3);
+            database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
+
+            long id = cursor.getLong(0);
+            database.delete("coins", "id = ?", new String[] {Long.toString(id)});
+        }
     }
 
     //Методы для работы с базой данных
