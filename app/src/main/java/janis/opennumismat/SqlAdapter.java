@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * Created by v.ignatov on 20.10.2014.
  */
 public class SqlAdapter extends BaseAdapter {
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
     private static final int DB_NATIVE_VERSION = 3;
 
     private static final String TABLE_NAME = "coins";
@@ -230,29 +230,19 @@ public class SqlAdapter extends BaseAdapter {
     public Coin getFullItem(int position) {
         if (cursor.moveToPosition(position)) {
             Coin coin = new Coin(cursor);
-            Cursor extra_cursor;
 
-            if (isMobile) {
-                extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
-                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
-                        " LEFT JOIN images AS obverseimg ON coins.obverseimg = obverseimg.id" +
-                        " LEFT JOIN images AS reverseimg ON coins.reverseimg = reverseimg.id" +
-                        " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
-            }
-            else {
-                extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
-                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
-                        " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
-                        " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
-                        " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
-            }
+            Cursor extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
+                    " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                    " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                    " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                    " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
             if (extra_cursor.moveToFirst())
                 coin.addExtra(extra_cursor);
 
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
-                    "Cant move cursor to postion");
+                    "Cant move cursor to position");
         }
     }
 
@@ -290,33 +280,48 @@ public class SqlAdapter extends BaseAdapter {
     private void init(String path) {
         database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
 
+        isMobile = false;
+        Cursor type_cursor = database.rawQuery("SELECT value FROM settings" +
+                " WHERE title = 'Type'", new String[] {});
+        if (type_cursor.moveToFirst()) {
+            if (type_cursor.getString(0).equals("Mobile"))
+                isMobile = true;
+        }
+
         Cursor version_cursor = database.rawQuery("SELECT value FROM settings" +
                 " WHERE title = 'Version'", new String[] {});
         if (version_cursor.moveToFirst()) {
             String version_str = version_cursor.getString(0);
-            isMobile = version_str.startsWith("M");
-            if (isMobile) {
-                version = Integer.parseInt(version_str.substring(1));
-                if (version > DB_VERSION) {
-                    Toast toast = Toast.makeText(
-                            context, R.string.new_db_version, Toast.LENGTH_LONG
-                    );
-                    toast.show();
-                }
+            if (version_str.equals("M2")) {
+                Toast toast = Toast.makeText(
+                        context, R.string.old_db_version, Toast.LENGTH_LONG
+                );
+                toast.show();
+                throw new SQLiteException("Wrong DB format");
             }
             else {
-                version = Integer.parseInt(version_str);
-                if (version > DB_NATIVE_VERSION) {
-                    Toast toast = Toast.makeText(
-                            context, R.string.new_db_version, Toast.LENGTH_LONG
-                    );
-                    toast.show();
+                version = Integer.parseInt(version_cursor.getString(0));
+                if (isMobile) {
+                    if (version > DB_VERSION) {
+                        Toast toast = Toast.makeText(
+                                context, R.string.new_db_version, Toast.LENGTH_LONG
+                        );
+                        toast.show();
+                    }
                 }
-                else if (version < DB_NATIVE_VERSION) {
-                    Toast toast = Toast.makeText(
-                            context, R.string.old_db_version, Toast.LENGTH_LONG
-                    );
-                    toast.show();
+                else {
+                    if (version > DB_NATIVE_VERSION) {
+                        Toast toast = Toast.makeText(
+                                context, R.string.new_db_version, Toast.LENGTH_LONG
+                        );
+                        toast.show();
+                    }
+                    else if (version < DB_NATIVE_VERSION) {
+                        Toast toast = Toast.makeText(
+                                context, R.string.old_db_version, Toast.LENGTH_LONG
+                        );
+                        toast.show();
+                    }
                 }
             }
         }
