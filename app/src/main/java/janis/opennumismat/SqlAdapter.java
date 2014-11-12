@@ -413,7 +413,7 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     //Вызывает обновление вида
-    private void refresh() {
+    public void refresh() {
         cursor = getAllEntries();
         notifyDataSetChanged();
     }

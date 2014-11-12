@@ -133,7 +133,7 @@ public class MainActivity extends Activity
                     public void onSharedPreferenceChanged(SharedPreferences prefs,
                                                           String key) {
                         if (key.equals("sort_order")) {
-                            adapter.notifyDataSetChanged();
+                            adapter.refresh();
                         }
                     }
                 };
