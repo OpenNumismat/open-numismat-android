@@ -16,7 +16,10 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +29,8 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
@@ -55,6 +60,7 @@ public class MainActivity extends Activity
     private static final int REQUEST_CHOOSER = 1;
     private static final int REQUEST_DOWNLOADER = 2;
     private SqlAdapter adapter;
+    SharedPreferences.OnSharedPreferenceChangeListener prefListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +128,16 @@ public class MainActivity extends Activity
             ad.setCancelable(true);
             ad.show();
         }
+
+        prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs,
+                                                          String key) {
+                        if (key.equals("sort_order")) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                };
+        pref.registerOnSharedPreferenceChangeListener(prefListener);
     }
 
     @Override

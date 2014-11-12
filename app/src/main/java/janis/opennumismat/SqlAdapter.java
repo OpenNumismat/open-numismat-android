@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
@@ -12,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -375,10 +377,16 @@ public class SqlAdapter extends BaseAdapter {
     //Методы для работы с базой данных
 
     public Cursor getAllEntries() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String order = "ASC";
+        if (!sp.getString("sort_order", "0").equals("0"))
+            order = "DESC";
+
         groups = new ArrayList<Group>();
         Cursor group_cursor = database.rawQuery("SELECT year, COUNT(id) FROM coins" +
                 " WHERE status='demo'" +
-                " GROUP BY year", new String[]{});
+                " GROUP BY year" +
+                " ORDER BY year " + order, new String[]{});
         int position = 0;
         while(group_cursor.moveToNext()) {
             Group group = new Group();
@@ -394,7 +402,7 @@ public class SqlAdapter extends BaseAdapter {
         String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
         String selection = "status=?";
         String[] selectionArgs = new String[] {"demo"};
-        String orderBy = "year, issuedate ASC";
+        String orderBy = "year " + order + ", issuedate " + order;
         // составляем запрос к базе
         return database.query(TABLE_NAME, columnsToTake,
                 selection, selectionArgs, null, null, orderBy);
