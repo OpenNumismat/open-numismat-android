@@ -27,6 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by v.ignatov on 20.10.2014.
@@ -58,6 +61,14 @@ public class SqlAdapter extends BaseAdapter {
     private SQLiteDatabase database;
     private Context context;
 
+    static class Group {
+        public Integer count;
+        public String title;
+        public Integer position;
+    }
+
+    private List<Group> groups;
+
     public SqlAdapter(Context context, String path) {
         super();
         this.context = context;
@@ -66,59 +77,49 @@ public class SqlAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        Coin coin = getItem(position);
-        return coin.getId();
-    }
-
-    static class ViewHolder {
-        public ImageView image;
-        public TextView title;
-        public TextView count;
-        public TextView description;
-        public LinearLayout count_layout;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        View rowView;
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View rowView = convertView;
-        if (null == convertView) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.list_item, null);
-
-            holder = new ViewHolder();
-            holder.title = (TextView) rowView.findViewById(R.id.title);
-            holder.description = (TextView) rowView.findViewById(R.id.description);
-            holder.count = (TextView) rowView.findViewById(R.id.count);
-            holder.image = (ImageView) rowView.findViewById(R.id.coin_image);
-            if (!isMobile) {
-                holder.image.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
+            Group group = i.next();
+            if (group.position == position) {
+                rowView = inflater.inflate(R.layout.group_header, null);
+                TextView title = (TextView) rowView.findViewById(R.id.title);
+                title.setText(group.title);
+                return rowView;
             }
-            holder.count_layout = (LinearLayout) rowView.findViewById(R.id.CountLayout);
+        }
 
-            rowView.setTag(holder);
-        }
-        else {
-            holder = (ViewHolder) rowView.getTag();
-        }
+        rowView = inflater.inflate(R.layout.list_item, null);
 
         Coin coin = getItem(position);
 
-        holder.title.setText(coin.getTitle());
-        holder.description.setText(coin.getDescription(context));
-
-        holder.image.setImageBitmap(coin.getImageBitmap());
+        TextView title = (TextView) rowView.findViewById(R.id.title);
+        title.setText(coin.getTitle());
+        TextView description = (TextView) rowView.findViewById(R.id.description);
+        description.setText(coin.getDescription(context));
+        TextView count = (TextView) rowView.findViewById(R.id.count);
+        count.setText(coin.getCount());
 
         if (coin.count > 0) {
-            holder.count.setText(coin.getCount());
-            holder.count.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.count.setVisibility(View.GONE);
+            count.setText(coin.getCount());
+            count.setVisibility(View.VISIBLE);
+        } else {
+            count.setVisibility(View.GONE);
         }
 
-        holder.count_layout.setOnClickListener(new OnClickListener(coin));
+        ImageView imageView = (ImageView) rowView.findViewById(R.id.coin_image);
+        if (!isMobile)
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        imageView.setImageBitmap(coin.getImageBitmap());
+
+        LinearLayout count_layout = (LinearLayout) rowView.findViewById(R.id.CountLayout);
+        count_layout.setOnClickListener(new OnClickListener(coin));
 
         return rowView;
     }
@@ -189,38 +190,61 @@ public class SqlAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return cursor.getCount();
+        return cursor.getCount() + groups.size();
+    }
+
+    public boolean isEnabled(int position) {
+        for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
+            Group group = i.next();
+            if (group.position == position) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public Coin getItem(int position) {
-        if (cursor.moveToPosition(position)) {
+        Log.e("getItem", Integer.toString(position) + " " + Integer.toString(positionToCursor(position)));
+        if (cursor.moveToPosition(positionToCursor(position))) {
             Coin coin = new Coin(cursor);
             coin.count = getCoinsCount(coin);
             if (isMobile) {
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
-            }
-            else {
+            } else {
                 Cursor extra_cursor = database.rawQuery("SELECT image FROM images WHERE id = ?",
-                        new String[] { Long.toString(cursor.getLong(Coin.IMAGE_COLUMN)) });
+                        new String[]{Long.toString(cursor.getLong(Coin.IMAGE_COLUMN))});
                 if (extra_cursor.moveToFirst())
                     coin.image = extra_cursor.getBlob(0);
             }
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
-                    "Cant move cursor to position");
+                    "Can't move cursor to position");
         }
     }
 
+    private int positionToCursor(int position) {
+        int group_count = 0;
+        for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
+            Group group = i.next();
+            if (group.position == position)
+                Log.e("WRONG POSITION", Integer.toString(position));
+            if (group.position > position)
+                break;
+            group_count ++;
+        }
+        return position - group_count;
+    }
+
     public Coin getFullItem(int position) {
-        if (cursor.moveToPosition(position)) {
+        if (cursor.moveToPosition(positionToCursor(position))) {
             Coin coin = new Coin(cursor);
 
             return fillExtra(coin);
         } else {
             throw new CursorIndexOutOfBoundsException(
-                    "Cant move cursor to position");
+                    "Can't move cursor to position");
         }
     }
 
@@ -352,12 +376,30 @@ public class SqlAdapter extends BaseAdapter {
     //Методы для работы с базой данных
 
     public Cursor getAllEntries() {
+        groups = new ArrayList<Group>();
+        Cursor group_cursor = database.rawQuery("SELECT year, COUNT(id) FROM coins" +
+                " WHERE status='demo'" +
+                " GROUP BY year", new String[]{});
+        int position = 0;
+        while(group_cursor.moveToNext()) {
+            Group group = new Group();
+            group.count = group_cursor.getInt(1);
+            group.title = group_cursor.getString(0);
+            group.position = position;
+            position += group.count+1;
+            Log.e("Group", group.title + ": " + Integer.toString(group.count));
+            if (!group.title.isEmpty())
+                groups.add(group);
+        }
+
         //Список колонок базы, которые следует включить в результат
         String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
-        String selection = "status='demo'";
+        String selection = "status=?";
+        String[] selectionArgs = new String[] {"demo"};
+        String orderBy = "year, issuedate ASC";
         // составляем запрос к базе
         return database.query(TABLE_NAME, columnsToTake,
-                selection, null, null, null, KEY_ID);
+                selection, selectionArgs, null, null, orderBy);
     }
 
     public void onDestroy() {
