@@ -62,6 +62,7 @@ public class SqlAdapter extends BaseAdapter {
     private Cursor cursor;
     private SQLiteDatabase database;
     private Context context;
+    private SharedPreferences pref;
 
     static class Group {
         public Integer count;
@@ -74,6 +75,7 @@ public class SqlAdapter extends BaseAdapter {
     public SqlAdapter(Context context, String path) {
         super();
         this.context = context;
+        pref = PreferenceManager.getDefaultSharedPreferences(context);
         init(path);
     }
 
@@ -110,14 +112,21 @@ public class SqlAdapter extends BaseAdapter {
 
         if (coin.count > 0) {
             count.setText(coin.getCount());
+            count.setBackgroundResource(R.drawable.count_box);
             count.setVisibility(View.VISIBLE);
         } else {
-            count.setVisibility(View.GONE);
+            if (!pref.getBoolean("show_zero", true))
+                count.setVisibility(View.GONE);
+            else {
+                count.setText(coin.getCount());
+                count.setBackgroundResource(R.drawable.zero_count_box);
+                count.setVisibility(View.VISIBLE);
+            }
         }
 
         ImageView imageView = (ImageView) rowView.findViewById(R.id.coin_image);
         if (!isMobile)
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setImageBitmap(coin.getImageBitmap());
 
         LinearLayout count_layout = (LinearLayout) rowView.findViewById(R.id.CountLayout);
@@ -377,9 +386,8 @@ public class SqlAdapter extends BaseAdapter {
     //Методы для работы с базой данных
 
     public Cursor getAllEntries() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String order = "ASC";
-        if (!sp.getString("sort_order", "0").equals("0"))
+        if (!pref.getString("sort_order", "0").equals("0"))
             order = "DESC";
 
         groups = new ArrayList<Group>();

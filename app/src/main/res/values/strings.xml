@@ -41,7 +41,6 @@
     <string name="old_db_version">Catalog in a old unsupported format. Please update catalog.</string>
     <string name="new_xml_version">Catalogs list in a new format. Please update application.</string>
     <string name="sort_coins">Sort coins</string>
-    sort_coins
     <string-array name="sorts">
         <item>By date (old first)</item>
         <item>By date (newest first)</item>
@@ -50,4 +49,6 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+    <string name="show_zero">Show count for not collected coins</string>
+    <string name="show_zero_desc">Show grey box with 0 at right</string>
 </resources>

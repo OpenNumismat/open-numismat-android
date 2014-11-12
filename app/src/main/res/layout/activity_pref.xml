@@ -12,12 +12,13 @@
         android:summary="%s"
         android:title="@string/sort_coins">
     </ListPreference>
-    <!--CheckBoxPreference
-        android:key="notif"
-        android:summary="Enable notifications"
-        android:title="Notifications">
+    <CheckBoxPreference
+        android:key="show_zero"
+        android:defaultValue="true"
+        android:summary="@string/show_zero_desc"
+        android:title="@string/show_zero">
     </CheckBoxPreference>
-    <EditTextPreference
+    <!--EditTextPreference
         android:key="address"
         android:summary="Address for notifications"
         android:title="Address">
