@@ -205,7 +205,6 @@ public class SqlAdapter extends BaseAdapter {
 
     @Override
     public Coin getItem(int position) {
-        Log.e("getItem", Integer.toString(position) + " " + Integer.toString(positionToCursor(position)));
         if (cursor.moveToPosition(positionToCursor(position))) {
             Coin coin = new Coin(cursor);
             coin.count = getCoinsCount(coin);
@@ -387,7 +386,6 @@ public class SqlAdapter extends BaseAdapter {
             group.title = group_cursor.getString(0);
             group.position = position;
             position += group.count+1;
-            Log.e("Group", group.title + ": " + Integer.toString(group.count));
             if (!group.title.isEmpty())
                 groups.add(group);
         }
