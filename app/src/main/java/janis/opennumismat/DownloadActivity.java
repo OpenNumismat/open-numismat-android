@@ -14,7 +14,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,9 +24,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,8 +43,8 @@ import java.util.List;
  * Created by v.ignatov on 22.10.2014.
  */
 public class DownloadActivity extends Activity {
-    private static final String XML_VERSION = "0.4";
-    private static final String XML_LIST_URL = "https://open-numismat-mobile.googlecode.com/files/collections.xml";
+    private static final Integer LIST_VERSION = 1;
+    private static final String LIST_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/list.json";
     private static final String TARGET_DIR = "OpenNumismat";
 
     private ArrayAdapter adapter;
@@ -94,7 +95,7 @@ public class DownloadActivity extends Activity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        new DownloadListTask().execute(XML_LIST_URL);
+        new DownloadListTask().execute(LIST_URL);
     }
 
     @Override
@@ -108,119 +109,11 @@ public class DownloadActivity extends Activity {
         }
     }
 
-    private List loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
-        InputStream stream = null;
-        List entries = null;
-
-        try {
-            //this will be used in reading the data from the internet
-            stream = downloadUrl(XML_LIST_URL);
-
-            XmlPullParser parser = Xml.newPullParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(stream, null);
-            parser.nextTag();
-
-            entries = readFeed(parser);
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
-
-        return entries;
-    }
-
-    private static final String ns = null;
-    private List readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
-        List entries = new ArrayList();
-
-        parser.require(XmlPullParser.START_TAG, ns, "collections");
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            String name = parser.getName();
-            // Starts by looking for the entry tag
-            if (name.equals("collection")) {
-                DownloadEntry entry = readEntry(parser);
-                if (entry != null)
-                    entries.add(entry);
-            } else {
-                skip(parser);
-            }
-        }
-        return entries;
-    }
-    // Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them off
-    // to their respective "read" methods for processing. Otherwise, skips the tag.
-    private DownloadEntry readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, ns, "collection");
-        String title = null;
-        String date = null;
-        String size = null;
-        String file = null;
-        String url = null;
-
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            String name = parser.getName();
-            if (name.equals("title")) {
-                title = readText(parser, "title");
-            } else if (name.equals("date")) {
-                date = readText(parser, "date");
-            } else if (name.equals("size")) {
-                size = readText(parser, "size");
-            } else if (name.equals("file")) {
-                file = readText(parser, "file");
-            } else if (name.equals("url")) {
-                url = readText(parser, "url");
-            } else {
-                skip(parser);
-            }
-        }
-
-        if (title != null)
-            return new DownloadEntry(title, date, size, file, url);
-        else
-            return null;
-    }
-    // For the tags title and summary, extracts their text values.
-    private String readText(XmlPullParser parser, String tag) throws IOException, XmlPullParserException {
-        String result = "";
-
-        parser.require(XmlPullParser.START_TAG, ns, tag);
-        if (parser.next() == XmlPullParser.TEXT) {
-            result = parser.getText();
-            parser.nextTag();
-        }
-        parser.require(XmlPullParser.END_TAG, ns, tag);
-
-        return result;
-    }
-    private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
-        if (parser.getEventType() != XmlPullParser.START_TAG) {
-            throw new IllegalStateException();
-        }
-        int depth = 1;
-        while (depth != 0) {
-            switch (parser.next()) {
-                case XmlPullParser.END_TAG:
-                    depth--;
-                    break;
-                case XmlPullParser.START_TAG:
-                    depth++;
-                    break;
-            }
-        }
-    }
     private InputStream downloadUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
+        conn.setReadTimeout(5000 /* milliseconds */);
+        conn.setConnectTimeout(1000 /* milliseconds */);
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
         // Starts the query
@@ -324,12 +217,44 @@ public class DownloadActivity extends Activity {
 
         @Override
         protected List doInBackground(String... urls) {
-            url = urls[0];
             try {
-                return loadXmlFromNetwork(url);
+                InputStream stream;
+                url = urls[0];
+                stream = downloadUrl(url);
+                ByteArrayOutputStream outString = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int current;
+
+                try{
+                    while((current = stream.read(buffer)) != -1) {
+                        outString.write(buffer, 0, current);
+                    }
+                } finally {
+                    stream.close();
+                }
+
+                String str = new String(outString.toByteArray());
+
+                JSONObject json = new JSONObject(str);
+
+                if (json.getInt("version") != LIST_VERSION)
+                    return null;
+
+                List entries = new ArrayList();
+                JSONArray cats = json.getJSONArray("catalogues");
+                for (int i = 0; i < cats.length(); i++) {
+                    JSONObject cat = cats.getJSONObject(i);
+
+                    DownloadEntry entry = new DownloadEntry(cat.getString("title"),
+                            cat.getString("date"), cat.getJSONObject("size").getString("MDPI"),
+                            cat.getString("file"), cat.getJSONObject("url").getString("MDPI"));
+                    entries.add(entry);
+                }
+
+                return entries;
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (XmlPullParserException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
