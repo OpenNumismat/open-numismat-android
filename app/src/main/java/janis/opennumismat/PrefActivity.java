@@ -48,7 +48,7 @@ public class PrefActivity extends PreferenceActivity implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals("sort_order")) {
+        if (key.equals("sort_order") || key.equals("density")) {
             Preference pref = getPreference(key);
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());

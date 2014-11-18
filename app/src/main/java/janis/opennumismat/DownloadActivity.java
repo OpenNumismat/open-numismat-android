@@ -7,12 +7,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -48,6 +50,7 @@ public class DownloadActivity extends Activity {
     private static final String TARGET_DIR = "OpenNumismat";
 
     private ArrayAdapter adapter;
+    private SharedPreferences pref;
 
     private static class DownloadEntry {
         private final String title;
@@ -88,6 +91,8 @@ public class DownloadActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
+
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         adapter = null;
 
@@ -240,14 +245,16 @@ public class DownloadActivity extends Activity {
                 if (json.getInt("version") != LIST_VERSION)
                     return null;
 
+                String density = pref.getString("density", "XHDPI");
+
                 List entries = new ArrayList();
                 JSONArray cats = json.getJSONArray("catalogues");
                 for (int i = 0; i < cats.length(); i++) {
                     JSONObject cat = cats.getJSONObject(i);
 
                     DownloadEntry entry = new DownloadEntry(cat.getString("title"),
-                            cat.getString("date"), cat.getJSONObject("size").getString("MDPI"),
-                            cat.getString("file"), cat.getJSONObject("url").getString("MDPI"));
+                            cat.getString("date"), cat.getJSONObject("size").getString(density),
+                            cat.getString("file"), cat.getJSONObject("url").getString(density));
                     entries.add(entry);
                 }
 

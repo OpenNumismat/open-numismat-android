@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -69,7 +70,27 @@ public class MainActivity extends Activity
 
         adapter = null;
 
+        // Set default density
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!pref.contains("density")) {
+            String density;
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            if (metrics.densityDpi <= metrics.DENSITY_MEDIUM)
+                density = "MDPI";
+            else if (metrics.densityDpi <= metrics.DENSITY_HIGH)
+                density = "HDPI";
+            else if (metrics.densityDpi <= metrics.DENSITY_XHIGH)
+                density = "XHDPI";
+            else if (metrics.densityDpi <= metrics.DENSITY_XXHIGH)
+                density = "XXHDPI";
+            else
+                density = "XXXHDPI";
+
+            SharedPreferences.Editor ed = pref.edit();
+            ed.putString("density", density);
+            ed.commit();
+        }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);

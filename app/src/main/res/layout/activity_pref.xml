@@ -18,6 +18,14 @@
         android:summary="@string/show_zero_desc"
         android:title="@string/show_zero">
     </CheckBoxPreference>
+    <ListPreference
+        android:key="density"
+        android:entries="@array/densities"
+        android:entryValues="@array/densities"
+        android:defaultValue="0"
+        android:summary="%s"
+        android:title="@string/density">
+    </ListPreference>
     <!--EditTextPreference
         android:key="address"
         android:summary="Address for notifications"

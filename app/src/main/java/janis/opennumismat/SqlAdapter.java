@@ -37,7 +37,7 @@ import java.util.Map;
  * Created by v.ignatov on 20.10.2014.
  */
 public class SqlAdapter extends BaseAdapter {
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
     private static final int DB_NATIVE_VERSION = 3;
 
     private static final String TABLE_NAME = "coins";

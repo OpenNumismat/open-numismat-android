@@ -51,4 +51,12 @@
     </string-array>
     <string name="show_zero">Show count for not collected coins</string>
     <string name="show_zero_desc">Show grey box with 0 at right</string>
+    <string name="density">Density of the display</string>
+    <string-array name="densities">
+        <item>MDPI</item>
+        <item>HDPI</item>
+        <item>XHDPI</item>
+        <item>XXHDPI</item>
+        <item>XXXHDPI</item>
+    </string-array>
 </resources>
