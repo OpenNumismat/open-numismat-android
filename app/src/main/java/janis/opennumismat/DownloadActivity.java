@@ -60,8 +60,6 @@ public class DownloadActivity extends Activity {
         private final String url;
         public File file;
 
-        final boolean[] answer = new boolean[1];
-
         private DownloadEntry(String title, String date, String size, String file, String url) {
             this.title = title;
             this.date = date;
@@ -215,6 +213,14 @@ public class DownloadActivity extends Activity {
         };
 
         new DownloadFileTask().execute(entry);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(pd != null){
+            pd.dismiss();
+        }
     }
 
     private class DownloadListTask extends AsyncTask<String, Void, List> {
