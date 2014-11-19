@@ -1,6 +1,7 @@
 package janis.opennumismat;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 /**
@@ -28,6 +30,10 @@ public class PrefActivity extends PreferenceActivity implements
         } else {
             onCreatePreferenceFragment();
         }
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -90,6 +96,17 @@ public class PrefActivity extends PreferenceActivity implements
         {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.layout.activity_pref);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
