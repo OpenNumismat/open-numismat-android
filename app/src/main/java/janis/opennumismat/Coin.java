@@ -103,6 +103,8 @@ public class Coin implements Parcelable {
     }
 
     private Coin(Parcel in) {
+        int length;
+
         id = in.readLong();
         title = in.readString();
         value = in.readLong();
@@ -118,10 +120,17 @@ public class Coin implements Parcelable {
         date = in.readString();
         quality = in.readString();
         count = in.readLong();
-        obverse_image = new byte[in.readInt()];
-        in.readByteArray(obverse_image);
-        reverse_image = new byte[in.readInt()];
-        in.readByteArray(reverse_image);
+
+        length = in.readInt();
+        if (length > 0) {
+            obverse_image = new byte[length];
+            in.readByteArray(obverse_image);
+        }
+        length = in.readInt();
+        if (length > 0) {
+            reverse_image = new byte[length];
+            in.readByteArray(reverse_image);
+        }
     }
 
     public static final Parcelable.Creator<Coin> CREATOR
@@ -156,10 +165,20 @@ public class Coin implements Parcelable {
         out.writeString(date);
         out.writeString(quality);
         out.writeLong(count);
-        out.writeInt(obverse_image.length);
-        out.writeByteArray(obverse_image);
-        out.writeInt(reverse_image.length);
-        out.writeByteArray(reverse_image);
+        if (obverse_image != null) {
+            out.writeInt(obverse_image.length);
+            out.writeByteArray(obverse_image);
+        }
+        else {
+            out.writeInt(0);
+        }
+        if (reverse_image != null) {
+            out.writeInt(reverse_image.length);
+            out.writeByteArray(reverse_image);
+        }
+        else {
+            out.writeInt(0);
+        }
     }
 
     public long getId() {
@@ -239,10 +258,16 @@ public class Coin implements Parcelable {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
     public Bitmap getObverseImageBitmap() {
-        return BitmapFactory.decodeByteArray(obverse_image, 0, obverse_image.length);
+        if (obverse_image != null)
+            return BitmapFactory.decodeByteArray(obverse_image, 0, obverse_image.length);
+        else
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     }
     public Bitmap getReverseImageBitmap() {
-        return BitmapFactory.decodeByteArray(reverse_image, 0, reverse_image.length);
+        if (reverse_image != null)
+            return BitmapFactory.decodeByteArray(reverse_image, 0, reverse_image.length);
+        else
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     }
 
     public void addExtra(Cursor cursor) {
