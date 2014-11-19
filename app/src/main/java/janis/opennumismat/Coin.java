@@ -255,7 +255,10 @@ public class Coin implements Parcelable {
     }
 
     public Bitmap getImageBitmap() {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+        if (image != null)
+            return BitmapFactory.decodeByteArray(image, 0, image.length);
+        else
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     }
     public Bitmap getObverseImageBitmap() {
         if (obverse_image != null)
