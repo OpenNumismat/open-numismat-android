@@ -171,6 +171,14 @@ public class MainActivity extends Activity
     }
 
     @Override
+    public void onDestroy() {
+        if (adapter != null)
+            adapter.close();
+
+        super.onDestroy();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CHOOSER:
@@ -185,6 +193,9 @@ public class MainActivity extends Activity
                     // Alternatively, use FileUtils.getFile(Context, Uri)
                     if (path != null && FileUtils.isLocal(path)) {
                         try {
+                            if (adapter != null)
+                                adapter.close();
+
                             adapter = new SqlAdapter(this, path);
                         } catch (SQLiteException e) {
                             Toast toast = Toast.makeText(

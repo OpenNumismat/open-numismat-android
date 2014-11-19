@@ -416,7 +416,7 @@ public class SqlAdapter extends BaseAdapter {
                 selection, selectionArgs, null, null, orderBy);
     }
 
-    public void onDestroy() {
+    public void close() {
         database.close();
     }
 
