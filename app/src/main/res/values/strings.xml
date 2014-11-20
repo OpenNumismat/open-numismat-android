@@ -59,4 +59,16 @@
         <item>XXHDPI</item>
         <item>XXXHDPI</item>
     </string-array>
+    <string name="use_grading">Use grading</string>
+    <string name="ok">Ok</string>
+    <string name="fine">Fine</string>
+    <string name="very_fine">Very Fine</string>
+    <string name="extremely_fine">Extremely Fine</string>
+    <string name="about_uncirculated">About Uncirculated</string>
+    <string name="uncirculated">Uncirculated</string>
+    <string name="F">F</string>
+    <string name="VF">VF</string>
+    <string name="XF">XF</string>
+    <string name="AU">AU</string>
+    <string name="Unc">Unc</string>
 </resources>

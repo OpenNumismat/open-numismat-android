@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
@@ -21,10 +23,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -66,6 +71,7 @@ public class SqlAdapter extends BaseAdapter {
     private SQLiteDatabase database;
     private Context context;
     private SharedPreferences pref;
+    private GradingAdapter grading_adapter;
 
     static class Group {
         public Integer count;
@@ -114,14 +120,12 @@ public class SqlAdapter extends BaseAdapter {
         count.setText(coin.getCount());
 
         if (coin.count > 0) {
-            count.setText(coin.getCount());
             count.setBackgroundResource(R.drawable.count_box);
             count.setVisibility(View.VISIBLE);
         } else {
             if (!pref.getBoolean("show_zero", true))
                 count.setVisibility(View.GONE);
             else {
-                count.setText(coin.getCount());
                 count.setBackgroundResource(R.drawable.zero_count_box);
                 count.setVisibility(View.VISIBLE);
             }
@@ -142,6 +146,8 @@ public class SqlAdapter extends BaseAdapter {
             View.OnClickListener {
 
         private Coin coin;
+        private String selected_grade;
+        private int old_count;
 
         public OnClickListener(Coin coin) {
             this.coin = coin;
@@ -149,29 +155,107 @@ public class SqlAdapter extends BaseAdapter {
 
         public void onClick(View v) {
             // TODO: Use count_dialog.xml
+            if (!pref.getBoolean("use_grading", false)) {
+                grading_adapter = null;
+                countDialog(DEFAULT_GRADE);
+            }
+            else {
+                ArrayList<Grading> items = new ArrayList<Grading>();
+
+                RelativeLayout linearLayout = new RelativeLayout(context);
+                final ListView lView= new ListView(context);
+
+                grading_adapter = new GradingAdapter(context, items);
+                lView.setAdapter(grading_adapter);
+
+                lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1,
+                                            int pos, long id
+                    ) {
+                        Grading grade = grading_adapter.getItem(pos);
+                        countDialog(grade.grade);
+                    }
+                });
+
+                Grading grade;
+                Resources res = context.getResources();
+                grade = new Grading("Unc", res.getString(R.string.Unc), res.getString(R.string.uncirculated));
+                grade.count = coin.count_unc;
+                grading_adapter.add(grade);
+                grade = new Grading("AU", res.getString(R.string.AU), res.getString(R.string.about_uncirculated));
+                grade.count = coin.count_au;
+                grading_adapter.add(grade);
+                grade = new Grading("XF", res.getString(R.string.XF), res.getString(R.string.extremely_fine));
+                grade.count = coin.count_xf;
+                grading_adapter.add(grade);
+                grade = new Grading("VF", res.getString(R.string.VF), res.getString(R.string.very_fine));
+                grade.count = coin.count_vf;
+                grading_adapter.add(grade);
+                grade = new Grading("F", res.getString(R.string.F), res.getString(R.string.fine));
+                grade.count = coin.count_f;
+                grading_adapter.add(grade);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
+                RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+                linearLayout.setLayoutParams(params);
+                linearLayout.addView(lView, numPicerParams);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                Drawable drawable = new BitmapDrawable(context.getResources(), coin.getImageBitmap());
+                alertDialogBuilder.setIcon(drawable);
+                alertDialogBuilder.setTitle(coin.getTitle());
+                alertDialogBuilder.setView(linearLayout);
+                alertDialogBuilder
+                        .setCancelable(true)
+                        .setNeutralButton(R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        }
+
+        private void countDialog(String grade) {
+            selected_grade = grade;
+            if (pref.getBoolean("use_grading", false)) {
+                if (grade.equals("Unc"))
+                    old_count = coin.count_unc;
+                else if (grade.equals("AU"))
+                    old_count = coin.count_au;
+                else if (grade.equals("XF"))
+                    old_count = coin.count_xf;
+                else if (grade.equals("VF"))
+                    old_count = coin.count_vf;
+                else if (grade.equals("F"))
+                    old_count = coin.count_f;
+            }
+            else
+                old_count = (int) coin.count;
+
             RelativeLayout linearLayout = new RelativeLayout(context);
             final NumberPicker aNumberPicker = new NumberPicker(context);
             aNumberPicker.setMaxValue(1000);
             aNumberPicker.setMinValue(0);
-            aNumberPicker.setValue((int)coin.count);
+            aNumberPicker.setValue(old_count);
             aNumberPicker.setWrapSelectorWheel(false);
-//            final TextView aTextView = new TextView(context);
-//            aTextView.setText(coin.getTitle());
-//            aTextView.setTextSize(18.f);
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
             RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//            RelativeLayout.LayoutParams textPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//            textPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//            textPicerParams.setMargins(10, 10, 10, 10);
 
             linearLayout.setLayoutParams(params);
-//            linearLayout.addView(aTextView,textPicerParams);
-            linearLayout.addView(aNumberPicker,numPicerParams);
+            linearLayout.addView(aNumberPicker, numPicerParams);
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            Drawable drawable = (Drawable)new BitmapDrawable(context.getResources(), coin.getImageBitmap());
+            Drawable drawable = new BitmapDrawable(context.getResources(), coin.getImageBitmap());
             alertDialogBuilder.setIcon(drawable);
             alertDialogBuilder.setTitle(coin.getTitle());
             alertDialogBuilder.setView(linearLayout);
@@ -182,14 +266,18 @@ public class SqlAdapter extends BaseAdapter {
                                 public void onClick(DialogInterface dialog,
                                                     int id) {
                                     int new_count = aNumberPicker.getValue();
-                                    int old_count = (int) coin.count;
 
                                     if (new_count > old_count) {
-                                        addCoin(coin, new_count - old_count);
+                                        addCoin(coin, new_count - old_count, selected_grade);
                                     } else if (new_count < old_count) {
-                                        removeCoin(coin, old_count-new_count);
+                                        removeCoin(coin, old_count - new_count, selected_grade);
                                     }
+
                                     refresh();
+
+                                    if (grading_adapter != null) {
+                                        grading_adapter.notifyDataSetChanged();
+                                    }
                                 }
                             })
                     .setNegativeButton(R.string.cancel,
@@ -224,6 +312,8 @@ public class SqlAdapter extends BaseAdapter {
         if (cursor.moveToPosition(positionToCursor(position))) {
             Coin coin = new Coin(cursor);
             coin.count = getCoinsCount(coin);
+            if (pref.getBoolean("use_grading", false))
+                getCoinsGrade(coin);
             if (isMobile) {
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
             } else {
@@ -275,7 +365,7 @@ public class SqlAdapter extends BaseAdapter {
         return coin;
     }
 
-    private void addCoin(Coin coin, int count) {
+    private void addCoin(Coin coin, int count, String grade) {
         coin = fillExtra(coin);
 
         Time now = new Time();
@@ -320,7 +410,7 @@ public class SqlAdapter extends BaseAdapter {
                 values.put("mintage", coin.mintage);
             values.put("quality", coin.quality);
             values.put("issuedate", coin.date);
-            values.put("grade", DEFAULT_GRADE);
+            values.put("grade", grade);
             if (isMobile)
                 values.put("image", coin.image);
             else if (image_id > 0)
@@ -330,7 +420,11 @@ public class SqlAdapter extends BaseAdapter {
         }
     }
 
-    private void removeCoin(Coin coin, int count) {
+    private void removeCoin(Coin coin, int count, String grade) {
+        String sql_grade = "";
+        if (pref.getBoolean("use_grading", false)) {
+            sql_grade = " AND grade = '" + grade + "'";
+        }
         String sql = "SELECT id, image, obverseimg, reverseimg FROM coins WHERE status='owned'" +
                 " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
                 " AND " + makeFilter(coin.series.isEmpty(), "series") +
@@ -340,6 +434,7 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.year == 0, "year") +
                 " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
                 " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
+                sql_grade +
                 " ORDER BY id DESC" + " LIMIT " + Integer.toString(count);
         ArrayList<String> params = new ArrayList<String>();
 
@@ -488,17 +583,16 @@ public class SqlAdapter extends BaseAdapter {
         cursor = getAllEntries();
     }
 
-    // Only for desktop version
     private long getCoinsCount(Coin coin) {
         String sql = "SELECT COUNT(*) FROM coins WHERE status='owned'" +
-                    " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
-                    " AND " + makeFilter(coin.series.isEmpty(), "series") +
-                    " AND " + makeFilter(coin.value == 0, "value") +
-                    " AND " + makeFilter(coin.country.isEmpty(), "country") +
-                    " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
-                    " AND " + makeFilter(coin.year == 0, "year") +
-                    " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
-                    " AND " + makeFilter(coin.quality.isEmpty(), "quality");
+                " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
+                " AND " + makeFilter(coin.series.isEmpty(), "series") +
+                " AND " + makeFilter(coin.value == 0, "value") +
+                " AND " + makeFilter(coin.country.isEmpty(), "country") +
+                " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
+                " AND " + makeFilter(coin.year == 0, "year") +
+                " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
+                " AND " + makeFilter(coin.quality.isEmpty(), "quality");
         ArrayList<String> params = new ArrayList<String>();
 
         if (!coin.subject_short.isEmpty()) {
@@ -534,6 +628,92 @@ public class SqlAdapter extends BaseAdapter {
             return extra_cursor.getLong(0);
         else
             return 0;
+    }
+
+    private Coin getCoinsGrade(Coin coin) {
+        if (pref.getBoolean("use_grading", false)) {
+            String sql = "SELECT grade, COUNT(grade) FROM coins WHERE status='owned'" +
+                    " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
+                    " AND " + makeFilter(coin.series.isEmpty(), "series") +
+                    " AND " + makeFilter(coin.value == 0, "value") +
+                    " AND " + makeFilter(coin.country.isEmpty(), "country") +
+                    " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
+                    " AND " + makeFilter(coin.year == 0, "year") +
+                    " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
+                    " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
+                    " GROUP BY grade";
+            ArrayList<String> params = new ArrayList<String>();
+
+            if (!coin.subject_short.isEmpty()) {
+                params.add(coin.subject_short);
+            }
+            if (!coin.series.isEmpty()) {
+                params.add(coin.series);
+            }
+            if (coin.value > 0) {
+                params.add(Long.toString(coin.value));
+            }
+            if (!coin.country.isEmpty()) {
+                params.add(coin.country);
+            }
+            if (!coin.unit.isEmpty()) {
+                params.add(coin.unit);
+            }
+            if (coin.year > 0) {
+                params.add(Long.toString(coin.year));
+            }
+            if (!coin.mintmark.isEmpty()) {
+                params.add(coin.mintmark);
+            }
+            if (!coin.quality.isEmpty()) {
+                params.add(coin.quality);
+            }
+
+            String[] params_arr = new String[params.size()];
+            params_arr = params.toArray(params_arr);
+            Cursor grading_cursor = database.rawQuery(sql, params_arr);
+
+            String grade;
+            coin.count_unc = 0;
+            coin.count_au = 0;
+            coin.count_xf = 0;
+            coin.count_vf = 0;
+            coin.count_f = 0;
+            while(grading_cursor.moveToNext()) {
+                grade = grading_cursor.getString(0);
+                if (grade.equals("Unc")) {
+                    coin.count_unc = grading_cursor.getInt(1);
+                }
+                else if (grade.equals("AU")) {
+                    coin.count_au = grading_cursor.getInt(1);
+                }
+                else if (grade.equals("XF")) {
+                    coin.count_xf = grading_cursor.getInt(1);
+                }
+                else if (grade.equals("VF")) {
+                    coin.count_vf = grading_cursor.getInt(1);
+                }
+                else if (grade.equals("F")) {
+                    coin.count_f = grading_cursor.getInt(1);
+                }
+            }
+
+            if (coin.count_unc > 0)
+                coin.grade = "Unc";
+            else if (coin.count_au > 0)
+                coin.grade = "AU";
+            else if (coin.count_xf > 0)
+                coin.grade = "XF";
+            else if (coin.count_vf > 0)
+                coin.grade = "VF";
+            else if (coin.count_f > 0)
+                coin.grade = "F";
+        }
+        else {
+            coin.grade = DEFAULT_GRADE;
+        }
+
+        return coin;
     }
 
     private String makeFilter(boolean empty, String field) {

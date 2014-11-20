@@ -56,7 +56,13 @@ public class Coin implements Parcelable {
     public byte[] obverse_image;
     public byte[] reverse_image;
     public String quality;
+    public String grade;
     public long count;
+    public int count_unc;
+    public int count_au;
+    public int count_xf;
+    public int count_vf;
+    public int count_f;
 
     public Coin(Cursor cursor) {
         id = cursor.getLong(ID_COLUMN);
