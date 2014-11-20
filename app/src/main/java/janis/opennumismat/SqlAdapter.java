@@ -13,6 +13,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
@@ -153,23 +155,25 @@ public class SqlAdapter extends BaseAdapter {
             aNumberPicker.setMinValue(0);
             aNumberPicker.setValue((int)coin.count);
             aNumberPicker.setWrapSelectorWheel(false);
-            final TextView aTextView = new TextView(context);
-            aTextView.setText(coin.getTitle());
-            aTextView.setTextSize(18.f);
+//            final TextView aTextView = new TextView(context);
+//            aTextView.setText(coin.getTitle());
+//            aTextView.setTextSize(18.f);
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
             RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            RelativeLayout.LayoutParams textPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            textPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            textPicerParams.setMargins(10, 10, 10, 10);
+//            RelativeLayout.LayoutParams textPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//            textPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+//            textPicerParams.setMargins(10, 10, 10, 10);
 
             linearLayout.setLayoutParams(params);
-            linearLayout.addView(aTextView,textPicerParams);
+//            linearLayout.addView(aTextView,textPicerParams);
             linearLayout.addView(aNumberPicker,numPicerParams);
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle(R.string.change_count);
+            Drawable drawable = (Drawable)new BitmapDrawable(context.getResources(), coin.getImageBitmap());
+            alertDialogBuilder.setIcon(drawable);
+            alertDialogBuilder.setTitle(coin.getTitle());
             alertDialogBuilder.setView(linearLayout);
             alertDialogBuilder
                     .setCancelable(true)
