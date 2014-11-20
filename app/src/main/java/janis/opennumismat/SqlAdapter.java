@@ -39,6 +39,7 @@ import java.util.Map;
 public class SqlAdapter extends BaseAdapter {
     private static final int DB_VERSION = 4;
     private static final int DB_NATIVE_VERSION = 3;
+    private static final String DEFAULT_GRADE = "XF";
 
     private static final String TABLE_NAME = "coins";
     // Для удобства выполнения sql-запросов
@@ -315,6 +316,7 @@ public class SqlAdapter extends BaseAdapter {
                 values.put("mintage", coin.mintage);
             values.put("quality", coin.quality);
             values.put("issuedate", coin.date);
+            values.put("grade", DEFAULT_GRADE);
             if (isMobile)
                 values.put("image", coin.image);
             else if (image_id > 0)
