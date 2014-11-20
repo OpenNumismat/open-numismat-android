@@ -51,14 +51,17 @@
         android:focusableInTouchMode="false">
         <TextView
             android:id="@+id/count"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
+            android:gravity="center"
             android:text="0"
             android:ellipsize="none"
             android:background="@drawable/count_box"
             android:textSize="22sp"
-            android:textColor="?android:textColorPrimary" />
+            android:textColor="?android:textColorPrimary"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"/>
     </LinearLayout>
 
 </LinearLayout>
