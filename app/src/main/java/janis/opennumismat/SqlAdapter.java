@@ -71,7 +71,6 @@ public class SqlAdapter extends BaseAdapter {
     private SQLiteDatabase database;
     private Context context;
     private SharedPreferences pref;
-    private GradingAdapter grading_adapter;
 
     static class Group {
         public Integer count;
@@ -148,6 +147,8 @@ public class SqlAdapter extends BaseAdapter {
         private Coin coin;
         private String selected_grade;
         private int old_count;
+        private Grading grading;
+        private GradingAdapter grading_adapter;
 
         public OnClickListener(Coin coin) {
             this.coin = coin;
@@ -156,8 +157,7 @@ public class SqlAdapter extends BaseAdapter {
         public void onClick(View v) {
             // TODO: Use count_dialog.xml
             if (!pref.getBoolean("use_grading", false)) {
-                grading_adapter = null;
-                countDialog(DEFAULT_GRADE);
+                countDialog(null);
             }
             else {
                 ArrayList<Grading> items = new ArrayList<Grading>();
@@ -175,7 +175,7 @@ public class SqlAdapter extends BaseAdapter {
                                             int pos, long id
                     ) {
                         Grading grade = grading_adapter.getItem(pos);
-                        countDialog(grade.grade);
+                        countDialog(grade);
                     }
                 });
 
@@ -223,22 +223,16 @@ public class SqlAdapter extends BaseAdapter {
             }
         }
 
-        private void countDialog(String grade) {
-            selected_grade = grade;
-            if (pref.getBoolean("use_grading", false)) {
-                if (grade.equals("Unc"))
-                    old_count = coin.count_unc;
-                else if (grade.equals("AU"))
-                    old_count = coin.count_au;
-                else if (grade.equals("XF"))
-                    old_count = coin.count_xf;
-                else if (grade.equals("VF"))
-                    old_count = coin.count_vf;
-                else if (grade.equals("F"))
-                    old_count = coin.count_f;
+        private void countDialog(Grading grade) {
+            if (grade != null) {
+                selected_grade = grade.grade;
+                old_count = grade.count;
             }
-            else
+            else {
+                selected_grade = DEFAULT_GRADE;
                 old_count = (int) coin.count;
+            }
+            grading = grade;
 
             RelativeLayout linearLayout = new RelativeLayout(context);
             final NumberPicker aNumberPicker = new NumberPicker(context);
@@ -273,11 +267,13 @@ public class SqlAdapter extends BaseAdapter {
                                         removeCoin(coin, old_count - new_count, selected_grade);
                                     }
 
-                                    refresh();
-
+                                    if (grading != null)
+                                        grading.count = new_count;
                                     if (grading_adapter != null) {
                                         grading_adapter.notifyDataSetChanged();
                                     }
+
+                                    refresh();
                                 }
                             })
                     .setNegativeButton(R.string.cancel,
@@ -312,8 +308,9 @@ public class SqlAdapter extends BaseAdapter {
         if (cursor.moveToPosition(positionToCursor(position))) {
             Coin coin = new Coin(cursor);
             coin.count = getCoinsCount(coin);
-            if (pref.getBoolean("use_grading", false))
-                getCoinsGrade(coin);
+            if (pref.getBoolean("use_grading", false) && coin.count > 0) {
+                coin = getCoinsGrade(coin);
+            }
             if (isMobile) {
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
             } else {
@@ -674,11 +671,6 @@ public class SqlAdapter extends BaseAdapter {
             Cursor grading_cursor = database.rawQuery(sql, params_arr);
 
             String grade;
-            coin.count_unc = 0;
-            coin.count_au = 0;
-            coin.count_xf = 0;
-            coin.count_vf = 0;
-            coin.count_f = 0;
             while(grading_cursor.moveToNext()) {
                 grade = grading_cursor.getString(0);
                 if (grade.equals("Unc")) {
