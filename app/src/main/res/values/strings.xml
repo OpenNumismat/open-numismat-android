@@ -50,7 +50,7 @@
         <item>1</item>
     </string-array>
     <string name="show_zero">Show add button</string>
-    <string name="show_zero_desc">Show "+" for not collected coins</string>
+    <string name="show_zero_desc">Show \"+\" for not collected coins</string>
     <string name="density">Density of the display</string>
     <string-array name="densities">
         <item>MDPI</item>
