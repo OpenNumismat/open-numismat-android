@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="not_present">#bfbfbf</color>
+    <color name="unc">#cf1f9934</color>
+    <color name="au">#cf8bc63a</color>
+    <color name="xf">#cfe3ca39</color>
+    <color name="vf">#cfe4902d</color>
+    <color name="f">#cfde262d</color>
+</resources>

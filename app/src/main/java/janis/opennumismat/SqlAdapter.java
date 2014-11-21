@@ -15,8 +15,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
@@ -115,18 +120,32 @@ public class SqlAdapter extends BaseAdapter {
         title.setText(coin.getTitle());
         TextView description = (TextView) rowView.findViewById(R.id.description);
         description.setText(coin.getDescription(context));
-        TextView count = (TextView) rowView.findViewById(R.id.count);
-        count.setText(coin.getCount());
 
+        TextView count = (TextView) rowView.findViewById(R.id.count);
         if (coin.count > 0) {
-            count.setBackgroundResource(R.drawable.count_box);
+            count.setText(coin.getCount());
             count.setVisibility(View.VISIBLE);
+
+            GradientDrawable back = (GradientDrawable) count.getBackground();
+            if (coin.grade.equals("Unc"))
+                back.setColor(context.getResources().getColor(R.color.unc));
+            else if (coin.grade.equals("AU"))
+                back.setColor(context.getResources().getColor(R.color.au));
+            else if (coin.grade.equals("VF"))
+                back.setColor(context.getResources().getColor(R.color.vf));
+            else if (coin.grade.equals("F"))
+                back.setColor(context.getResources().getColor(R.color.f));
+            else
+                back.setColor(context.getResources().getColor(R.color.xf));
         } else {
             if (!pref.getBoolean("show_zero", true))
                 count.setVisibility(View.GONE);
             else {
-                count.setBackgroundResource(R.drawable.zero_count_box);
+                count.setText("+");
                 count.setVisibility(View.VISIBLE);
+
+                GradientDrawable back = (GradientDrawable) count.getBackground();
+                back.setColor(context.getResources().getColor(R.color.not_present));
             }
         }
 
@@ -308,7 +327,7 @@ public class SqlAdapter extends BaseAdapter {
         if (cursor.moveToPosition(positionToCursor(position))) {
             Coin coin = new Coin(cursor);
             coin.count = getCoinsCount(coin);
-            if (pref.getBoolean("use_grading", false) && coin.count > 0) {
+            if (coin.count > 0) {
                 coin = getCoinsGrade(coin);
             }
             if (isMobile) {
