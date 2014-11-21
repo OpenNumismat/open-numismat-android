@@ -214,7 +214,10 @@ public class Coin implements Parcelable {
     }
 
     public String getDescription(Context context) {
-        String desc = value + " " + unit;
+        String desc = "";
+        if (!subject_short.isEmpty())
+            desc += subject_short + ", ";
+        desc += value + " " + unit;
         if (year > 0)
             desc += ", " + year;
         if (!mintmark.isEmpty())
