@@ -215,14 +215,6 @@ public class DownloadActivity extends Activity {
         new DownloadFileTask().execute(entry);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(pd != null){
-            pd.dismiss();
-        }
-    }
-
     private class DownloadListTask extends AsyncTask<String, Void, List> {
         private String url;
 
@@ -276,6 +268,9 @@ public class DownloadActivity extends Activity {
 
         @Override
         protected void onPostExecute(List result) {
+            if(pd != null)
+                pd.dismiss();
+
             setContentView(R.layout.activity_download);
             if (result != null) {
                 adapter = new DownloadListAdapter(DownloadActivity.this, result);
