@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
+  <string name="version">Версия: 0.1</string>
+  <string name="license">Лицензия: GPL v3</string>
   <string name="title_section1">Section 1</string>
   <string name="title_section_about">О программе</string>
   <string name="navigation_drawer_open">Открыть панель навигации</string>
@@ -35,5 +37,37 @@
   <string name="open">Открыть имеющуюся</string>
   <string name="replace">Файл уже существует. Перезаписать его?</string>
   <string name="new_db_version">Каталог в новом формате. Обновите приложение.</string>
+  <string name="old_db_version">Каталог в устаревшем неподдерживаемом формате. Пожалуйста, обновите каталог.</string>
   <string name="new_xml_version">Список каталогов в новом формате. Обновите приложение.</string>
+  <string name="sort_coins">Сортировать монеты</string>
+  <string-array name="sorts">
+    <item>По дате (старые в начале)</item>
+    <item>По дате (новые в начале)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Показывать кнопку добавления</string>
+  <string name="show_zero_desc">Показывать \"+\" если монеты еще нет</string>
+  <string name="density">Плотность пикселей дисплея</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="use_grading">Использовать состояние</string>
+  <string name="ok">ОК</string>
+  <string name="fine">Хорошая</string>
+  <string name="very_fine">Очень хорошая</string>
+  <string name="extremely_fine">Отличная</string>
+  <string name="about_uncirculated">Почти превосходная</string>
+  <string name="uncirculated">Превосходная</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">Unc</string>
 </resources>
