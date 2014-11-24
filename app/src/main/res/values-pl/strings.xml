@@ -1,8 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
+  <string name="version">Version: 0.2</string>
+  <string name="license">License: GPL v3</string>
   <string name="title_section1">Sekcja 1</string>
   <string name="title_section_about">O nas</string>
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
   <string name="action_open">Otwórz</string>
   <string name="action_download">Pobierz</string>
   <string name="action_settings">Ustawienia</string>
@@ -11,26 +15,42 @@
   <string name="could_not_open_database">Nie można otworzyć bazy danych</string>
   <string name="could_not_download_list">Nie można pobrać listy katalogów</string>
   <string name="could_not_download_file">Nie można pobrać katalogu</string>
+  <string name="could_not_parse_list">Could not parse catalogues list</string>
   <string name="country">Kraj</string>
+  <string name="mintage">Mintage</string>
   <string name="subject_short">Temat</string>
+    <string name="denomination">Denomination</string>
   <string name="series">Seria</string>
   <string name="date_of_issue">Data wydania</string>
   <string name="year">Rok</string>
   <string name="mintmark">Mennica</string>
   <string name="price">Cena</string>
+    <string name="material">Material</string>
   <string name="cancel">Anuluj</string>
   <string name="overwrite">Nadpisz</string>
   <string name="save">Zapisz</string>
+    <string name="change_count">Change coins count</string>
+    <string name="not_implemented_for_desktop">Not yet implemented for desktop version of collection</string>
   <string name="downloading">Pobieranie</string>
   <string name="download">Pobierz z sieci</string>
+    <string name="where_first">Where from get collection for working?</string>
   <string name="open">Otwórz istniejące</string>
   <string name="replace">Plik już istnieje. Nadpisać?</string>
   <string name="new_db_version">Katalog w nowszym formacie. Zaktualizuj aplikację. </string>
+    <string name="old_db_version">Catalog in a old unsupported format. Please update catalog.</string>
   <string name="new_xml_version">Lista katalogów w nowszym formacie. Zaktualizuj aplikację.</string>
+    <string name="sort_coins">Sort coins</string>
+    <string-array name="sorts">
+        <item>By date (old first)</item>
+        <item>By date (newest first)</item>
+    </string-array>
   <string-array name="sort_values">
     <item>0</item>
     <item>1</item>
   </string-array>
+    <string name="show_zero">Show add button</string>
+    <string name="show_zero_desc">Show \"+\" for not collected coins</string>
+    <string name="density">Density of the display</string>
   <string-array name="densities">
     <item>MDPI</item>
     <item>HDPI</item>
@@ -38,6 +58,13 @@
     <item>XXHDPI</item>
     <item>XXXHDPI</item>
   </string-array>
+    <string name="use_grading">Use grading</string>
+    <string name="ok">Ok</string>
+    <string name="fine">Fine</string>
+    <string name="very_fine">Very Fine</string>
+    <string name="extremely_fine">Extremely Fine</string>
+    <string name="about_uncirculated">About Uncirculated</string>
+    <string name="uncirculated">Uncirculated</string>
   <string name="F">F</string>
   <string name="VF">VF</string>
   <string name="XF">XF</string>
