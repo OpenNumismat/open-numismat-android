@@ -382,33 +382,13 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private void addCoin(Coin coin, int count, String grade) {
-        coin = fillExtra(coin);
-
         Time now = new Time();
         now.setToNow();
 
-        ContentValues obverse = new ContentValues();
-        obverse.put("image", coin.obverse_image);
-        ContentValues reverse = new ContentValues();
-        reverse.put("image", coin.reverse_image);
-
-        ContentValues image = new ContentValues();
-        if (!isMobile)
-            image.put("image", coin.image);
-
         int i;
         for (i = 0; i < count; i++) {
-            long obverse_image_id = database.insert("photos", null, obverse);
-            long reverse_image_id = database.insert("photos", null, reverse);
-
-            long image_id = 0;
-            if (!isMobile)
-                image_id = database.insert("images", null, image);
-
             ContentValues values = new ContentValues();
             values.put("status", "owned");
-            values.put("obverseimg", obverse_image_id);
-            values.put("reverseimg", reverse_image_id);
             values.put("updatedat", now.format2445());
             values.put("createdat", now.format2445());
             values.put("title", coin.title);
@@ -425,12 +405,7 @@ public class SqlAdapter extends BaseAdapter {
             if (coin.mintage != 0)
                 values.put("mintage", coin.mintage);
             values.put("quality", coin.quality);
-            values.put("issuedate", coin.date);
             values.put("grade", grade);
-            if (isMobile)
-                values.put("image", coin.image);
-            else if (image_id > 0)
-                values.put("image", image_id);
 
             database.insert("coins", null, values);
         }
@@ -486,14 +461,17 @@ public class SqlAdapter extends BaseAdapter {
         while (cursor.moveToNext()) {
             if (!isMobile) {
                 long image_id = cursor.getLong(1);
-                database.delete("images", "id = ?", new String[] {Long.toString(image_id)});
-            }
+                if (image_id > 0)
+                    database.delete("images", "id = ?", new String[] {Long.toString(image_id)});
 
-            long photo_id;
-            photo_id = cursor.getLong(2);
-            database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
-            photo_id = cursor.getLong(3);
-            database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
+                long photo_id;
+                photo_id = cursor.getLong(2);
+                if (photo_id > 0)
+                    database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
+                photo_id = cursor.getLong(3);
+                if (photo_id > 0)
+                    database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
+            }
 
             long id = cursor.getLong(0);
             database.delete("coins", "id = ?", new String[] {Long.toString(id)});
