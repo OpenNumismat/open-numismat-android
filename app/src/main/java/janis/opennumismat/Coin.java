@@ -269,19 +269,35 @@ public class Coin implements Parcelable {
         if (image != null)
             return BitmapFactory.decodeByteArray(image, 0, image.length);
         else
-            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
     }
-    public Bitmap getObverseImageBitmap() {
-        if (obverse_image != null)
-            return BitmapFactory.decodeByteArray(obverse_image, 0, obverse_image.length);
+    public Bitmap getObverseImageBitmap(int maxSize) {
+        if (obverse_image != null) {
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(obverse_image, 0, obverse_image.length, opts);
+
+            opts.inSampleSize = opts.outWidth / maxSize;
+            opts.inJustDecodeBounds = false;
+            opts.inScaled = true;
+            return BitmapFactory.decodeByteArray(obverse_image, 0, obverse_image.length, opts);
+        }
         else
-            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
     }
-    public Bitmap getReverseImageBitmap() {
-        if (reverse_image != null)
-            return BitmapFactory.decodeByteArray(reverse_image, 0, reverse_image.length);
+    public Bitmap getReverseImageBitmap(int maxSize) {
+        if (reverse_image != null) {
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(reverse_image, 0, reverse_image.length, opts);
+
+            opts.inSampleSize = opts.outWidth / maxSize;
+            opts.inJustDecodeBounds = false;
+            opts.inScaled = true;
+            return BitmapFactory.decodeByteArray(reverse_image, 0, reverse_image.length, opts);
+        }
         else
-            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
     }
 
     public void addExtra(Cursor cursor) {

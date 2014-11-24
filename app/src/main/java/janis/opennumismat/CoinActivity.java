@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
@@ -31,11 +32,15 @@ public class CoinActivity extends Activity {
 
         actionBar.setTitle(coin.getTitle());
 
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int maxSize = metrics.widthPixels > metrics.heightPixels ? metrics.heightPixels : metrics.widthPixels;
+
         ImageView coin_obverse = (ImageView) findViewById(R.id.coin_obverse);
-        coin_obverse.setImageBitmap(coin.getObverseImageBitmap());
+        coin_obverse.setImageBitmap(coin.getObverseImageBitmap(maxSize/2));
         coin_obverse.setOnClickListener(new OnClickListener(coin, true));
         ImageView coin_reverse = (ImageView) findViewById(R.id.coin_reverse);
-        coin_reverse.setImageBitmap(coin.getReverseImageBitmap());
+        coin_reverse.setImageBitmap(coin.getReverseImageBitmap(maxSize/2));
         coin_reverse.setOnClickListener(new OnClickListener(coin, false));
 
         GridLayout coin_details = (GridLayout) findViewById(R.id.coin_details);

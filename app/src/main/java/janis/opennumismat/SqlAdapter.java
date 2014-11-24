@@ -1,5 +1,6 @@
 package janis.opennumismat;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -112,7 +113,10 @@ public class SqlAdapter extends BaseAdapter {
             }
         }
 
-        rowView = inflater.inflate(R.layout.list_item, null);
+        if (convertView != null && convertView.findViewById(R.id.coin_image) != null)
+            rowView = convertView;
+        else
+            rowView = inflater.inflate(R.layout.list_item, null);
 
         Coin coin = getItem(position);
 
