@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="title_section1">Sekcja 1</string>
+  <string name="title_section_about">O nas</string>
+  <string name="action_open">Otwórz</string>
+  <string name="action_download">Pobierz</string>
+  <string name="action_settings">Ustawienia</string>
+  <string name="action_about">O nas</string>
+  <string name="file_chooser">Wybierz plik</string>
+  <string name="could_not_open_database">Nie można otworzyć bazy danych</string>
+  <string name="could_not_download_list">Nie można pobrać listy katalogów</string>
+  <string name="could_not_download_file">Nie można pobrać katalogu</string>
+  <string name="country">Kraj</string>
+  <string name="subject_short">Temat</string>
+  <string name="series">Seria</string>
+  <string name="date_of_issue">Data wydania</string>
+  <string name="year">Rok</string>
+  <string name="mintmark">Mennica</string>
+  <string name="price">Cena</string>
+  <string name="cancel">Anuluj</string>
+  <string name="overwrite">Nadpisz</string>
+  <string name="save">Zapisz</string>
+  <string name="downloading">Pobieranie</string>
+  <string name="download">Pobierz z sieci</string>
+  <string name="open">Otwórz istniejące</string>
+  <string name="replace">Plik już istnieje. Nadpisać?</string>
+  <string name="new_db_version">Katalog w nowszym formacie. Zaktualizuj aplikację. </string>
+  <string name="new_xml_version">Lista katalogów w nowszym formacie. Zaktualizuj aplikację.</string>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">Unc</string>
+</resources>

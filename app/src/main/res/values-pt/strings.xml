@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Versão: 0.1</string>
+  <string name="license">Licença: GPL v3</string>
+  <string name="title_section1">Secção 1</string>
+  <string name="title_section_about">Acerca</string>
+  <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
+  <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
+  <string name="action_open">Abrir</string>
+  <string name="action_download">Transferir</string>
+  <string name="action_settings">Definições</string>
+  <string name="action_about">Acerca</string>
+  <string name="file_chooser">Selecionar um ficheiro</string>
+  <string name="could_not_open_database">Impossível abrir a base de dados</string>
+  <string name="could_not_download_list">Impossível transferir a lista de catálogos</string>
+  <string name="could_not_download_file">Impossível transferir catálogo</string>
+  <string name="could_not_parse_list">Impossível analisar a lista de catálogos</string>
+  <string name="country">País</string>
+  <string name="mintage">Cunhagem</string>
+  <string name="subject_short">Assunto</string>
+  <string name="denomination">Denominação</string>
+  <string name="series">Série</string>
+  <string name="date_of_issue">Data de emissão</string>
+  <string name="year">Ano</string>
+  <string name="mintmark">Cunho</string>
+  <string name="price">Preço</string>
+  <string name="material">Material</string>
+  <string name="cancel">Cancelar</string>
+  <string name="overwrite">Substituir</string>
+  <string name="save">Gravar</string>
+  <string name="change_count">Alterar contagem de moedas</string>
+  <string name="not_implemented_for_desktop">Ainda não implementado para coleção em versão PC</string>
+  <string name="downloading">A transferir</string>
+  <string name="download">Transferir da web</string>
+  <string name="where_first">De onde obter coleção para trabalhar?</string>
+  <string name="open">Abrir existente</string>
+  <string name="replace">O ficheiro já existe. Quer substituir?</string>
+  <string name="new_db_version">Catálogo em novo formato. Por favor, atualize a aplicação.</string>
+  <string name="old_db_version">Catálogo num formato antigo não suportado. Por favor, atualize o catálogo.</string>
+  <string name="new_xml_version">Lista de catálogos em novo formato. Por favor, atualize a aplicação.</string>
+  <string name="sort_coins">Ordenar moedas</string>
+  <string-array name="sorts">
+    <item>Por data (antigas primeiro)</item>
+    <item>Por data (recentes primeiro)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Mostrar botão Adicionar</string>
+  <string name="show_zero_desc">Mostrar \"+\" para moedas não colecionadas</string>
+  <string name="density">Densidade do ecrã</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="use_grading">Usar graduação</string>
+  <string name="ok">Aceitar</string>
+  <string name="fine">Bem conservada</string>
+  <string name="very_fine">Muito bem conservada</string>
+  <string name="extremely_fine">Bela</string>
+  <string name="about_uncirculated">Quase não circulada</string>
+  <string name="uncirculated">Não circulada</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">Unc</string>
+</resources>

@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Versione: 0.1</string>
+  <string name="license">Licenza: GPL v3</string>
+  <string name="title_section1">Sezione 1</string>
+  <string name="title_section_about">Informazioni su</string>
+  <string name="navigation_drawer_open">Apri opzioni di disegno</string>
+  <string name="navigation_drawer_close">Chiudi opzioni di disegno</string>
+  <string name="action_open">Apri</string>
+  <string name="action_download">Scarica</string>
+  <string name="action_settings">Impostazioni</string>
+  <string name="action_about">Informazioni su</string>
+  <string name="file_chooser">Seleziona un file</string>
+  <string name="could_not_open_database">Impossibile aprire il database</string>
+  <string name="could_not_download_list">Impossibile scaricare la lista dei cataloghi</string>
+  <string name="could_not_download_file">Impossibile scaricare il catalogo</string>
+  <string name="could_not_parse_list">Impossibile analizzare la lista dei cataloghi</string>
+  <string name="country">Nazione</string>
+  <string name="mintage">Coniatura</string>
+  <string name="subject_short">Soggetto</string>
+  <string name="denomination">Denominazione</string>
+  <string name="series">Serie</string>
+  <string name="date_of_issue">Data di emissione</string>
+  <string name="year">Anno</string>
+  <string name="mintmark">Condizione</string>
+  <string name="price">Prezzo</string>
+  <string name="material">Materiale</string>
+  <string name="cancel">Cancella</string>
+  <string name="overwrite">Sovrascrivi</string>
+  <string name="save">Salva</string>
+  <string name="change_count">Cambia il conteggio delle monete</string>
+  <string name="not_implemented_for_desktop">Non ancora realizzata la versione desktop della collezione</string>
+  <string name="downloading">Scaricamento</string>
+  <string name="download">Scarica da internet</string>
+  <string name="where_first">Da dove prendo la collezione per lavorare?</string>
+  <string name="open">Apri esistente</string>
+  <string name="replace">File esistente. Sovrasciverlo?</string>
+  <string name="new_db_version">Catalogo in un nuovo formato. Si prega di aggiornare l\'applicazione.</string>
+  <string name="old_db_version">Catalogo in un vecchio formato non supportato. Si prega di aggiornare il catalogo.</string>
+  <string name="new_xml_version">Lista cataloghi in un nuovo formato. Si prega di aggiornare l\'applicazione.</string>
+  <string name="sort_coins">Ordina monete</string>
+  <string-array name="sorts">
+    <item>Per data (prima più vecchi)</item>
+    <item>Per data (prima più nuovi)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Mostra pulsante aggiungi</string>
+  <string name="show_zero_desc">Mostra \"+\" per le monete non collezionate</string>
+  <string name="density">Densità dello schermo</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="use_grading">Usa classificazione</string>
+  <string name="ok">Ok</string>
+  <string name="fine">Bella</string>
+  <string name="very_fine">Molto bella</string>
+  <string name="extremely_fine">Bellissima</string>
+  <string name="about_uncirculated">Quasi fior di conio</string>
+  <string name="uncirculated">Fior di conio</string>
+  <string name="F">B</string>
+  <string name="VF">MB</string>
+  <string name="XF">BB</string>
+  <string name="AU">QFdc</string>
+  <string name="Unc">Fdc</string>
+</resources>
