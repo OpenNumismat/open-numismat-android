@@ -3,13 +3,18 @@ package janis.opennumismat;
 import android.app.ActionBar;
 //import android.support.v7.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * Created by v.ignatov on 17.10.2014.
  */
 public class AboutActivity extends Activity {
+    private static final String HOME_URL = "http://opennumismat.github.io";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,5 +34,10 @@ public class AboutActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void sendMessage(View view) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(HOME_URL));
+        startActivity(browserIntent);
     }
 }
