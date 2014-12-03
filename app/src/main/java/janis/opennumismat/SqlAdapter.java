@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -389,13 +390,15 @@ public class SqlAdapter extends BaseAdapter {
     private void addCoin(Coin coin, int count, String grade) {
         Time now = new Time();
         now.setToNow();
+        String timestamp = now.format("%Y-%m-%dT%H:%M:%SZ");
 
         int i;
         for (i = 0; i < count; i++) {
             ContentValues values = new ContentValues();
             values.put("status", "owned");
-            values.put("updatedat", now.format2445());
-            values.put("createdat", now.format2445());
+            values.put("updatedat", timestamp);
+            values.put("createdat", timestamp);
+
             values.put("title", coin.title);
             values.put("subjectshort", coin.subject_short);
             values.put("series", coin.series);
