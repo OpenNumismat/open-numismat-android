@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.DatabaseErrorHandler;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -525,9 +526,17 @@ public class SqlAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    private class MyDbErrorHandler implements DatabaseErrorHandler {
+        @Override
+        public void onCorruption(SQLiteDatabase dbObj) {
+            // Back up the db or do some other stuff
+        }
+    };
+
     // Инициализация адаптера: открываем базу и создаем курсор
     private void init(String path) {
-        database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        MyDbErrorHandler databaseErrorHandler = new MyDbErrorHandler();
+        database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE, databaseErrorHandler);
 
         isMobile = false;
         Cursor type_cursor = database.rawQuery("SELECT value FROM settings" +
