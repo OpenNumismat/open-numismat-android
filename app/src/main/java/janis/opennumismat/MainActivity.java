@@ -236,6 +236,7 @@ public class MainActivity extends Activity
                 ed.commit();
             }
 
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setDisplayShowTitleEnabled(true);
         }
     }
