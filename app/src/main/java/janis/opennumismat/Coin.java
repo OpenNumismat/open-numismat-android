@@ -107,7 +107,8 @@ public class Coin implements Parcelable {
         else
             quality = cursor.getString(QUALITY_COLUMN);
 
-        count_unc = count_au = count_xf = count_vf = count_f = 0;
+        count = count_unc = count_au = count_xf = count_vf = count_f = 0;
+        grade = SqlAdapter.DEFAULT_GRADE;
     }
 
     private Coin(Parcel in) {

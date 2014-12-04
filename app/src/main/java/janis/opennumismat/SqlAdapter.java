@@ -54,7 +54,7 @@ import java.util.Map;
 public class SqlAdapter extends BaseAdapter {
     private static final int DB_VERSION = 4;
     private static final int DB_NATIVE_VERSION = 3;
-    private static final String DEFAULT_GRADE = "XF";
+    public static final String DEFAULT_GRADE = "XF";
 
     private static final String TABLE_NAME = "coins";
     // Для удобства выполнения sql-запросов
@@ -79,6 +79,8 @@ public class SqlAdapter extends BaseAdapter {
     private SQLiteDatabase database;
     private Context context;
     private SharedPreferences pref;
+    private List<String> filters;
+    private String filter;
 
     static class Group {
         public Integer count;
@@ -493,12 +495,21 @@ public class SqlAdapter extends BaseAdapter {
         if (!pref.getString("sort_order", "0").equals("0"))
             order = "DESC";
 
-        groups = new ArrayList<Group>();
+        String field = "series";
+        ArrayList<String> params = new ArrayList<String>();
+        if (filter != null && !filter.isEmpty()) {
+            params.add(filter);
+        }
+        String[] params_arr = new String[params.size()];
+        params_arr = params.toArray(params_arr);
+
         Cursor group_cursor = database.rawQuery("SELECT year, COUNT(id) FROM coins" +
                 " WHERE status='demo'" +
+                        (filter != null ? (" AND " + makeFilter(filter.isEmpty(), field)) : "") +
                 " GROUP BY year" +
-                " ORDER BY year " + order, new String[]{});
+                " ORDER BY year " + order, params_arr);
         int position = 0;
+        groups = new ArrayList<Group>();
         while(group_cursor.moveToNext()) {
             Group group = new Group();
             group.count = group_cursor.getInt(1);
@@ -511,12 +522,61 @@ public class SqlAdapter extends BaseAdapter {
 
         //Список колонок базы, которые следует включить в результат
         String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
-        String selection = "status=?";
-        String[] selectionArgs = new String[] {"demo"};
+        String selection = "status=?" + (filter != null ? (" AND " + makeFilter(filter.isEmpty(), field)) : "");
+        params = new ArrayList<String>();
+        params.add("demo");
+        if (filter != null && !filter.isEmpty()) {
+            params.add(filter);
+        }
+        params_arr = new String[params.size()];
+        params_arr = params.toArray(params_arr);
         String orderBy = "year " + order + ", issuedate " + order;
         // составляем запрос к базе
         return database.query(TABLE_NAME, columnsToTake,
-                selection, selectionArgs, null, null, orderBy);
+                selection, params_arr, null, null, orderBy);
+    }
+
+    public List<String> getFilters() {
+        if (filters == null) {
+            String field = "series";
+            Cursor group_cursor = database.rawQuery("SELECT " + field + " FROM coins" +
+                    " GROUP BY " + field +
+                    " ORDER BY " + field + " ASC", new String[]{});
+
+            filters = new ArrayList<String>();
+            boolean empty_present = false;
+            Resources res = context.getResources();
+            filters.add(res.getString(R.string.filter_all));
+            while (group_cursor.moveToNext()) {
+                String val = group_cursor.getString(0);
+                if (val.isEmpty())
+                    empty_present = true;
+                else
+                    filters.add(val);
+            }
+            if (empty_present)
+                filters.add(res.getString(R.string.filter_empty));
+        }
+
+        return filters;
+    }
+
+    public void setFilter(String filter) {
+        if (this.filter == null && filter == null)
+            return;
+        if (this.filter != null && this.filter.equals(filter))
+            return;
+
+        Resources res = context.getResources();
+        if (filter.equals(res.getString(R.string.filter_all))) {
+            this.filter = null;
+        } else if (filter.equals(res.getString(R.string.filter_empty))) {
+            this.filter = "";
+        } else {
+            this.filter = filter;
+        }
+
+        refresh();
     }
 
     public void close() {
@@ -685,6 +745,11 @@ public class SqlAdapter extends BaseAdapter {
 
             String grade;
             while(grading_cursor.moveToNext()) {
+                if (grading_cursor.isNull(0) || grading_cursor.getString(0).isEmpty()) {
+                    coin.count_xf += grading_cursor.getInt(1);
+                    continue;
+                }
+
                 grade = grading_cursor.getString(0);
                 if (grade.equals("Unc")) {
                     coin.count_unc = grading_cursor.getInt(1);
@@ -693,7 +758,7 @@ public class SqlAdapter extends BaseAdapter {
                     coin.count_au = grading_cursor.getInt(1);
                 }
                 else if (grade.equals("XF")) {
-                    coin.count_xf = grading_cursor.getInt(1);
+                    coin.count_xf += grading_cursor.getInt(1);
                 }
                 else if (grade.equals("VF")) {
                     coin.count_vf = grading_cursor.getInt(1);

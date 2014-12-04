@@ -72,4 +72,6 @@
     <string name="AU">AU</string>
     <string name="Unc">Unc</string>
     <string name="visit_homepage">Visit homepage</string>
+    <string name="filter_all">All</string>
+    <string name="filter_empty">Empty</string>
 </resources>

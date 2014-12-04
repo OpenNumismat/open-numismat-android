@@ -34,6 +34,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -120,18 +121,7 @@ public class MainActivity extends Activity
 
         String path = pref.getString(PREF_LAST_PATH, "");
         if (!path.isEmpty()) {
-            try {
-                adapter = new SqlAdapter(this, path);
-            } catch (SQLiteException e) {
-                Toast toast = Toast.makeText(
-                        getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
-                );
-                toast.show();
-
-                adapter = null;
-            }
-
-            lView.setAdapter(adapter);
+            openFile(path, true);
         }
         else {
             AlertDialog.Builder ad = new AlertDialog.Builder(this);
@@ -192,31 +182,61 @@ public class MainActivity extends Activity
 
                     // Alternatively, use FileUtils.getFile(Context, Uri)
                     if (path != null && FileUtils.isLocal(path)) {
-                        try {
-                            if (adapter != null)
-                                adapter.close();
-
-                            adapter = new SqlAdapter(this, path);
-                        } catch (SQLiteException e) {
-                            Toast toast = Toast.makeText(
-                                    getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
-                            );
-                            toast.show();
-
-                            adapter = null;
-                        }
-
-                        ListView lView = (ListView) findViewById(R.id.lview);
-                        lView.setAdapter(adapter);
-
-                        if (adapter != null) {
-                            SharedPreferences.Editor ed = pref.edit();
-                            ed.putString(PREF_LAST_PATH, path);
-                            ed.commit();
-                        }
+                        openFile(path, false);
                     }
                 }
                 break;
+        }
+    }
+
+    private void openFile(String path, boolean first) {
+        try {
+            if (adapter != null)
+                adapter.close();
+
+            adapter = new SqlAdapter(this, path);
+        } catch (SQLiteException e) {
+            Toast toast = Toast.makeText(
+                    getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
+            );
+            toast.show();
+
+            adapter = null;
+        }
+
+        ListView lView = (ListView) findViewById(R.id.lview);
+        lView.setAdapter(adapter);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(mTitle);
+        if (adapter != null) {
+            if (!first) {
+                SharedPreferences.Editor ed = pref.edit();
+                ed.putString(PREF_LAST_PATH, path);
+                ed.commit();
+            }
+
+            ArrayAdapter<String> filter_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, adapter.getFilters());
+            ActionBar.OnNavigationListener callback = new ActionBar.OnNavigationListener() {
+
+                @Override
+                public boolean onNavigationItemSelected(int position, long id) {
+                    adapter.setFilter(adapter.getFilters().get(position));
+                    return true;
+                }
+            };
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setListNavigationCallbacks(filter_adapter, callback);
+        }
+        else {
+            if (first) {
+                SharedPreferences.Editor ed = pref.edit();
+                ed.remove(PREF_LAST_PATH);
+                ed.commit();
+            }
+
+            actionBar.setDisplayShowTitleEnabled(true);
         }
     }
 
@@ -233,9 +253,14 @@ public class MainActivity extends Activity
 
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        if (adapter != null) {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+        else {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            actionBar.setDisplayShowTitleEnabled(true);
+        }
     }
 
 
