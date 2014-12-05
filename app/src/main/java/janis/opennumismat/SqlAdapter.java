@@ -55,6 +55,7 @@ public class SqlAdapter extends BaseAdapter {
     private static final int DB_VERSION = 4;
     private static final int DB_NATIVE_VERSION = 3;
     public static final String DEFAULT_GRADE = "XF";
+    public static final String DEFAULT_FILTER = "series";
 
     private static final String TABLE_NAME = "coins";
     // Для удобства выполнения sql-запросов
@@ -81,6 +82,7 @@ public class SqlAdapter extends BaseAdapter {
     private SharedPreferences pref;
     private List<String> filters;
     private String filter;
+    private String filter_field;
 
     static class Group {
         public Integer count;
@@ -495,7 +497,6 @@ public class SqlAdapter extends BaseAdapter {
         if (!pref.getString("sort_order", "0").equals("0"))
             order = "DESC";
 
-        String field = "series";
         ArrayList<String> params = new ArrayList<String>();
         if (filter != null && !filter.isEmpty()) {
             params.add(filter);
@@ -505,7 +506,7 @@ public class SqlAdapter extends BaseAdapter {
 
         Cursor group_cursor = database.rawQuery("SELECT year, COUNT(id) FROM coins" +
                 " WHERE status='demo'" +
-                        (filter != null ? (" AND " + makeFilter(filter.isEmpty(), field)) : "") +
+                        (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
                 " GROUP BY year" +
                 " ORDER BY year " + order, params_arr);
         int position = 0;
@@ -522,7 +523,7 @@ public class SqlAdapter extends BaseAdapter {
 
         //Список колонок базы, которые следует включить в результат
         String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
-        String selection = "status=?" + (filter != null ? (" AND " + makeFilter(filter.isEmpty(), field)) : "");
+        String selection = "status=?" + (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "");
         params = new ArrayList<String>();
         params.add("demo");
         if (filter != null && !filter.isEmpty()) {
@@ -538,27 +539,56 @@ public class SqlAdapter extends BaseAdapter {
 
     public List<String> getFilters() {
         if (filters == null) {
-            String field = "series";
-            Cursor group_cursor = database.rawQuery("SELECT " + field + " FROM coins" +
-                    " GROUP BY " + field +
-                    " ORDER BY " + field + " ASC", new String[]{});
+            Cursor group_cursor = database.rawQuery("SELECT " + filter_field + " FROM coins" +
+                    " GROUP BY " + filter_field +
+                    " ORDER BY " + filter_field + " ASC", new String[]{});
 
             filters = new ArrayList<String>();
             boolean empty_present = false;
             Resources res = context.getResources();
-            filters.add(res.getString(R.string.filter_all));
+            if (filter_field.equals("series"))
+                filters.add(res.getString(R.string.filter_all_series));
+            else if (filter_field.equals("country"))
+                filters.add(res.getString(R.string.filter_all_countries));
+            else
+                filters.add(res.getString(R.string.filter_all));
             while (group_cursor.moveToNext()) {
                 String val = group_cursor.getString(0);
                 if (val.isEmpty())
                     empty_present = true;
                 else
+                    if (filter_field.equals("unit,value"))
+                        val = group_cursor.getString(1) + " " + val;
+
                     filters.add(val);
             }
             if (empty_present)
-                filters.add(res.getString(R.string.filter_empty));
+                if (filter_field.equals("series"))
+                    filters.add(res.getString(R.string.filter_empty_series));
+                else
+                    filters.add(res.getString(R.string.filter_empty));
         }
 
         return filters;
+    }
+
+    public void setFilterField(String field) {
+        Cursor filter_field_cursor = database.rawQuery("SELECT value FROM settings" +
+                " WHERE title = 'Filter'", new String[] {});
+        if (filter_field_cursor.moveToFirst()) {
+            ContentValues values = new ContentValues();
+            values.put("value", field);
+            database.update("settings", values, "title='Filter'", new String[] {});
+        }
+        else {
+            database.rawQuery(
+                    "INSERT INTO settings (title, value) VALUES ('Filter', ?)",
+                    new String[]{field});
+        }
+
+        filter_field = field;
+        filters = null;
+        filter = null;
     }
 
     public void setFilter(String filter) {
@@ -568,7 +598,9 @@ public class SqlAdapter extends BaseAdapter {
             return;
 
         Resources res = context.getResources();
-        if (filter.equals(res.getString(R.string.filter_all))) {
+        if (filter.equals(res.getString(R.string.filter_all)) ||
+                filter.equals(res.getString(R.string.filter_all_series)) ||
+                filter.equals(res.getString(R.string.filter_all_countries))) {
             this.filter = null;
         } else if (filter.equals(res.getString(R.string.filter_empty))) {
             this.filter = "";
@@ -649,6 +681,18 @@ public class SqlAdapter extends BaseAdapter {
         else {
             throw new SQLiteException("Wrong DB format");
         }
+
+        Cursor filter_field_cursor = database.rawQuery("SELECT value FROM settings" +
+                " WHERE title='Filter'", new String[] {});
+        if (filter_field_cursor.moveToFirst()) {
+            filter_field = filter_field_cursor.getString(0);
+        }
+        else {
+            filter_field = DEFAULT_FILTER;
+        }
+        SharedPreferences.Editor ed = pref.edit();
+        ed.putString("filter_field", filter_field);
+        ed.commit();
 
         cursor = getAllEntries();
     }

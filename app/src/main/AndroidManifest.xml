@@ -21,7 +21,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PrefActivity"
+            android:name=".PreferencesActivity"
+            android:label="@string/action_preferences"
+            />
+        <activity
+            android:name=".SettingsActivity"
             android:label="@string/action_settings"
             />
         <activity

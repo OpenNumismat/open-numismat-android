@@ -12,12 +12,13 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.ListView;
 
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class PrefActivity extends PreferenceActivity implements
+public class PreferencesActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     SettingsFr fragment;
 
@@ -54,7 +55,7 @@ public class PrefActivity extends PreferenceActivity implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals("sort_order") || key.equals("density")) {
+        if (key.equals("filter_field")) {
             Preference pref = getPreference(key);
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());
@@ -74,7 +75,7 @@ public class PrefActivity extends PreferenceActivity implements
      */
     @SuppressWarnings("deprecation")
     private void onCreatePreferenceActivity() {
-        addPreferencesFromResource(R.layout.activity_pref);
+        addPreferencesFromResource(R.layout.activity_preferences);
     }
 
     /**
@@ -95,7 +96,7 @@ public class PrefActivity extends PreferenceActivity implements
         public void onCreate(final Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.layout.activity_pref);
+            addPreferencesFromResource(R.layout.activity_preferences);
         }
     }
 

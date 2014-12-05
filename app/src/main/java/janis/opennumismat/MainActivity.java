@@ -6,22 +6,14 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,16 +22,11 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
-
-import java.io.File;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -143,8 +130,14 @@ public class MainActivity extends Activity
         prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                     public void onSharedPreferenceChanged(SharedPreferences prefs,
                                                           String key) {
-                        if (key.equals("sort_order")) {
-                            adapter.refresh();
+                        if (adapter != null) {
+                            if (key.equals("sort_order")) {
+                                adapter.refresh();
+                            } else if (key.equals("filter_field")) {
+                                adapter.setFilterField(prefs.getString(key, adapter.DEFAULT_FILTER));
+                                adapter.refresh();
+                                refreshFilter();
+                            }
                         }
                     }
                 };
@@ -207,15 +200,28 @@ public class MainActivity extends Activity
         ListView lView = (ListView) findViewById(R.id.lview);
         lView.setAdapter(adapter);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setTitle(mTitle);
+        refreshFilter();
+
         if (adapter != null) {
             if (!first) {
                 SharedPreferences.Editor ed = pref.edit();
                 ed.putString(PREF_LAST_PATH, path);
                 ed.commit();
             }
+        }
+        else {
+            if (first) {
+                SharedPreferences.Editor ed = pref.edit();
+                ed.remove(PREF_LAST_PATH);
+                ed.commit();
+            }
+        }
+    }
 
+    private void refreshFilter() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(mTitle);
+        if (adapter != null) {
             ArrayAdapter<String> filter_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, adapter.getFilters());
             ActionBar.OnNavigationListener callback = new ActionBar.OnNavigationListener() {
 
@@ -230,12 +236,6 @@ public class MainActivity extends Activity
             actionBar.setListNavigationCallbacks(filter_adapter, callback);
         }
         else {
-            if (first) {
-                SharedPreferences.Editor ed = pref.edit();
-                ed.remove(PREF_LAST_PATH);
-                ed.commit();
-            }
-
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setDisplayShowTitleEnabled(true);
         }
@@ -306,8 +306,12 @@ public class MainActivity extends Activity
 
             return true;
         }
+        else if (id == R.id.action_preferences) {
+            startActivity(new Intent(this, PreferencesActivity.class));
+            return true;
+        }
         else if (id == R.id.action_settings) {
-            startActivity(new Intent(this, PrefActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         else if (id == R.id.action_about) {
