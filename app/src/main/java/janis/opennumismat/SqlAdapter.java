@@ -566,7 +566,7 @@ public class SqlAdapter extends BaseAdapter {
                 filters.add(res.getString(R.string.filter_all));
             while (group_cursor.moveToNext()) {
                 String val = group_cursor.getString(0);
-                if (val.isEmpty())
+                if (val == null || val.isEmpty())
                     empty_present = true;
                 else
                     if (filter_field.equals("unit,value"))
@@ -593,9 +593,9 @@ public class SqlAdapter extends BaseAdapter {
             database.update("settings", values, "title='Filter'", new String[] {});
         }
         else {
-            database.rawQuery(
-                    "INSERT INTO settings (title, value) VALUES ('Filter', ?)",
-                    new String[]{field});
+            ContentValues values = new ContentValues();
+            values.put("value", field);
+            database.insert("settings", null, values);
         }
 
         filter_field = field;
@@ -698,6 +698,9 @@ public class SqlAdapter extends BaseAdapter {
                 " WHERE title='Filter'", new String[] {});
         if (filter_field_cursor.moveToFirst()) {
             filter_field = filter_field_cursor.getString(0);
+            // TODO: Remove workaround bug in first collections
+            if (filter_field.equals("countries"))
+                filter_field = "country";
         }
         else {
             filter_field = DEFAULT_FILTER;

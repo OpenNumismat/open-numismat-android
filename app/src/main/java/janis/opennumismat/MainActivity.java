@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -155,8 +156,10 @@ public class MainActivity extends Activity
 
     @Override
     public void onDestroy() {
-        if (adapter != null)
+        if (adapter != null) {
             adapter.close();
+            adapter = null;
+        }
 
         super.onDestroy();
     }
@@ -184,8 +187,10 @@ public class MainActivity extends Activity
 
     private void openFile(String path, boolean first) {
         try {
-            if (adapter != null)
+            if (adapter != null) {
                 adapter.close();
+                adapter = null;
+            }
 
             adapter = new SqlAdapter(this, path);
         } catch (SQLiteException e) {
@@ -193,8 +198,6 @@ public class MainActivity extends Activity
                     getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
             );
             toast.show();
-
-            adapter = null;
         }
 
         ListView lView = (ListView) findViewById(R.id.lview);
