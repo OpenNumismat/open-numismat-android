@@ -499,14 +499,20 @@ public class SqlAdapter extends BaseAdapter {
 
         ArrayList<String> params = new ArrayList<String>();
         if (filter != null && !filter.isEmpty()) {
-            params.add(filter);
+            if (filter_field.contains(",")) {
+                String[] parts = filter.split(" ");
+                params.add(parts[1]);
+                params.add(parts[0]);
+            }
+            else
+                params.add(filter);
         }
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
 
         Cursor group_cursor = database.rawQuery("SELECT year, COUNT(id) FROM coins" +
                 " WHERE status='demo'" +
-                        (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
                 " GROUP BY year" +
                 " ORDER BY year " + order, params_arr);
         int position = 0;
@@ -527,7 +533,13 @@ public class SqlAdapter extends BaseAdapter {
         params = new ArrayList<String>();
         params.add("demo");
         if (filter != null && !filter.isEmpty()) {
-            params.add(filter);
+            if (filter_field.contains(",")) {
+                String[] parts = filter.split(" ");
+                params.add(parts[1]);
+                params.add(parts[0]);
+            }
+            else
+                params.add(filter);
         }
         params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
@@ -831,9 +843,20 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private String makeFilter(boolean empty, String field) {
-        if (empty)
-            return "IFNULL(" + field + ",'')=''";
-        else
-            return field + "=?";
+        int i;
+        String result;
+        String[] parts = field.split(",");
+        if (empty) {
+            result = "IFNULL(" + parts[0] + ",'')=''";
+            for (i = 1; i < parts.length; i++)
+                result += " AND " + "IFNULL(" + parts[i] + ",'')=''";
+        }
+        else {
+            result = parts[0] + "=?";
+            for (i = 1; i < parts.length; i++)
+                result += " AND " + parts[i] + "=?";
+        }
+
+        return result;
     }
 }
