@@ -566,13 +566,15 @@ public class SqlAdapter extends BaseAdapter {
                 filters.add(res.getString(R.string.filter_all));
             while (group_cursor.moveToNext()) {
                 String val = group_cursor.getString(0);
-                if (val == null || val.isEmpty())
+                if (val == null || val.isEmpty()) {
                     empty_present = true;
-                else
+                }
+                else {
                     if (filter_field.equals("unit,value"))
                         val = group_cursor.getString(1) + " " + val;
 
                     filters.add(val);
+                }
             }
             if (empty_present)
                 if (filter_field.equals("series"))
