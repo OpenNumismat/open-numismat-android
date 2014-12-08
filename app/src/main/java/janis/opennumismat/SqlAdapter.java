@@ -52,27 +52,10 @@ import java.util.Map;
  * Created by v.ignatov on 20.10.2014.
  */
 public class SqlAdapter extends BaseAdapter {
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
     private static final int DB_NATIVE_VERSION = 3;
     public static final String DEFAULT_GRADE = "XF";
     public static final String DEFAULT_FILTER = "series";
-
-    private static final String TABLE_NAME = "coins";
-    // Для удобства выполнения sql-запросов
-    // создадим константы с именами полей таблицы
-    // и номерами соответсвующих столбцов
-    private static final String KEY_ID = "id";
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_VALUE = "value";
-    private static final String KEY_UNIT = "unit";
-    private static final String KEY_YEAR = "year";
-    private static final String KEY_COUNTRY = "country";
-    private static final String KEY_MINTMARK = "mintmark";
-    private static final String KEY_MINTAGE = "mintage";
-    private static final String KEY_SERIES = "series";
-    private static final String KEY_SUBJECT_SHORT = "subjectshort";
-    private static final String KEY_QUALITY = "quality";
-    private static final String KEY_IMAGE = "image";
 
     private int version;
     private boolean isMobile;
@@ -380,7 +363,7 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private Coin fillExtra(Coin coin) {
-        Cursor extra_cursor = database.rawQuery("SELECT subject, material, issuedate," +
+        Cursor extra_cursor = database.rawQuery("SELECT subject, issuedate," +
                 " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
                 " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
                 " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
@@ -417,6 +400,11 @@ public class SqlAdapter extends BaseAdapter {
             if (coin.mintage != 0)
                 values.put("mintage", coin.mintage);
             values.put("quality", coin.quality);
+            values.put("material", coin.material);
+            values.put("variety", coin.variety);
+            values.put("obversevar", coin.obversevar);
+            values.put("reversevar", coin.reversevar);
+            values.put("edgevar", coin.edgevar);
             values.put("grade", grade);
 
             database.insert("coins", null, values);
@@ -437,6 +425,11 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.year == 0, "year") +
                 " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
                 " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
+                " AND " + makeFilter(coin.material.isEmpty(), "material") +
+                " AND " + makeFilter(coin.variety.isEmpty(), "variety") +
+                " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
+                " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
+                " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar") +
                 sql_grade +
                 " ORDER BY id DESC" + " LIMIT " + Integer.toString(count);
         ArrayList<String> params = new ArrayList<String>();
@@ -464,6 +457,21 @@ public class SqlAdapter extends BaseAdapter {
         }
         if (!coin.quality.isEmpty()) {
             params.add(coin.quality);
+        }
+        if (!coin.material.isEmpty()) {
+            params.add(coin.material);
+        }
+        if (!coin.variety.isEmpty()) {
+            params.add(coin.variety);
+        }
+        if (!coin.obversevar.isEmpty()) {
+            params.add(coin.obversevar);
+        }
+        if (!coin.reversevar.isEmpty()) {
+            params.add(coin.reversevar);
+        }
+        if (!coin.edgevar.isEmpty()) {
+            params.add(coin.edgevar);
         }
 
         String[] params_arr = new String[params.size()];
@@ -493,8 +501,12 @@ public class SqlAdapter extends BaseAdapter {
     //Методы для работы с базой данных
 
     public Cursor getAllEntries() {
-        String order = "ASC";
-        if (!pref.getString("sort_order", "0").equals("0"))
+        String sql;
+        String order;
+
+        if (pref.getString("sort_order", "0").equals("0"))
+            order = "ASC";
+        else
             order = "DESC";
 
         ArrayList<String> params = new ArrayList<String>();
@@ -510,11 +522,12 @@ public class SqlAdapter extends BaseAdapter {
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
 
-        Cursor group_cursor = database.rawQuery("SELECT year, COUNT(id) FROM coins" +
+        sql = "SELECT year, COUNT(id) FROM coins" +
                 " WHERE status='demo'" +
                 (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
                 " GROUP BY year" +
-                " ORDER BY year " + order, params_arr);
+                " ORDER BY year " + order;
+        Cursor group_cursor = database.rawQuery(sql, params_arr);
         int position = 0;
         groups = new ArrayList<Group>();
         while(group_cursor.moveToNext()) {
@@ -528,25 +541,13 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         //Список колонок базы, которые следует включить в результат
-        String[] columnsToTake = { KEY_ID, KEY_TITLE, KEY_VALUE, KEY_UNIT, KEY_YEAR, KEY_COUNTRY, KEY_MINTMARK, KEY_MINTAGE, KEY_SERIES, KEY_SUBJECT_SHORT, KEY_QUALITY, KEY_IMAGE };
-        String selection = "status=?" + (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "");
-        params = new ArrayList<String>();
-        params.add("demo");
-        if (filter != null && !filter.isEmpty()) {
-            if (filter_field.contains(",")) {
-                String[] parts = filter.split(" ");
-                params.add(parts[1]);
-                params.add(parts[0]);
-            }
-            else
-                params.add(filter);
-        }
-        params_arr = new String[params.size()];
-        params_arr = params.toArray(params_arr);
-        String orderBy = "year " + order + ", issuedate " + order;
-        // составляем запрос к базе
-        return database.query(TABLE_NAME, columnsToTake,
-                selection, params_arr, null, null, orderBy);
+        sql = "SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
+                "quality, material, variety, obversevar, reversevar, edgevar, image FROM coins" +
+                (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+                " quality, material, variety, obversevar, reversevar, edgevar" +
+                " ORDER BY year " + order + ", issuedate " + order + ", id " + order;
+        return database.rawQuery(sql, params_arr);
     }
 
     public List<String> getFilters() {
@@ -669,6 +670,21 @@ public class SqlAdapter extends BaseAdapter {
             else {
                 version = Integer.parseInt(version_cursor.getString(0));
                 if (isMobile) {
+                    if (version == 4) {
+                        database.execSQL("ALTER TABLE coins ADD COLUMN obversevar STRING");
+                        database.execSQL("ALTER TABLE coins ADD COLUMN reversevar STRING");
+                        database.execSQL("ALTER TABLE coins ADD COLUMN edgevar STRING");
+                        database.execSQL("UPDATE settings SET value='5' WHERE title='Version'");
+                        database.execSQL("UPDATE settings SET value='country' WHERE title='Filter' AND value='countries'");
+
+                        version = 5;
+
+                        Toast toast = Toast.makeText(
+                                context, R.string.upgraded_db_version, Toast.LENGTH_LONG
+                        );
+                        toast.show();
+                    }
+
                     if (version > DB_VERSION) {
                         Toast toast = Toast.makeText(
                                 context, R.string.new_db_version, Toast.LENGTH_LONG
@@ -700,13 +716,6 @@ public class SqlAdapter extends BaseAdapter {
                 " WHERE title='Filter'", new String[] {});
         if (filter_field_cursor.moveToFirst()) {
             filter_field = filter_field_cursor.getString(0);
-            // TODO: Remove workaround for bug in first collections
-            if (filter_field.equals("countries")) {
-                filter_field = "country";
-                ContentValues values = new ContentValues();
-                values.put("value", filter_field);
-                database.update("settings", values, "title='Filter'", new String[] {});
-            }
         }
         else {
             filter_field = DEFAULT_FILTER;
@@ -727,7 +736,12 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
                 " AND " + makeFilter(coin.year == 0, "year") +
                 " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
-                " AND " + makeFilter(coin.quality.isEmpty(), "quality");
+                " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
+                " AND " + makeFilter(coin.material.isEmpty(), "material") +
+                " AND " + makeFilter(coin.variety.isEmpty(), "variety") +
+                " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
+                " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
+                " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar");
         ArrayList<String> params = new ArrayList<String>();
 
         if (!coin.subject_short.isEmpty()) {
@@ -754,6 +768,21 @@ public class SqlAdapter extends BaseAdapter {
         if (!coin.quality.isEmpty()) {
             params.add(coin.quality);
         }
+        if (!coin.material.isEmpty()) {
+            params.add(coin.material);
+        }
+        if (!coin.variety.isEmpty()) {
+            params.add(coin.variety);
+        }
+        if (!coin.obversevar.isEmpty()) {
+            params.add(coin.obversevar);
+        }
+        if (!coin.reversevar.isEmpty()) {
+            params.add(coin.reversevar);
+        }
+        if (!coin.edgevar.isEmpty()) {
+            params.add(coin.edgevar);
+        }
 
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
@@ -776,6 +805,11 @@ public class SqlAdapter extends BaseAdapter {
                     " AND " + makeFilter(coin.year == 0, "year") +
                     " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
                     " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
+                    " AND " + makeFilter(coin.material.isEmpty(), "material") +
+                    " AND " + makeFilter(coin.variety.isEmpty(), "variety") +
+                    " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
+                    " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
+                    " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar") +
                     " GROUP BY grade";
             ArrayList<String> params = new ArrayList<String>();
 
@@ -802,6 +836,21 @@ public class SqlAdapter extends BaseAdapter {
             }
             if (!coin.quality.isEmpty()) {
                 params.add(coin.quality);
+            }
+            if (!coin.material.isEmpty()) {
+                params.add(coin.material);
+            }
+            if (!coin.variety.isEmpty()) {
+                params.add(coin.variety);
+            }
+            if (!coin.obversevar.isEmpty()) {
+                params.add(coin.obversevar);
+            }
+            if (!coin.reversevar.isEmpty()) {
+                params.add(coin.reversevar);
+            }
+            if (!coin.edgevar.isEmpty()) {
+                params.add(coin.edgevar);
             }
 
             String[] params_arr = new String[params.size()];

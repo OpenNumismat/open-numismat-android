@@ -31,13 +31,17 @@ public class Coin implements Parcelable {
     private static final int SERIES_COLUMN = 8;
     private static final int SUBJECT_SHORT_COLUMN = 9;
     private static final int QUALITY_COLUMN = 10;
-    public static final int IMAGE_COLUMN = 11;
+    private static final int MATERIAL_COLUMN = 11;
+    private static final int VARIETY_COLUMN = 12;
+    private static final int OBVERSEVAR_COLUMN = 13;
+    private static final int REVERSEVAR_COLUMN = 14;
+    private static final int EDGEVAR_COLUMN = 15;
+    public static final int IMAGE_COLUMN = 16;
 
     private static final int SUBJECT_EX_COLUMN = 0;
-    private static final int MATERIAL_EX_COLUMN = 1;
-    private static final int DATE_EX_COLUMN = 2;
-    private static final int OBVERSE_IMAGE_EX_COLUMN = 3;
-    private static final int REVERSE_IMAGE_EX_COLUMN = 4;
+    private static final int DATE_EX_COLUMN = 1;
+    private static final int OBVERSE_IMAGE_EX_COLUMN = 2;
+    private static final int REVERSE_IMAGE_EX_COLUMN = 3;
 
     private long id;
     public String title;
@@ -52,6 +56,10 @@ public class Coin implements Parcelable {
     private String subject;
     public String subject_short;
     public String material;
+    public String variety;
+    public String obversevar;
+    public String reversevar;
+    public String edgevar;
     public String date;
     public byte[] obverse_image;
     public byte[] reverse_image;
@@ -106,6 +114,26 @@ public class Coin implements Parcelable {
             quality = "";
         else
             quality = cursor.getString(QUALITY_COLUMN);
+        if (cursor.isNull(MATERIAL_COLUMN))
+            material = "";
+        else
+            material = cursor.getString(MATERIAL_COLUMN);
+        if (cursor.isNull(VARIETY_COLUMN))
+            variety = "";
+        else
+            variety = cursor.getString(VARIETY_COLUMN);
+        if (cursor.isNull(OBVERSEVAR_COLUMN))
+            obversevar = "";
+        else
+            obversevar = cursor.getString(OBVERSEVAR_COLUMN);
+        if (cursor.isNull(REVERSEVAR_COLUMN))
+            reversevar = "";
+        else
+            reversevar = cursor.getString(REVERSEVAR_COLUMN);
+        if (cursor.isNull(EDGEVAR_COLUMN))
+            edgevar = "";
+        else
+            edgevar = cursor.getString(EDGEVAR_COLUMN);
 
         count = count_unc = count_au = count_xf = count_vf = count_f = 0;
         grade = SqlAdapter.DEFAULT_GRADE;
@@ -126,6 +154,10 @@ public class Coin implements Parcelable {
         subject = in.readString();
         subject_short = in.readString();
         material = in.readString();
+        variety = in.readString();
+        obversevar = in.readString();
+        reversevar = in.readString();
+        edgevar = in.readString();
         date = in.readString();
         quality = in.readString();
         count = in.readLong();
@@ -171,6 +203,10 @@ public class Coin implements Parcelable {
         out.writeString(subject);
         out.writeString(subject_short);
         out.writeString(material);
+        out.writeString(variety);
+        out.writeString(obversevar);
+        out.writeString(reversevar);
+        out.writeString(edgevar);
         out.writeString(date);
         out.writeString(quality);
         out.writeLong(count);
@@ -306,10 +342,6 @@ public class Coin implements Parcelable {
             subject = "";
         else
             subject = cursor.getString(SUBJECT_EX_COLUMN);
-        if (cursor.isNull(MATERIAL_EX_COLUMN))
-            material = "";
-        else
-            material = cursor.getString(MATERIAL_EX_COLUMN);
         if (cursor.isNull(DATE_EX_COLUMN))
             date = "";
         else
