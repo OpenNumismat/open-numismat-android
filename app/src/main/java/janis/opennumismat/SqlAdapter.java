@@ -546,7 +546,7 @@ public class SqlAdapter extends BaseAdapter {
                 (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
                 " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar" +
-                " ORDER BY year " + order + ", issuedate " + order + ", id " + order;
+                " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
         return database.rawQuery(sql, params_arr);
     }
 
