@@ -700,9 +700,13 @@ public class SqlAdapter extends BaseAdapter {
                 " WHERE title='Filter'", new String[] {});
         if (filter_field_cursor.moveToFirst()) {
             filter_field = filter_field_cursor.getString(0);
-            // TODO: Remove workaround bug in first collections
-            if (filter_field.equals("countries"))
+            // TODO: Remove workaround for bug in first collections
+            if (filter_field.equals("countries")) {
                 filter_field = "country";
+                ContentValues values = new ContentValues();
+                values.put("value", filter_field);
+                database.update("settings", values, "title='Filter'", new String[] {});
+            }
         }
         else {
             filter_field = DEFAULT_FILTER;

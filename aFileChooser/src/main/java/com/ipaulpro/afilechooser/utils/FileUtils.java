@@ -256,7 +256,7 @@ public class FileUtils {
      */
     public static String getPath(final Context context, final Uri uri) {
 
-        if (!DEBUG)
+        if (DEBUG)
             Log.d(TAG + " File -",
                     "Authority: " + uri.getAuthority() +
                             ", Fragment: " + uri.getFragment() +
