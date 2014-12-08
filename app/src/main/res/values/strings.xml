@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Open Numismat</string>
-    <string name="version">Version: 0.2</string>
+    <string name="version">Version: 0.3</string>
     <string name="license">License: GPL v3</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section_about">About</string>
