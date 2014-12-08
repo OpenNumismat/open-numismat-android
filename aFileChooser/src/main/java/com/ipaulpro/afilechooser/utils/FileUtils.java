@@ -256,7 +256,7 @@ public class FileUtils {
      */
     public static String getPath(final Context context, final Uri uri) {
 
-        if (DEBUG)
+        if (!DEBUG)
             Log.d(TAG + " File -",
                     "Authority: " + uri.getAuthority() +
                             ", Fragment: " + uri.getFragment() +
@@ -285,8 +285,10 @@ public class FileUtils {
                 if ("primary".equalsIgnoreCase(type)) {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
-
                 // TODO handle non-primary volumes
+                else {
+                    return "TODO";
+                }
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {

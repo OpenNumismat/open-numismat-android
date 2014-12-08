@@ -175,10 +175,17 @@ public class MainActivity extends Activity
 
                     // Get the File path from the Uri
                     String path = FileUtils.getPath(this, uri);
-
-                    // Alternatively, use FileUtils.getFile(Context, Uri)
-                    if (path != null && FileUtils.isLocal(path)) {
-                        openFile(path, false);
+                    if (path != null) {
+                        // TODO handle non-primary volumes
+                        if (path.equals("TODO")) {
+                            Toast toast = Toast.makeText(
+                                    getApplicationContext(), getString(R.string.could_not_open_sd), Toast.LENGTH_LONG
+                            );
+                            toast.show();
+                        }
+                        else if (FileUtils.isLocal(path)) {
+                            openFile(path, false);
+                        }
                     }
                 }
                 break;
