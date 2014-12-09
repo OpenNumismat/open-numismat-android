@@ -534,6 +534,8 @@ public class SqlAdapter extends BaseAdapter {
             Group group = new Group();
             group.count = group_cursor.getInt(1);
             group.title = group_cursor.getString(0);
+            if (group.title == null)
+                group.title = "";
             group.position = position;
             position += group.count+1;
             if (!group.title.isEmpty())
