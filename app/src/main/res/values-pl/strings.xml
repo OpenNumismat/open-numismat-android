@@ -10,12 +10,14 @@
   <string name="action_open">Otwórz</string>
   <string name="action_download">Pobierz</string>
   <string name="action_settings">Ustawienia</string>
+  <string name="action_preferences">Preferences</string>
   <string name="action_about">O nas</string>
   <string name="file_chooser">Wybierz plik</string>
   <string name="could_not_open_database">Nie można otworzyć bazy danych</string>
   <string name="could_not_download_list">Nie można pobrać listy katalogów</string>
   <string name="could_not_download_file">Nie można pobrać katalogu</string>
   <string name="could_not_parse_list">Could not parse catalogues list</string>
+  <string name="could_not_open_sd">File access to the SD card is restricted on your device. Try to move file to internal memory.</string>
   <string name="country">Kraj</string>
   <string name="mintage">Mintage</string>
   <string name="subject_short">Temat</string>
@@ -37,7 +39,8 @@
   <string name="open">Otwórz istniejące</string>
   <string name="replace">Plik już istnieje. Nadpisać?</string>
   <string name="new_db_version">Katalog w nowszym formacie. Zaktualizuj aplikację. </string>
-    <string name="old_db_version">Catalog in a old unsupported format. Please update catalog.</string>
+  <string name="old_db_version">Catalog in a old unsupported format. Please update catalog.</string>
+  <string name="upgraded_db_version">Updated catalgue structure.</string>
   <string name="new_xml_version">Lista katalogów w nowszym formacie. Zaktualizuj aplikację.</string>
     <string name="sort_coins">Sort coins</string>
     <string-array name="sorts">
@@ -70,4 +73,21 @@
   <string name="XF">XF</string>
   <string name="AU">AU</string>
   <string name="Unc">Unc</string>
+  <string name="visit_homepage">Visit homepage</string>
+  <string name="filter_all">All</string>
+  <string name="filter_empty">Empty</string>
+  <string name="filter_all_series">All series</string>
+  <string name="filter_all_countries">All countries</string>
+  <string name="filter_empty_series">Without series</string>
+  <string name="filter_field">Filter by</string>
+  <string-array name="filter_fields">
+      <item>Country</item>
+      <item>Denomination</item>
+      <item>Series</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>country</item>
+    <item>unit,value</item>
+    <item>series</item>
+  </string-array>
 </resources>
