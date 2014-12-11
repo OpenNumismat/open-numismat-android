@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
-  <string name="version">Versão: 0.1</string>
+  <string name="version">Versão: 0.3</string>
   <string name="license">Licença: GPL v3</string>
   <string name="title_section1">Secção 1</string>
   <string name="title_section_about">Acerca</string>
@@ -10,12 +10,14 @@
   <string name="action_open">Abrir</string>
   <string name="action_download">Transferir</string>
   <string name="action_settings">Definições</string>
+  <string name="action_preferences">Preferências</string>
   <string name="action_about">Acerca</string>
   <string name="file_chooser">Selecionar um ficheiro</string>
   <string name="could_not_open_database">Impossível abrir a base de dados</string>
   <string name="could_not_download_list">Impossível transferir a lista de catálogos</string>
   <string name="could_not_download_file">Impossível transferir catálogo</string>
   <string name="could_not_parse_list">Impossível analisar a lista de catálogos</string>
+  <string name="could_not_open_sd">Acesso a ficheiros no cartão SD é restrito no seu dispositivo. Tente mover o ficheiro para a memória interna.</string>
   <string name="country">País</string>
   <string name="mintage">Cunhagem</string>
   <string name="subject_short">Assunto</string>
@@ -38,6 +40,7 @@
   <string name="replace">O ficheiro já existe. Quer substituir?</string>
   <string name="new_db_version">Catálogo em novo formato. Por favor, atualize a aplicação.</string>
   <string name="old_db_version">Catálogo num formato antigo não suportado. Por favor, atualize o catálogo.</string>
+  <string name="upgraded_db_version">Estrutura do catálogo atualizada.</string>
   <string name="new_xml_version">Lista de catálogos em novo formato. Por favor, atualize a aplicação.</string>
   <string name="sort_coins">Ordenar moedas</string>
   <string-array name="sorts">
@@ -70,4 +73,21 @@
   <string name="XF">XF</string>
   <string name="AU">AU</string>
   <string name="Unc">Unc</string>
+  <string name="visit_homepage">Visitar a página inicial</string>
+  <string name="filter_all">Tudo</string>
+  <string name="filter_empty">Vazio</string>
+  <string name="filter_all_series">Todas as séries</string>
+  <string name="filter_all_countries">Todos os países</string>
+  <string name="filter_empty_series">Sem séries</string>
+  <string name="filter_field">Filtrar por</string>
+  <string-array name="filter_fields">
+    <item>País</item>
+    <item>Denominação</item>
+    <item>Série</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>country</item>
+    <item>unit,value</item>
+    <item>series</item>
+  </string-array>
 </resources>

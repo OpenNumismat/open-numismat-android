@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
-  <string name="version">Версия: 0.2</string>
+  <string name="version">Версия: 0.3</string>
   <string name="license">Лицензия: GPL v3</string>
   <string name="title_section1">Section 1</string>
   <string name="title_section_about">О программе</string>
@@ -10,12 +10,14 @@
   <string name="action_open">Открыть</string>
   <string name="action_download">Скачать</string>
   <string name="action_settings">Настройки</string>
+  <string name="action_preferences">Предпочтения</string>
   <string name="action_about">О программе</string>
   <string name="file_chooser">Выбрать файл</string>
   <string name="could_not_open_database">Не удалось открыть базу данных</string>
   <string name="could_not_download_list">Не удалось скачать список каталогов</string>
   <string name="could_not_download_file">Не удалось скачать каталог</string>
   <string name="could_not_parse_list">Не удалось разобрать список каталогов</string>
+  <string name="could_not_open_sd">Доступ к файлам на SD-карте не поддерживается на вашем устройстве. Переместите файл во внутреннюю память.</string>
   <string name="country">Страна</string>
   <string name="mintage">Тираж</string>
   <string name="subject_short">Тема</string>
@@ -38,6 +40,7 @@
   <string name="replace">Файл уже существует. Перезаписать его?</string>
   <string name="new_db_version">Каталог в новом формате. Обновите приложение.</string>
   <string name="old_db_version">Каталог в устаревшем неподдерживаемом формате. Пожалуйста, обновите каталог.</string>
+  <string name="upgraded_db_version">Обновлена структура каталога</string>
   <string name="new_xml_version">Список каталогов в новом формате. Обновите приложение.</string>
   <string name="sort_coins">Сортировать монеты</string>
   <string-array name="sorts">
@@ -70,4 +73,21 @@
   <string name="XF">XF</string>
   <string name="AU">AU</string>
   <string name="Unc">Unc</string>
+  <string name="visit_homepage">Домашняя сраница</string>
+  <string name="filter_all">Все</string>
+  <string name="filter_empty">Пусто</string>
+  <string name="filter_all_series">Все серии</string>
+  <string name="filter_all_countries">Все страны</string>
+  <string name="filter_empty_series">Без серии</string>
+  <string name="filter_field">Фильтр по</string>
+  <string-array name="filter_fields">
+    <item>Страна</item>
+    <item>Номинал</item>
+    <item>Серия</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>country</item>
+    <item>unit,value</item>
+    <item>series</item>
+  </string-array>
 </resources>
