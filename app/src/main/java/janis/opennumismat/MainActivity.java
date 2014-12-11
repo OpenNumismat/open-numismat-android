@@ -80,7 +80,7 @@ public class MainActivity extends Activity
             ed.putString("density", density);
             ed.commit();
         }
-
+/*
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -89,7 +89,7 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
+*/
         ListView lView = (ListView) findViewById(R.id.lview);
         lView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -277,15 +277,15 @@ public class MainActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+//        if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             return true;
-        }
-        return super.onCreateOptionsMenu(menu);
+//        }
+//        return super.onCreateOptionsMenu(menu);
     }
 
     private void openFileDialog() {
