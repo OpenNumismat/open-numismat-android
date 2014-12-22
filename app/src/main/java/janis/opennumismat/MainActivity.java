@@ -80,7 +80,7 @@ public class MainActivity extends Activity
             ed.putString("density", density);
             ed.commit();
         }
-/*
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -89,7 +89,7 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-*/
+
         ListView lView = (ListView) findViewById(R.id.lview);
         lView.setOnItemClickListener(new OnItemClickListener() {
 
