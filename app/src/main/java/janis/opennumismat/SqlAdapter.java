@@ -52,7 +52,7 @@ import java.util.Map;
  * Created by v.ignatov on 20.10.2014.
  */
 public class SqlAdapter extends BaseAdapter {
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 6;
     private static final int DB_NATIVE_VERSION = 3;
     public static final String DEFAULT_GRADE = "XF";
     public static final String DEFAULT_FILTER = "series";
@@ -386,25 +386,36 @@ public class SqlAdapter extends BaseAdapter {
             values.put("updatedat", timestamp);
             values.put("createdat", timestamp);
 
-            values.put("title", coin.title);
-            values.put("subjectshort", coin.subject_short);
-            values.put("series", coin.series);
+            if (!coin.title.isEmpty())
+                values.put("title", coin.title);
+            if (!coin.subject_short.isEmpty())
+                values.put("subjectshort", coin.subject_short);
+            if (!coin.series.isEmpty())
+                values.put("series", coin.series);
             if (coin.value != 0)
                 values.put("value", coin.value);
-            values.put("country", coin.country);
-            values.put("unit", coin.unit);
+            if (!coin.country.isEmpty())
+                values.put("country", coin.country);
+            if (!coin.unit.isEmpty())
+                values.put("unit", coin.unit);
             if (coin.year != 0)
                 values.put("year", coin.year);
-            values.put("mintmark", coin.mintmark);
-            values.put("material", coin.material);
+            if (!coin.mintmark.isEmpty())
+                values.put("mintmark", coin.mintmark);
             if (coin.mintage != 0)
                 values.put("mintage", coin.mintage);
-            values.put("quality", coin.quality);
-            values.put("material", coin.material);
-            values.put("variety", coin.variety);
-            values.put("obversevar", coin.obversevar);
-            values.put("reversevar", coin.reversevar);
-            values.put("edgevar", coin.edgevar);
+            if (!coin.quality.isEmpty())
+                values.put("quality", coin.quality);
+            if (!coin.material.isEmpty())
+                values.put("material", coin.material);
+            if (!coin.variety.isEmpty())
+                values.put("variety", coin.variety);
+            if (!coin.obversevar.isEmpty())
+                values.put("obversevar", coin.obversevar);
+            if (!coin.reversevar.isEmpty())
+                values.put("reversevar", coin.reversevar);
+            if (!coin.edgevar.isEmpty())
+                values.put("edgevar", coin.edgevar);
             values.put("grade", grade);
 
             database.insert("coins", null, values);
@@ -543,10 +554,11 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         //Список колонок базы, которые следует включить в результат
-        sql = "SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
-                "quality, material, variety, obversevar, reversevar, edgevar, image FROM coins" +
+        sql = "SELECT * FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
+                "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
                 (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
-                " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+                " ORDER BY image ASC" +
+                ") GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar" +
                 " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
         return database.rawQuery(sql, params_arr);
@@ -619,7 +631,8 @@ public class SqlAdapter extends BaseAdapter {
                 filter.equals(res.getString(R.string.filter_all_series)) ||
                 filter.equals(res.getString(R.string.filter_all_countries))) {
             this.filter = null;
-        } else if (filter.equals(res.getString(R.string.filter_empty))) {
+        } else if (filter.equals(res.getString(R.string.filter_empty)) ||
+                filter.equals(res.getString(R.string.filter_empty_series))) {
             this.filter = "";
         } else {
             this.filter = filter;
@@ -680,6 +693,28 @@ public class SqlAdapter extends BaseAdapter {
                         database.execSQL("UPDATE settings SET value='country' WHERE title='Filter' AND value='countries'");
 
                         version = 5;
+
+                        Toast toast = Toast.makeText(
+                                context, R.string.upgraded_db_version, Toast.LENGTH_LONG
+                        );
+                        toast.show();
+                    }
+                    if (version == 5) {
+                        database.execSQL("UPDATE coins SET title=NULL WHERE title=''");
+                        database.execSQL("UPDATE coins SET subjectshort=NULL WHERE subjectshort=''");
+                        database.execSQL("UPDATE coins SET series=NULL WHERE series=''");
+                        database.execSQL("UPDATE coins SET country=NULL WHERE country=''");
+                        database.execSQL("UPDATE coins SET unit=NULL WHERE unit=''");
+                        database.execSQL("UPDATE coins SET mintmark=NULL WHERE mintmark=''");
+                        database.execSQL("UPDATE coins SET material=NULL WHERE material=''");
+                        database.execSQL("UPDATE coins SET quality=NULL WHERE quality=''");
+                        database.execSQL("UPDATE coins SET variety=NULL WHERE variety=''");
+                        database.execSQL("UPDATE coins SET obversevar=NULL WHERE obversevar=''");
+                        database.execSQL("UPDATE coins SET reversevar=NULL WHERE reversevar=''");
+                        database.execSQL("UPDATE coins SET edgevar=NULL WHERE edgevar=''");
+                        database.execSQL("UPDATE settings SET value='6' WHERE title='Version'");
+
+                        version = 6;
 
                         Toast toast = Toast.makeText(
                                 context, R.string.upgraded_db_version, Toast.LENGTH_LONG
