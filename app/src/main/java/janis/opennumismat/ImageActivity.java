@@ -22,12 +22,16 @@ public class ImageActivity extends Activity {
         int maxSize = metrics.widthPixels > metrics.heightPixels ? metrics.heightPixels : metrics.widthPixels;
 
         Intent intent = getIntent();
+        Boolean obverse = intent.getExtras().getBoolean(MainActivity.EXTRA_COIN_IMAGE);
         Coin coin = intent.getParcelableExtra(MainActivity.EXTRA_COIN_ID);
 
-        ImageView coin_obverse = (ImageView) findViewById(R.id.coin_obverse);
-        coin_obverse.setImageBitmap(coin.getObverseImageBitmap(maxSize));
-        ImageView coin_reverse = (ImageView) findViewById(R.id.coin_reverse);
-        coin_reverse.setImageBitmap(coin.getReverseImageBitmap(maxSize));
+        ImageView coin_image = (ImageView) findViewById(R.id.coin_image);
+        if (obverse) {
+            coin_image.setImageBitmap(coin.getObverseImageBitmap(maxSize));
+        }
+        else {
+            coin_image.setImageBitmap(coin.getReverseImageBitmap(maxSize));
+        }
 
         ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);

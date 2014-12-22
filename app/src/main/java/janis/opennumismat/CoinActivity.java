@@ -168,13 +168,16 @@ public class CoinActivity extends Activity {
             View.OnClickListener {
 
         private Coin coin;
+        private boolean obverse;
 
         public OnClickListener(Coin coin, boolean obverse) {
             this.coin = coin;
+            this.obverse = obverse;
         }
 
         public void onClick(View v) {
             Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
+            intent.putExtra(MainActivity.EXTRA_COIN_IMAGE, obverse);
             intent.putExtra(MainActivity.EXTRA_COIN_ID, coin);
             startActivity(intent);
         }

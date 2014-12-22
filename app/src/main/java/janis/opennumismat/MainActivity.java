@@ -34,6 +34,7 @@ public class MainActivity extends Activity
 
     private static final String PREF_LAST_PATH = "last_path";
     public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
+    public final static String EXTRA_COIN_IMAGE = "org.janis.opennumismat.COIN_IMAGE";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
