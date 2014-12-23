@@ -1,24 +1,19 @@
 package janis.opennumismat;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class PreferencesActivity extends PreferenceActivity implements
+public class PreferencesActivity extends ActionBarActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     SettingsFr fragment;
 
@@ -26,13 +21,9 @@ public class PreferencesActivity extends PreferenceActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            onCreatePreferenceActivity();
-        } else {
-            onCreatePreferenceFragment();
-        }
+        onCreatePreferenceFragment();
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
@@ -63,25 +54,9 @@ public class PreferencesActivity extends PreferenceActivity implements
     }
 
     private Preference getPreference(String key) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            return findPreference(key);
-        } else {
-            return fragment.findPreference(key);
-        }
+        return fragment.findPreference(key);
     }
 
-    /**
-     * code for Android < 3 (i.e. API lvl < 11)
-     */
-    @SuppressWarnings("deprecation")
-    private void onCreatePreferenceActivity() {
-        addPreferencesFromResource(R.layout.activity_preferences);
-    }
-
-    /**
-     * code for Android >= 3 (i.e. API lvl >= 11)
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void onCreatePreferenceFragment() {
         fragment = new SettingsFr();
         getFragmentManager().beginTransaction()
@@ -89,7 +64,6 @@ public class PreferencesActivity extends PreferenceActivity implements
                 .commit();
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFr extends PreferenceFragment
     {
         @Override

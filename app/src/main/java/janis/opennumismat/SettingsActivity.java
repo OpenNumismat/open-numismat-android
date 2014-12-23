@@ -1,25 +1,19 @@
 package janis.opennumismat;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class SettingsActivity extends PreferenceActivity implements
+public class SettingsActivity extends ActionBarActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     SettingsFr fragment;
 
@@ -27,26 +21,11 @@ public class SettingsActivity extends PreferenceActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            onCreatePreferenceActivity();
-        } else {
-            onCreatePreferenceFragment();
-        }
+        onCreatePreferenceFragment();
 
-        // get the root container of the preferences list
-        LinearLayout root = (LinearLayout)findViewById(android.R.id.list).getParent().getParent().getParent();
-        Toolbar bar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.toolbar, root, false);
-        root.addView(bar, 0); // insert at top
-        bar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        ActionBar actionBar = getActionBar();
-//        actionBar.setHomeButtonEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -75,25 +54,9 @@ public class SettingsActivity extends PreferenceActivity implements
     }
 
     private Preference getPreference(String key) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            return findPreference(key);
-        } else {
-            return fragment.findPreference(key);
-        }
+        return fragment.findPreference(key);
     }
 
-    /**
-     * code for Android < 3 (i.e. API lvl < 11)
-     */
-    @SuppressWarnings("deprecation")
-    private void onCreatePreferenceActivity() {
-        addPreferencesFromResource(R.layout.activity_settings);
-    }
-
-    /**
-     * code for Android >= 3 (i.e. API lvl >= 11)
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void onCreatePreferenceFragment() {
         fragment = new SettingsFr();
         getFragmentManager().beginTransaction()
@@ -101,7 +64,6 @@ public class SettingsActivity extends PreferenceActivity implements
                 .commit();
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFr extends PreferenceFragment
     {
         @Override
