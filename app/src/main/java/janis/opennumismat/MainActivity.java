@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
     private String[] navigationDrawerItems;
 
     private SharedPreferences pref;
+    SharedPreferences.OnSharedPreferenceChangeListener prefListener;
     private SqlAdapter adapter;
 
     @Override
@@ -141,6 +142,24 @@ public class MainActivity extends ActionBarActivity {
             ad.setCancelable(true);
             ad.show();
         }
+
+        prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs,
+                                                  String key) {
+                if (adapter != null) {
+                    if (key.equals("sort_order")) {
+                        adapter.refresh();
+                    } else if (key.equals("filter_field")) {
+                        adapter.setFilterField(prefs.getString(key, adapter.DEFAULT_FILTER));
+                        adapter.refresh();
+
+                        title = adapter.getFilter() + " ▼";
+                        setTitle(title);
+                    }
+                }
+            }
+        };
+        pref.registerOnSharedPreferenceChangeListener(prefListener);
     }
 
     @Override
