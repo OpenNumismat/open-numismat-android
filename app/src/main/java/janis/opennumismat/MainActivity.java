@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
         // set a custom shadow that overlays the main content when the drawer opens
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, navigationDrawerItems));
+        listView.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, navigationDrawerItems));
         listView.setOnItemClickListener(new DrawerItemClickListener());
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
@@ -401,7 +401,6 @@ public class MainActivity extends ActionBarActivity {
 
     public static class DummyFragment extends Fragment {
         public static final String ARG_MENU_INDEX = "index";
-        private SqlAdapter adapter;
 
         public DummyFragment() {
             // Empty constructor required for fragment subclasses

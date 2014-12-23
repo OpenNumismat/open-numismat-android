@@ -1,29 +1,19 @@
 package janis.opennumismat;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DatabaseErrorHandler;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
@@ -31,9 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -42,11 +30,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by v.ignatov on 20.10.2014.
@@ -92,8 +77,7 @@ public class SqlAdapter extends BaseAdapter {
         View rowView;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
-            Group group = i.next();
+        for (Group group : groups) {
             if (group.position == position) {
                 rowView = inflater.inflate(R.layout.group_header, null);
                 TextView title = (TextView) rowView.findViewById(R.id.title);
@@ -172,7 +156,7 @@ public class SqlAdapter extends BaseAdapter {
                 countDialog(null);
             }
             else {
-                ArrayList<Grading> items = new ArrayList<Grading>();
+                ArrayList<Grading> items = new ArrayList<>();
 
                 RelativeLayout linearLayout = new RelativeLayout(context);
                 final ListView lView= new ListView(context);
@@ -298,7 +282,7 @@ public class SqlAdapter extends BaseAdapter {
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         }
-    };
+    }
 
     @Override
     public int getCount() {
@@ -306,8 +290,7 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public boolean isEnabled(int position) {
-        for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
-            Group group = i.next();
+        for (Group group : groups) {
             if (group.position == position) {
                 return false;
             }
@@ -340,13 +323,12 @@ public class SqlAdapter extends BaseAdapter {
 
     private int positionToCursor(int position) {
         int group_count = 0;
-        for(Iterator<Group> i = groups.iterator(); i.hasNext(); ) {
-            Group group = i.next();
+        for (Group group : groups) {
             if (group.position == position)
                 Log.e("WRONG POSITION", Integer.toString(position));
             if (group.position > position)
                 break;
-            group_count ++;
+            group_count++;
         }
         return position - group_count;
     }
@@ -443,7 +425,7 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar") +
                 sql_grade +
                 " ORDER BY id DESC" + " LIMIT " + Integer.toString(count);
-        ArrayList<String> params = new ArrayList<String>();
+        ArrayList<String> params = new ArrayList<>();
 
         if (!coin.subject_short.isEmpty()) {
             params.add(coin.subject_short);
@@ -520,7 +502,7 @@ public class SqlAdapter extends BaseAdapter {
         else
             order = "DESC";
 
-        ArrayList<String> params = new ArrayList<String>();
+        ArrayList<String> params = new ArrayList<>();
         if (filter != null && !filter.isEmpty()) {
             if (filter_field.contains(",")) {
                 String[] parts = filter.split(" ");
@@ -540,7 +522,7 @@ public class SqlAdapter extends BaseAdapter {
                 " ORDER BY year " + order;
         Cursor group_cursor = database.rawQuery(sql, params_arr);
         int position = 0;
-        groups = new ArrayList<Group>();
+        groups = new ArrayList<>();
         while(group_cursor.moveToNext()) {
             Group group = new Group();
             group.count = group_cursor.getInt(1);
@@ -651,7 +633,7 @@ public class SqlAdapter extends BaseAdapter {
             else
                 return res.getString(R.string.filter_all);
         }
-        else if (filter == "") {
+        else if (filter.equals("")) {
             if (filter_field.equals("series"))
                 return res.getString(R.string.filter_empty_series);
             else
@@ -676,7 +658,7 @@ public class SqlAdapter extends BaseAdapter {
         public void onCorruption(SQLiteDatabase dbObj) {
             // Back up the db or do some other stuff
         }
-    };
+    }
 
     // Инициализация адаптера: открываем базу и создаем курсор
     private void init(String path) {
@@ -779,7 +761,7 @@ public class SqlAdapter extends BaseAdapter {
         }
         SharedPreferences.Editor ed = pref.edit();
         ed.putString("filter_field", filter_field);
-        ed.commit();
+        ed.apply();
 
         cursor = getAllEntries();
     }
@@ -799,7 +781,7 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
                 " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
                 " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar");
-        ArrayList<String> params = new ArrayList<String>();
+        ArrayList<String> params = new ArrayList<>();
 
         if (!coin.subject_short.isEmpty()) {
             params.add(coin.subject_short);
@@ -868,7 +850,7 @@ public class SqlAdapter extends BaseAdapter {
                     " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
                     " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar") +
                     " GROUP BY grade";
-            ArrayList<String> params = new ArrayList<String>();
+            ArrayList<String> params = new ArrayList<>();
 
             if (!coin.subject_short.isEmpty()) {
                 params.add(coin.subject_short);
