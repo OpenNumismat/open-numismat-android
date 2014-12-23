@@ -1,7 +1,6 @@
 package janis.opennumismat;
 
-import android.app.ActionBar;
-import android.app.Activity;
+import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * Created by v.ignatov on 22.10.2014.
  */
-public class DownloadActivity extends Activity {
+public class DownloadActivity extends ActionBarActivity {
     private static final Integer LIST_VERSION = 1;
     private static final String LIST_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/list.json";
     private static final String TARGET_DIR = "OpenNumismat";
@@ -94,7 +94,7 @@ public class DownloadActivity extends Activity {
 
         adapter = null;
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 

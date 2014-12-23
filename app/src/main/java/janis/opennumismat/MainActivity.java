@@ -1,64 +1,103 @@
 package janis.opennumismat;
 
-import android.app.Activity;
-
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
-public class MainActivity extends Activity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+import java.util.Iterator;
+import java.util.List;
 
+
+public class MainActivity extends ActionBarActivity {
     private static final String PREF_LAST_PATH = "last_path";
+    private static final int REQUEST_CHOOSER = 1;
+    private static final int REQUEST_DOWNLOADER = 2;
+
     public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
     public final static String EXTRA_COIN_IMAGE = "org.janis.opennumismat.COIN_IMAGE";
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private DrawerLayout drawerLayout;
+    private ListView listView;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private Toolbar toolbar;
+    private CharSequence title;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
+    private String[] navigationDrawerItems;
 
-    private String[] animals;
     private SharedPreferences pref;
-    private static final int REQUEST_CHOOSER = 1;
-    private static final int REQUEST_DOWNLOADER = 2;
     private SqlAdapter adapter;
-    SharedPreferences.OnSharedPreferenceChangeListener prefListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        adapter = null;
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        navigationDrawerItems = getResources().getStringArray(R.array.navigation_drawer_items);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        listView = (ListView) findViewById(R.id.left_drawer);
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        // set up the drawer's list view with items and click listener
+        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, navigationDrawerItems));
+        listView.setOnItemClickListener(new DrawerItemClickListener());
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                setTitle(title);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                setTitle(R.string.app_name);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        if (savedInstanceState == null) {
+            selectItem(0);
+        }
 
         // Set default density
         pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -79,35 +118,10 @@ public class MainActivity extends Activity
 
             SharedPreferences.Editor ed = pref.edit();
             ed.putString("density", density);
-            ed.commit();
+            ed.apply();
         }
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        ListView lView = (ListView) findViewById(R.id.lview);
-        lView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                                    int pos, long id
-            ) {
-                if (adapter != null) {
-                    Coin coin = adapter.getFullItem(pos);
-
-                    Intent intent = new Intent(getApplicationContext(), CoinActivity.class);
-                    intent.putExtra(EXTRA_COIN_ID, coin);
-                    startActivity(intent);
-                }
-            }
-        });
-
+        // Load latest collection
         String path = pref.getString(PREF_LAST_PATH, "");
         if (!path.isEmpty()) {
             openFile(path, true);
@@ -128,31 +142,158 @@ public class MainActivity extends Activity
             ad.setCancelable(true);
             ad.show();
         }
-
-        prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    public void onSharedPreferenceChanged(SharedPreferences prefs,
-                                                          String key) {
-                        if (adapter != null) {
-                            if (key.equals("sort_order")) {
-                                adapter.refresh();
-                            } else if (key.equals("filter_field")) {
-                                adapter.setFilterField(prefs.getString(key, adapter.DEFAULT_FILTER));
-                                adapter.refresh();
-                                refreshFilter();
-                            }
-                        }
-                    }
-                };
-        pref.registerOnSharedPreferenceChangeListener(prefListener);
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (!drawerLayout.isDrawerOpen(findViewById(R.id.left_drawer))) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main, menu);
+            return true;
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_open) {
+            openFileDialog();
+            return true;
+        }
+        else if (id == R.id.action_download) {
+            openDownloadDialog();
+            return true;
+        }
+        else if (id == R.id.action_preferences) {
+            startActivity(new Intent(this, PreferencesActivity.class));
+            return true;
+        }
+        else if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        else if (id == R.id.action_about) {
+            startActivity(new Intent(this, AboutActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void openFileDialog() {
+        Intent getContentIntent = FileUtils.createGetContentIntent();
+
+        Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
+        startActivityForResult(intent, REQUEST_CHOOSER);
+    }
+
+    private void openDownloadDialog() {
+        Intent intent = new Intent(this, DownloadActivity.class);
+        startActivityForResult(intent, REQUEST_DOWNLOADER);
+    }
+
+    /* The click listener for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    private void selectItem(int position) {
+        Fragment fragment;
+        Bundle args = new Bundle();
+
+        switch (position) {
+            case 0:
+                fragment = new MainFragment();
+                args.putInt(DummyFragment.ARG_MENU_INDEX, position);
+                break;
+
+            case 1:
+                fragment = new DummyFragment();
+                args.putInt(DummyFragment.ARG_MENU_INDEX, position);
+                title = navigationDrawerItems[position];
+                setTitle(title);
+                break;
+
+            default:
+                return;
+        }
+
         // update the main content by replacing fragments
+        fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        // update selected item and title, then close the drawer
+        listView.setItemChecked(position, true);
+        drawerLayout.closeDrawer(listView);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+//        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setTitle("");
+        TextView text = (TextView) findViewById(R.id.toolbar_title);
+        text.setText(title);
+        registerForContextMenu(text);
+
+        if (adapter != null) {
+            text.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    openContextMenu(v);
+                }
+            });
+        }
+        else {
+            text.setOnClickListener(null);
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        switch (v.getId()) {
+            case R.id.toolbar_title:
+                List<String> list = adapter.getFilters();
+                for (int i = 0; i < list.size(); i++) {
+                    menu.add(0, i, 0, list.get(i));
+                }
+                break;
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        String filter = adapter.getFilters().get(item.getItemId());
+        adapter.setFilter(filter);
+        title = filter + " ▼";
+        setTitle(title);
+        return super.onContextItemSelected(item);
+    }
+
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -208,168 +349,71 @@ public class MainActivity extends Activity
             toast.show();
         }
 
-        ListView lView = (ListView) findViewById(R.id.lview);
-        lView.setAdapter(adapter);
-
-        refreshFilter();
+        selectItem(0);
+        String filter = adapter.getFilters().get(0);
+        adapter.setFilter(filter);
+        setTitle(filter + " ▼");
 
         if (adapter != null) {
             if (!first) {
                 SharedPreferences.Editor ed = pref.edit();
                 ed.putString(PREF_LAST_PATH, path);
-                ed.commit();
+                ed.apply();
             }
         }
         else {
             if (first) {
                 SharedPreferences.Editor ed = pref.edit();
                 ed.remove(PREF_LAST_PATH);
-                ed.commit();
+                ed.apply();
             }
         }
     }
 
-    private void refreshFilter() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setTitle(mTitle);
-        if (adapter != null) {
-            ArrayAdapter<String> filter_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, adapter.getFilters());
-            ActionBar.OnNavigationListener callback = new ActionBar.OnNavigationListener() {
-
-                @Override
-                public boolean onNavigationItemSelected(int position, long id) {
-                    adapter.setFilter(adapter.getFilters().get(position));
-                    return true;
-                }
-            };
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setListNavigationCallbacks(filter_adapter, callback);
-        }
-        else {
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-            actionBar.setDisplayShowTitleEnabled(true);
-        }
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.app_name);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section_about);
-                break;
-        }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        if (adapter != null) {
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
-        else {
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-            actionBar.setDisplayShowTitleEnabled(true);
-        }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    private void openFileDialog() {
-        Intent getContentIntent = FileUtils.createGetContentIntent();
-
-        Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
-        startActivityForResult(intent, REQUEST_CHOOSER);
-    }
-
-    private void openDownloadDialog() {
-        Intent intent = new Intent(this, DownloadActivity.class);
-        startActivityForResult(intent, REQUEST_DOWNLOADER);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_open) {
-            openFileDialog();
-
-            return true;
-        }
-        else if (id == R.id.action_download) {
-            openDownloadDialog();
-
-            return true;
-        }
-        else if (id == R.id.action_preferences) {
-            startActivity(new Intent(this, PreferencesActivity.class));
-            return true;
-        }
-        else if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
-        else if (id == R.id.action_about) {
-            startActivity(new Intent(this, AboutActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
+    public class MainFragment extends Fragment {
+        public MainFragment() {
+            // Empty constructor required for fragment subclasses
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.list_fragment, container, false);
+
+            if (adapter != null) {
+                ListView lView = (ListView) rootView.findViewById(R.id.lview);
+                lView.setAdapter(adapter);
+                lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                        Coin coin = adapter.getFullItem(pos);
+
+                        Intent intent = new Intent(getApplicationContext(), CoinActivity.class);
+                        intent.putExtra(EXTRA_COIN_ID, coin);
+                        startActivity(intent);
+                    }
+                });
+            }
+
             return rootView;
         }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
     }
 
+    public static class DummyFragment extends Fragment {
+        public static final String ARG_MENU_INDEX = "index";
+        private SqlAdapter adapter;
+
+        public DummyFragment() {
+            // Empty constructor required for fragment subclasses
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.statistics_fragment, container, false);
+            int index = getArguments().getInt(ARG_MENU_INDEX);
+            String text = String.format("Menu at index %s", index);
+            ((TextView) rootView.findViewById(R.id.textView)).setText(text);
+            return rootView;
+        }
+    }
 }

@@ -1,10 +1,10 @@
 package janis.opennumismat;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +15,7 @@ import android.widget.TextView;
 /**
  * Created by v.ignatov on 21.10.2014.
  */
-public class CoinActivity extends Activity {
+public class CoinActivity extends ActionBarActivity {
     private static final String COIN_DETAILS_DELIMITER = ": ";
 
     @Override
@@ -26,7 +26,7 @@ public class CoinActivity extends Activity {
         Intent intent = getIntent();
         Coin coin = intent.getParcelableExtra(MainActivity.EXTRA_COIN_ID);
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 

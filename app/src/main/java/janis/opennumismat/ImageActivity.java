@@ -1,9 +1,9 @@
 package janis.opennumismat;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 /**
  * Created by v.ignatov on 28.10.2014.
  */
-public class ImageActivity extends Activity {
+public class ImageActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,7 @@ public class ImageActivity extends Activity {
             coin_image.setImageBitmap(coin.getReverseImageBitmap(maxSize));
         }
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 

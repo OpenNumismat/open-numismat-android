@@ -1,18 +1,17 @@
 package janis.opennumismat;
 
-import android.app.ActionBar;
-//import android.support.v7.app.ActionBar;
-import android.app.Activity;
+import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class AboutActivity extends Activity {
+public class AboutActivity extends ActionBarActivity {
     private static final String HOME_URL = "http://opennumismat.github.io";
 
     @Override
@@ -20,7 +19,7 @@ public class AboutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
