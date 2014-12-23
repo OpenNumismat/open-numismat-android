@@ -641,6 +641,26 @@ public class SqlAdapter extends BaseAdapter {
         refresh();
     }
 
+    public String getFilter() {
+        Resources res = context.getResources();
+        if (filter == null) {
+            if (filter_field.equals("series"))
+                return res.getString(R.string.filter_all_series);
+            else if (filter_field.equals("country"))
+                return res.getString(R.string.filter_all_countries);
+            else
+                return res.getString(R.string.filter_all);
+        }
+        else if (filter == "") {
+            if (filter_field.equals("series"))
+                return res.getString(R.string.filter_empty_series);
+            else
+                return res.getString(R.string.filter_empty);
+        }
+
+        return filter;
+    }
+
     public void close() {
         database.close();
     }

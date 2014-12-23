@@ -33,7 +33,6 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -207,11 +206,25 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         Fragment fragment;
         Bundle args = new Bundle();
+        TextView text = (TextView) findViewById(R.id.toolbar_title);
 
         switch (position) {
             case 0:
                 fragment = new MainFragment();
                 args.putInt(DummyFragment.ARG_MENU_INDEX, position);
+
+                if (adapter != null) {
+                    text.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            openContextMenu(v);
+                        }
+                    });
+                    title = adapter.getFilter() + " ▼";
+                    setTitle(title);
+                }
+                else {
+                    text.setOnClickListener(null);
+                }
                 break;
 
             case 1:
@@ -219,6 +232,7 @@ public class MainActivity extends ActionBarActivity {
                 args.putInt(DummyFragment.ARG_MENU_INDEX, position);
                 title = navigationDrawerItems[position];
                 setTitle(title);
+                text.setOnClickListener(null);
                 break;
 
             default:
@@ -242,17 +256,6 @@ public class MainActivity extends ActionBarActivity {
         TextView text = (TextView) findViewById(R.id.toolbar_title);
         text.setText(title);
         registerForContextMenu(text);
-
-        if (adapter != null) {
-            text.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    openContextMenu(v);
-                }
-            });
-        }
-        else {
-            text.setOnClickListener(null);
-        }
     }
 
     @Override
@@ -272,7 +275,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onContextItemSelected(MenuItem item) {
         String filter = adapter.getFilters().get(item.getItemId());
         adapter.setFilter(filter);
-        title = filter + " ▼";
+        title = adapter.getFilter() + " ▼";
         setTitle(title);
         return super.onContextItemSelected(item);
     }
@@ -350,9 +353,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         selectItem(0);
-        String filter = adapter.getFilters().get(0);
-        adapter.setFilter(filter);
-        setTitle(filter + " ▼");
 
         if (adapter != null) {
             if (!first) {
