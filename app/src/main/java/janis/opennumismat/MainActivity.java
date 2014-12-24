@@ -94,6 +94,7 @@ public class MainActivity extends ActionBarActivity {
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         if (savedInstanceState == null) {
             selectItem(0);
@@ -271,7 +272,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void setTitle(CharSequence title) {
 //        getSupportActionBar().setTitle(title);
-        getSupportActionBar().setTitle("");
         TextView text = (TextView) findViewById(R.id.toolbar_title);
         text.setText(title);
         registerForContextMenu(text);
