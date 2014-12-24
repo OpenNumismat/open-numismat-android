@@ -231,8 +231,6 @@ public class MainActivity extends ActionBarActivity {
         switch (position) {
             case 0:
                 fragment = new MainFragment();
-                args.putInt(DummyFragment.ARG_MENU_INDEX, position);
-
                 if (adapter != null) {
                     text.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
@@ -249,7 +247,6 @@ public class MainActivity extends ActionBarActivity {
 
             case 1:
                 fragment = new DummyFragment();
-                args.putInt(DummyFragment.ARG_MENU_INDEX, position);
                 title = navigationDrawerItems[position];
                 setTitle(title);
                 text.setOnClickListener(null);
@@ -418,19 +415,23 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public static class DummyFragment extends Fragment {
-        public static final String ARG_MENU_INDEX = "index";
-
+    public class DummyFragment extends Fragment {
         public DummyFragment() {
             // Empty constructor required for fragment subclasses
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            String text;
             View rootView = inflater.inflate(R.layout.statistics_fragment, container, false);
-            int index = getArguments().getInt(ARG_MENU_INDEX);
-            String text = String.format("Menu at index %s", index);
-            ((TextView) rootView.findViewById(R.id.textView)).setText(text);
+
+            text = getString(R.string.total_count) + ": " + adapter.getTotalCount();
+            ((TextView) rootView.findViewById(R.id.total_count)).setText(text);
+            text = getString(R.string.collected_count) + ": " + adapter.getCollectedCount();
+            ((TextView) rootView.findViewById(R.id.collected_count)).setText(text);
+            text = getString(R.string.coins_count) + ": " + adapter.getCoinsCount();
+            ((TextView) rootView.findViewById(R.id.coins_count)).setText(text);
+
             return rootView;
         }
     }

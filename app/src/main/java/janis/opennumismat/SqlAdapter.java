@@ -289,6 +289,42 @@ public class SqlAdapter extends BaseAdapter {
         return cursor.getCount() + groups.size();
     }
 
+    public int getTotalCount() {
+        String sql = "SELECT id FROM coins" +
+                " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+                " quality, material, variety, obversevar, reversevar, edgevar";
+        Cursor cursor = database.rawQuery(sql, new String[]{});
+        if(cursor.moveToFirst()) {
+            return cursor.getCount();
+        }
+
+        return 0;
+    }
+
+    public int getCollectedCount() {
+        String sql = "SELECT id FROM coins" +
+                " WHERE status='owned'" +
+                " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+                " quality, material, variety, obversevar, reversevar, edgevar";
+        Cursor cursor = database.rawQuery(sql, new String[]{});
+        if(cursor.moveToFirst()) {
+            return cursor.getCount();
+        }
+
+        return 0;
+    }
+
+    public int getCoinsCount() {
+        String sql = "SELECT id FROM coins" +
+                " WHERE status='owned'";
+        Cursor cursor = database.rawQuery(sql, new String[]{});
+        if(cursor.moveToFirst()) {
+            return cursor.getCount();
+        }
+
+        return 0;
+    }
+
     public boolean isEnabled(int position) {
         for (Group group : groups) {
             if (group.position == position) {

@@ -94,4 +94,7 @@
         <item>Collection</item>
         <item>Statistics</item>
     </string-array>
+    <string name="total_count">Total count</string>
+    <string name="collected_count">Collected</string>
+    <string name="coins_count">Coins count</string>
 </resources>
