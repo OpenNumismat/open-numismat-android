@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
-  <string name="version">Version: 0.3</string>
+  <string name="version">Version: 0.4</string>
   <string name="license">License: GPL v3</string>
   <string name="title_section1">Sekcja 1</string>
   <string name="title_section_about">O nas</string>
