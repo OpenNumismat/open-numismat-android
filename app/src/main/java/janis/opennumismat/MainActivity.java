@@ -242,6 +242,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 else {
                     text.setOnClickListener(null);
+                    setTitle(R.string.app_name);
                 }
                 break;
 
