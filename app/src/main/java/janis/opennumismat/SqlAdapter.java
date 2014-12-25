@@ -752,6 +752,19 @@ public class SqlAdapter extends BaseAdapter {
                         database.execSQL("UPDATE coins SET edgevar=NULL WHERE edgevar=''");
                         database.execSQL("UPDATE settings SET value='6' WHERE title='Version'");
 
+                        Cursor cursor = database.rawQuery("SELECT a.id, b.material FROM coins AS a" +
+                                " INNER JOIN coins b ON a.title = b.title WHERE a.status='owned'" +
+                                " AND b.status='demo' AND a.material IS NULL AND b.material NOT NULL",
+                                new String[]{});
+                        while (cursor.moveToNext()) {
+                            Long id = cursor.getLong(0);
+                            String material = cursor.getString(1);
+
+                            ContentValues values = new ContentValues();
+                            values.put("material", material);
+                            database.update("coins", values, "id=?", new String[] {Long.toString(id)});
+                        }
+
                         version = 6;
 
                         Toast toast = Toast.makeText(
