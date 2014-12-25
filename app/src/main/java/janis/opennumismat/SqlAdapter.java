@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -751,6 +752,9 @@ public class SqlAdapter extends BaseAdapter {
                         database.execSQL("UPDATE coins SET reversevar=NULL WHERE reversevar=''");
                         database.execSQL("UPDATE coins SET edgevar=NULL WHERE edgevar=''");
                         database.execSQL("UPDATE settings SET value='6' WHERE title='Version'");
+
+                        File f = new File(path);
+                        database.execSQL("INSERT INTO settings VALUES ('File', '" + f.getName() + "')");
 
                         Cursor cursor = database.rawQuery("SELECT a.id, b.material FROM coins AS a" +
                                 " INNER JOIN coins b ON a.title = b.title WHERE a.status='owned'" +
