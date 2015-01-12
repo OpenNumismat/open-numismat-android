@@ -3,7 +3,7 @@
   <string name="app_name">Open Numismat</string>
   <string name="version">Version: 0.4</string>
   <string name="license">License: GPL v3</string>
-  <string name="title_section1">Sekcja 1</string>
+  <string name="title_section_statistics">Statistics</string>
   <string name="title_section_about">O nas</string>
   <string name="navigation_drawer_open">Open navigation drawer</string>
   <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -90,4 +90,11 @@
     <item>unit,value</item>
     <item>series</item>
   </string-array>
+    <string-array name="navigation_drawer_items">
+        <item>Collection</item>
+        <item>Statistics</item>
+    </string-array>
+    <string name="total_count">Total count</string>
+    <string name="collected_count">Collected</string>
+    <string name="coins_count">Coins count</string>
 </resources>

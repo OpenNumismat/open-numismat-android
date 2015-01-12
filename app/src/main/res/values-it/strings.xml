@@ -3,21 +3,20 @@
   <string name="app_name">Open Numismat</string>
   <string name="version">Versione: 0.4</string>
   <string name="license">Licenza: GPL v3</string>
-  <string name="title_section1">Sezione 1</string>
-  <string name="title_section_about">Informazioni su</string>
+  <string name="title_section_statistics">Statistics</string>
   <string name="navigation_drawer_open">Apri opzioni di disegno</string>
   <string name="navigation_drawer_close">Chiudi opzioni di disegno</string>
   <string name="action_open">Apri</string>
   <string name="action_download">Scarica</string>
   <string name="action_settings">Impostazioni</string>
-  <string name="action_preferences">Preferences</string>
+  <string name="action_preferences">Preferenze</string>
   <string name="action_about">Informazioni su</string>
   <string name="file_chooser">Seleziona un file</string>
   <string name="could_not_open_database">Impossibile aprire il database</string>
   <string name="could_not_download_list">Impossibile scaricare la lista dei cataloghi</string>
   <string name="could_not_download_file">Impossibile scaricare il catalogo</string>
   <string name="could_not_parse_list">Impossibile analizzare la lista dei cataloghi</string>
-  <string name="could_not_open_sd">File access to the SD card is restricted on your device. Try to move file to internal memory.</string>
+  <string name="could_not_open_sd">L\'accesso ai file sulla scheda SD è ristretto sul tuo dispositivo. Prova a spostare il file nella memoria interna.</string>
   <string name="country">Nazione</string>
   <string name="mintage">Coniatura</string>
   <string name="subject_short">Soggetto</string>
@@ -40,7 +39,7 @@
   <string name="replace">File esistente. Sovrasciverlo?</string>
   <string name="new_db_version">Catalogo in un nuovo formato. Si prega di aggiornare l\'applicazione.</string>
   <string name="old_db_version">Catalogo in un vecchio formato non supportato. Si prega di aggiornare il catalogo.</string>
-  <string name="upgraded_db_version">Updated catalgue structure.</string>
+  <string name="upgraded_db_version">Aggiornata la struttura del catalogo.</string>
   <string name="new_xml_version">Lista cataloghi in un nuovo formato. Si prega di aggiornare l\'applicazione.</string>
   <string name="sort_coins">Ordina monete</string>
   <string-array name="sorts">
@@ -73,21 +72,28 @@
   <string name="XF">BB</string>
   <string name="AU">QFdc</string>
   <string name="Unc">Fdc</string>
-  <string name="visit_homepage">Visit homepage</string>
-  <string name="filter_all">All</string>
-  <string name="filter_empty">Empty</string>
-  <string name="filter_all_series">All series</string>
-  <string name="filter_all_countries">All countries</string>
-  <string name="filter_empty_series">Without series</string>
-  <string name="filter_field">Filter by</string>
+  <string name="visit_homepage">Visita la homepage</string>
+  <string name="filter_all">Tutto</string>
+  <string name="filter_empty">Vuoto</string>
+  <string name="filter_all_series">Tutte le serie</string>
+  <string name="filter_all_countries">Tutti i paesi</string>
+  <string name="filter_empty_series">Senza serie</string>
+  <string name="filter_field">Filtra per</string>
   <string-array name="filter_fields">
-      <item>Country</item>
-      <item>Denomination</item>
-      <item>Series</item>
+    <item>Paese</item>
+    <item>Denominazione</item>
+    <item>Serie</item>
   </string-array>
   <string-array name="filter_field_vals">
     <item>country</item>
     <item>unit,value</item>
     <item>series</item>
   </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Collection</item>
+    <item>Statistics</item>
+  </string-array>
+  <string name="total_count">Total count</string>
+  <string name="collected_count">Collected</string>
+  <string name="coins_count">Coins count</string>
 </resources>
