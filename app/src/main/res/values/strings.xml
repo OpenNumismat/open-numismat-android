@@ -97,4 +97,7 @@
     <string name="total_count">Total count</string>
     <string name="collected_count">Collected</string>
     <string name="coins_count">Coins count</string>
+    <string name="action_update">Update</string>
+    <string name="apply_update">New update are available</string>
+    <string name="apply">Apply</string>
 </resources>

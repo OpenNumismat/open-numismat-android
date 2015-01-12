@@ -703,10 +703,12 @@ public class SqlAdapter extends BaseAdapter {
         database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE, databaseErrorHandler);
 
         isMobile = false;
+        String type = "unknown";
         Cursor type_cursor = database.rawQuery("SELECT value FROM settings" +
                 " WHERE title = 'Type'", new String[] {});
         if (type_cursor.moveToFirst()) {
-            if (type_cursor.getString(0).equals("Mobile"))
+            type = type_cursor.getString(0);
+            if (type.equals("Mobile"))
                 isMobile = true;
         }
 
@@ -784,7 +786,7 @@ public class SqlAdapter extends BaseAdapter {
                         toast.show();
                     }
                 }
-                else {
+                else if (type.equals("OpenNumismat")) {
                     if (version > DB_NATIVE_VERSION) {
                         Toast toast = Toast.makeText(
                                 context, R.string.new_db_version, Toast.LENGTH_LONG
@@ -797,6 +799,9 @@ public class SqlAdapter extends BaseAdapter {
                         );
                         toast.show();
                     }
+                }
+                else {
+                    throw new SQLiteException("Wrong DB format");
                 }
             }
         }
@@ -1008,5 +1013,116 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         return result;
+    }
+
+    public boolean update(String patch) {
+        SQLiteDatabase patch_db = SQLiteDatabase.openDatabase(patch, null,
+                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+
+        String type;
+        Cursor type_cursor = patch_db.rawQuery("SELECT value FROM settings" +
+                " WHERE title = 'Type'", new String[] {});
+        if (type_cursor.moveToFirst()) {
+            type = type_cursor.getString(0);
+            if (!type.equals("Patch"))
+                return false;
+        }
+
+        String action, sql;
+        Coin coin;
+        Cursor patch_cursor = patch_db.rawQuery("SELECT action, src_id, dst_id FROM patches",
+                new String[] {});
+        while (patch_cursor.moveToNext()) {
+            action = patch_cursor.getString(0);
+            if (action.equals("add")) {
+                Long id = patch_cursor.getLong(1);
+
+                sql = "SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
+                        " quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
+                        " WHERE id=?";
+                Cursor cursor = patch_db.rawQuery(sql, new String[] {id.toString()});
+                if (!cursor.moveToFirst())
+                    return false;
+                coin = new Coin(cursor);
+                coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
+
+                Cursor extra_cursor = patch_db.rawQuery("SELECT subject, issuedate," +
+                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                        " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                        " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                        " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
+                if (extra_cursor.moveToFirst())
+                    coin.addExtra(extra_cursor);
+
+                ContentValues values = new ContentValues();
+                values.put("image", coin.obverse_image);
+                long obvere_id = database.insert("photos", null, values);
+                if (obvere_id < 0)
+                    return false;
+
+                values = new ContentValues();
+                values.put("image", coin.reverse_image);
+                long revere_id = database.insert("photos", null, values);
+                if (revere_id < 0)
+                    return false;
+
+                Time now = new Time();
+                now.setToNow();
+                String timestamp = now.format("%Y-%m-%dT%H:%M:%SZ");
+
+                values = new ContentValues();
+                values.put("status", "demo");
+                values.put("updatedat", timestamp);
+                values.put("createdat", timestamp);
+                values.put("image", coin.image);
+                values.put("obverseimg", obvere_id);
+                values.put("reverseimg", revere_id);
+
+                if (!coin.title.isEmpty())
+                    values.put("title", coin.title);
+                if (!coin.subject_short.isEmpty())
+                    values.put("subjectshort", coin.subject_short);
+                if (!coin.series.isEmpty())
+                    values.put("series", coin.series);
+                if (coin.value != 0)
+                    values.put("value", coin.value);
+                if (!coin.country.isEmpty())
+                    values.put("country", coin.country);
+                if (!coin.unit.isEmpty())
+                    values.put("unit", coin.unit);
+                if (coin.year != 0)
+                    values.put("year", coin.year);
+                if (!coin.mintmark.isEmpty())
+                    values.put("mintmark", coin.mintmark);
+                if (coin.mintage != 0)
+                    values.put("mintage", coin.mintage);
+                if (!coin.quality.isEmpty())
+                    values.put("quality", coin.quality);
+                if (!coin.material.isEmpty())
+                    values.put("material", coin.material);
+                if (!coin.variety.isEmpty())
+                    values.put("variety", coin.variety);
+                if (!coin.obversevar.isEmpty())
+                    values.put("obversevar", coin.obversevar);
+                if (!coin.reversevar.isEmpty())
+                    values.put("reversevar", coin.reversevar);
+                if (!coin.edgevar.isEmpty())
+                    values.put("edgevar", coin.edgevar);
+                if (!coin.subject.isEmpty())
+                    values.put("subject", coin.subject);
+                if (!coin.date.isEmpty())
+                    values.put("issuedate", coin.date);
+
+                database.insert("coins", null, values);
+                Log.e("QQQ", coin.title);
+            }
+            else if (action.equals("update_img")) {
+                Long id = patch_cursor.getLong(1);
+            }
+        }
+
+        patch_db.close();
+
+        return true;
     }
 }

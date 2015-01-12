@@ -47,7 +47,7 @@ import java.util.List;
 public class DownloadActivity extends ActionBarActivity {
     private static final Integer LIST_VERSION = 1;
     private static final String LIST_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/list.json";
-    private static final String TARGET_DIR = "OpenNumismat";
+    public static final String TARGET_DIR = "OpenNumismat";
 
     private ArrayAdapter adapter;
     private SharedPreferences pref;

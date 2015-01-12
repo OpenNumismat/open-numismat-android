@@ -3,13 +3,18 @@ package janis.opennumismat;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +38,11 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 
@@ -188,6 +198,25 @@ public class MainActivity extends ActionBarActivity {
             openDownloadDialog();
             return true;
         }
+        else if (id == R.id.action_update) {
+            AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setMessage(R.string.apply_update);
+            ad.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    DownloadEntry entry = new DownloadEntry("", "", "", "std-commemorative-ru_patch_2014-12-25_mdpi.db", "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-ru_patch_2014-12-25/std-commemorative-ru_patch_mdpi.db");
+                    downloadUpdate(entry);
+                }
+            });
+            ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    dialog.dismiss();
+                }
+            });
+            ad.setCancelable(true);
+            ad.show();
+
+            return true;
+        }
         else if (id == R.id.action_preferences) {
             startActivity(new Intent(this, PreferencesActivity.class));
             return true;
@@ -215,6 +244,37 @@ public class MainActivity extends ActionBarActivity {
         startActivityForResult(intent, REQUEST_DOWNLOADER);
     }
 
+    ProgressDialog pd;
+    Handler h;
+    private void downloadUpdate(DownloadEntry entry) {
+        File targetDirectory = new File(Environment.getExternalStorageDirectory() + File.separator + DownloadActivity.TARGET_DIR);
+        if(!targetDirectory.exists()){
+            targetDirectory.mkdir();
+        }
+        entry.file = new File(targetDirectory, entry.file_name);
+
+        pd = new ProgressDialog(this);
+        pd.setMessage(getString(R.string.downloading));
+        // меняем стиль на индикатор
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        // включаем анимацию ожидания
+        pd.setIndeterminate(true);
+        pd.show();
+        h = new Handler() {
+            public void handleMessage(Message msg) {
+                // выключаем анимацию ожидания
+                pd.setIndeterminate(false);
+                if (msg.what < pd.getMax()) {
+                    pd.setProgress(msg.what);
+                } else {
+                    pd.dismiss();
+                }
+            }
+        };
+
+        new DownloadFileTask().execute(entry);
+    }
+
     /* The click listener for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -231,6 +291,7 @@ public class MainActivity extends ActionBarActivity {
         switch (position) {
             case 0:
                 fragment = new MainFragment();
+                ((MainFragment)fragment).setAdapter(adapter);
                 if (adapter != null) {
                     text.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
@@ -247,7 +308,8 @@ public class MainActivity extends ActionBarActivity {
                 break;
 
             case 1:
-                fragment = new DummyFragment();
+                fragment = new StatisticsFragment();
+                ((StatisticsFragment)fragment).setAdapter(adapter);
                 title = navigationDrawerItems[position];
                 setTitle(title);
                 text.setOnClickListener(null);
@@ -387,9 +449,15 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public class MainFragment extends Fragment {
+    public static class MainFragment extends Fragment {
+        private SqlAdapter adapter;
+
         public MainFragment() {
             // Empty constructor required for fragment subclasses
+        }
+
+        public void setAdapter(SqlAdapter adapter) {
+            this.adapter = adapter;
         }
 
         @Override
@@ -405,7 +473,7 @@ public class MainActivity extends ActionBarActivity {
                     public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
                         Coin coin = adapter.getFullItem(pos);
 
-                        Intent intent = new Intent(getApplicationContext(), CoinActivity.class);
+                        Intent intent = new Intent(getActivity().getApplicationContext(), CoinActivity.class);
                         intent.putExtra(EXTRA_COIN_ID, coin);
                         startActivity(intent);
                     }
@@ -416,9 +484,15 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public class DummyFragment extends Fragment {
-        public DummyFragment() {
+    public static class StatisticsFragment extends Fragment {
+        private SqlAdapter adapter;
+
+        public StatisticsFragment() {
             // Empty constructor required for fragment subclasses
+        }
+
+        public void setAdapter(SqlAdapter adapter) {
+            this.adapter = adapter;
         }
 
         @Override
@@ -434,6 +508,116 @@ public class MainActivity extends ActionBarActivity {
             ((TextView) rootView.findViewById(R.id.coins_count)).setText(text);
 
             return rootView;
+        }
+    }
+
+    private static class DownloadEntry {
+        private final String title;
+        private final String date;
+        private final String size;
+        private final String file_name;
+        private final String url;
+        public File file;
+
+        private DownloadEntry(String title, String date, String size, String file, String url) {
+            this.title = title;
+            this.date = date;
+            this.size = size;
+            this.file_name = file;
+            this.url = url;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public String getDescription() {
+            return file_name + ", " + size + ", " + date;
+        }
+    }
+
+    private class DownloadFileTask extends AsyncTask<DownloadEntry, Void, String> {
+        private DownloadEntry entry;
+
+        @Override
+        protected String doInBackground(DownloadEntry... entries) {
+            entry = entries[0];
+            return downloadData();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                Uri uri = Uri.fromFile(new File(result));
+                setResult(RESULT_OK, new Intent().setData(uri));
+
+                Log.e("qqq", result);
+                adapter.update(result);
+                adapter.refresh();
+            }
+            else {
+                Toast toast = Toast.makeText(
+                        MainActivity.this, getString(R.string.could_not_download_file) + '\n' + entry.getUrl(), Toast.LENGTH_LONG
+                );
+                toast.show();
+
+                setResult(RESULT_CANCELED);
+
+                return;
+            }
+        }
+
+        private String downloadData(){
+            try{
+                URL url  = new URL(entry.getUrl());
+                URLConnection connection = url.openConnection();
+                connection.connect();
+
+                int lenghtOfFile = connection.getContentLength();
+
+                InputStream is = url.openStream();
+
+                FileOutputStream fos = new FileOutputStream(entry.getFile());
+
+                byte data[] = new byte[1024];
+
+                int count;
+                int total = 0;
+                int progress = 0;
+
+                pd.setMax(lenghtOfFile);
+                h.sendEmptyMessage(progress);
+                while ((count=is.read(data)) != -1)
+                {
+                    total += count;
+                    int temp_progress = (int)total*100/lenghtOfFile;
+                    if (temp_progress != progress) {
+                        progress = temp_progress;
+                        h.sendEmptyMessage(total);
+                    }
+
+                    fos.write(data, 0, count);
+                }
+                h.sendEmptyMessage(lenghtOfFile);
+
+                is.close();
+                fos.close();
+
+                return entry.getFile().getPath();
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }

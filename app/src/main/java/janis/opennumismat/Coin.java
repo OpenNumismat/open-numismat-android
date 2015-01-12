@@ -53,7 +53,7 @@ public class Coin implements Parcelable {
     public long mintage;
     public String series;
     public byte[] image;
-    private String subject;
+    public String subject;
     public String subject_short;
     public String material;
     public String variety;
