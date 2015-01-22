@@ -38,11 +38,19 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -50,6 +58,8 @@ public class MainActivity extends ActionBarActivity {
     private static final String PREF_LAST_PATH = "last_path";
     private static final int REQUEST_CHOOSER = 1;
     private static final int REQUEST_DOWNLOADER = 2;
+
+    private static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
 
     public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
     public final static String EXTRA_COIN_IMAGE = "org.janis.opennumismat.COIN_IMAGE";
@@ -199,22 +209,7 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_update) {
-            AlertDialog.Builder ad = new AlertDialog.Builder(this);
-            ad.setMessage(R.string.apply_update);
-            ad.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    DownloadEntry entry = new DownloadEntry("", "", "", "std-commemorative-ru_patch_2014-12-25_mdpi.db", "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-ru_patch_2014-12-25/std-commemorative-ru_patch_mdpi.db");
-                    downloadUpdate(entry);
-                }
-            });
-            ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    dialog.dismiss();
-                }
-            });
-            ad.setCancelable(true);
-            ad.show();
-
+            new DownloadListTask().execute(UPDATE_URL);
             return true;
         }
         else if (id == R.id.action_preferences) {
@@ -273,6 +268,8 @@ public class MainActivity extends ActionBarActivity {
         };
 
         new DownloadFileTask().execute(entry);
+
+        entry.file.delete();
     }
 
     /* The click listener for ListView in the navigation drawer */
@@ -556,11 +553,11 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                Uri uri = Uri.fromFile(new File(result));
+                File file = new File(result);
+                Uri uri = Uri.fromFile(file);
                 setResult(RESULT_OK, new Intent().setData(uri));
 
-                Log.e("qqq", result);
-                adapter.update(result);
+                adapter.update(result, entry.title);
                 adapter.refresh();
             }
             else {
@@ -618,6 +615,72 @@ public class MainActivity extends ActionBarActivity {
             }
 
             return null;
+        }
+    }
+
+    private class DownloadListTask extends DownloadJsonTask {
+        private final Integer LIST_VERSION = 1;
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            if (json == null) {
+                Toast toast = Toast.makeText(
+                        MainActivity.this, getString(R.string.could_not_download_list) + '\n' + url, Toast.LENGTH_LONG
+                );
+                toast.show();
+
+                return;
+            }
+
+            try {
+                if (json.getInt("version") != LIST_VERSION)
+                    return;
+
+                String density = pref.getString("density", "XHDPI");
+                String catalog = adapter.getCatalogTitle();
+
+                JSONArray cats = json.getJSONArray("catalogues");
+                for (int i = 0; i < cats.length(); i++) {
+                    JSONObject cat = cats.getJSONObject(i);
+                    String file = cat.getString("file");
+                    if (file.equals(catalog)) {
+                        JSONArray upds = cat.getJSONArray("updates");
+                        for (int j = 0; j < upds.length(); j++) {
+                            JSONObject upd = upds.getJSONObject(j);
+
+                            if (!adapter.checkUpdate(upd.getString("title"))) {
+                                final DownloadEntry entry = new DownloadEntry(upd.getString("title"),
+                                        upd.getString("date"), upd.getJSONObject("size").getString(density),
+                                        upd.getString("file"), upd.getJSONObject("url").getString(density));
+
+                                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                                ad.setMessage(R.string.apply_update);
+                                ad.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int arg1) {
+                                        downloadUpdate(entry);
+                                    }
+                                });
+                                ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int arg1) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                ad.setCancelable(true);
+                                ad.show();
+
+                                return;
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Toast toast = Toast.makeText(
+                    MainActivity.this, getString(R.string.no_updates_available), Toast.LENGTH_LONG
+            );
+            toast.show();
         }
     }
 }

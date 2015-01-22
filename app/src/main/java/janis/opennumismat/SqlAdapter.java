@@ -326,6 +326,17 @@ public class SqlAdapter extends BaseAdapter {
         return 0;
     }
 
+    public String getCatalogTitle() {
+        String sql = "SELECT value FROM settings" +
+                " WHERE title='File'";
+        Cursor cursor = database.rawQuery(sql, new String[]{});
+        if(cursor.moveToFirst()) {
+            return cursor.getString(0);
+        }
+
+        return "";
+    }
+
     public boolean isEnabled(int position) {
         for (Group group : groups) {
             if (group.position == position) {
@@ -1015,7 +1026,14 @@ public class SqlAdapter extends BaseAdapter {
         return result;
     }
 
-    public boolean update(String patch) {
+    public boolean checkUpdate(String title) {
+        String sql = "SELECT value FROM updates" +
+                " WHERE title=?";
+        Cursor cursor = database.rawQuery(sql, new String[]{title});
+        return cursor.moveToFirst();
+    }
+
+    public boolean update(String patch, String title) {
         SQLiteDatabase patch_db = SQLiteDatabase.openDatabase(patch, null,
                 SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 
@@ -1027,6 +1045,10 @@ public class SqlAdapter extends BaseAdapter {
             if (!type.equals("Patch"))
                 return false;
         }
+
+        Time now = new Time();
+        now.setToNow();
+        String timestamp = now.format("%Y-%m-%dT%H:%M:%SZ");
 
         String action, sql;
         Coin coin;
@@ -1065,10 +1087,6 @@ public class SqlAdapter extends BaseAdapter {
                 long revere_id = database.insert("photos", null, values);
                 if (revere_id < 0)
                     return false;
-
-                Time now = new Time();
-                now.setToNow();
-                String timestamp = now.format("%Y-%m-%dT%H:%M:%SZ");
 
                 values = new ContentValues();
                 values.put("status", "demo");
@@ -1114,12 +1132,49 @@ public class SqlAdapter extends BaseAdapter {
                     values.put("issuedate", coin.date);
 
                 database.insert("coins", null, values);
-                Log.e("QQQ", coin.title);
             }
             else if (action.equals("update_img")) {
                 Long id = patch_cursor.getLong(1);
+
+                sql = "SELECT title, series, subjectshort, coins.image AS image," +
+                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                        " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
+                        " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
+                        " WHERE coins.id=?";
+
+                Cursor cursor = patch_db.rawQuery(sql, new String[] {id.toString()});
+                if (!cursor.moveToFirst())
+                    return false;
+
+                ContentValues values = new ContentValues();
+                values.put("image", cursor.getBlob(4));
+                long obvere_id = database.insert("photos", null, values);
+                if (obvere_id < 0)
+                    return false;
+
+                values = new ContentValues();
+                values.put("image", cursor.getBlob(5));
+                long revere_id = database.insert("photos", null, values);
+                if (revere_id < 0)
+                    return false;
+
+                values = new ContentValues();
+                values.put("updatedat", timestamp);
+                values.put("image", cursor.getBlob(3));
+                values.put("obverseimg", obvere_id);
+                values.put("reverseimg", revere_id);
+
+                // TODO: Remove old images
+
+                database.update("coins", values, "title=? AND series=? AND subjectshort=?",
+                        new String[] {cursor.getString(0), cursor.getString(1), cursor.getString(2)});
             }
         }
+
+        ContentValues values = new ContentValues();
+        values.put("title", title);
+        values.put("value", timestamp);
+        database.insert("updates", null, values);
 
         patch_db.close();
 

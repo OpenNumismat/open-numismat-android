@@ -112,18 +112,6 @@ public class DownloadActivity extends ActionBarActivity {
         }
     }
 
-    private InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(5000 /* milliseconds */);
-        conn.setConnectTimeout(1000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        // Starts the query
-        conn.connect();
-        return conn.getInputStream();
-    }
-
     private class DownloadListAdapter extends ArrayAdapter<DownloadEntry> {
         private final Context context;
         private final List values;
@@ -215,37 +203,26 @@ public class DownloadActivity extends ActionBarActivity {
         new DownloadFileTask().execute(entry);
     }
 
-    private class DownloadListTask extends AsyncTask<String, Void, List> {
-        private String url;
-
+    private class DownloadListTask extends DownloadJsonTask {
         @Override
-        protected List doInBackground(String... urls) {
+        protected void onPostExecute(JSONObject json) {
+            adapter = null;
+            if (json == null) {
+                Toast toast = Toast.makeText(
+                        DownloadActivity.this, getString(R.string.could_not_download_list) + '\n' + url, Toast.LENGTH_LONG
+                );
+                toast.show();
+
+                return;
+            }
+
+            List entries = new ArrayList();
             try {
-                InputStream stream;
-                url = urls[0];
-                stream = downloadUrl(url);
-                ByteArrayOutputStream outString = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int current;
-
-                try{
-                    while((current = stream.read(buffer)) != -1) {
-                        outString.write(buffer, 0, current);
-                    }
-                } finally {
-                    stream.close();
-                }
-
-                String str = new String(outString.toByteArray());
-
-                JSONObject json = new JSONObject(str);
-
                 if (json.getInt("version") != LIST_VERSION)
-                    return null;
+                    return;
 
                 String density = pref.getString("density", "XHDPI");
 
-                List entries = new ArrayList();
                 JSONArray cats = json.getJSONArray("catalogues");
                 for (int i = 0; i < cats.length(); i++) {
                     JSONObject cat = cats.getJSONObject(i);
@@ -255,34 +232,12 @@ public class DownloadActivity extends ActionBarActivity {
                             cat.getString("file"), cat.getJSONObject("url").getString(density));
                     entries.add(entry);
                 }
-
-                return entries;
-            } catch (IOException e) {
-                e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List result) {
-            if(pd != null)
-                pd.dismiss();
-
             setContentView(R.layout.activity_download);
-            if (result != null) {
-                adapter = new DownloadListAdapter(DownloadActivity.this, result);
-            }
-            else {
-                Toast toast = Toast.makeText(
-                        DownloadActivity.this, getString(R.string.could_not_download_list) + '\n' + url, Toast.LENGTH_LONG
-                );
-                toast.show();
-
-                adapter = null;
-            }
+            adapter = new DownloadListAdapter(DownloadActivity.this, entries);
 
             ListView lView = (ListView) findViewById(R.id.download_list);
             lView.setAdapter(adapter);

@@ -100,4 +100,5 @@
     <string name="action_update">Update</string>
     <string name="apply_update">New update are available</string>
     <string name="apply">Apply</string>
+    <string name="no_updates_available">No updates available</string>
 </resources>
