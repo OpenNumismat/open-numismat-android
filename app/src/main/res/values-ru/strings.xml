@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
-  <string name="version">Версия: 0.4</string>
+  <string name="version">Версия</string>
   <string name="license">Лицензия: GPL v3</string>
   <string name="title_section_statistics">Статистика</string>
   <string name="navigation_drawer_open">Открыть панель навигации</string>
@@ -24,7 +24,6 @@
   <string name="series">Серия</string>
   <string name="date_of_issue">Дата выпуска</string>
   <string name="year">Год</string>
-  <string name="mintmark">Буквы</string>
   <string name="price">Цена</string>
   <string name="material">Материал</string>
   <string name="cancel">Отмена</string>
@@ -96,4 +95,9 @@
   <string name="total_count">Всего</string>
   <string name="collected_count">Собрано</string>
   <string name="coins_count">Всего монет</string>
+  <string name="action_update">Обновить</string>
+  <string name="apply_update">Доступно обновление</string>
+  <string name="apply">Применить</string>
+  <string name="no_updates_available">Нет доступных обновлений</string>
+  <string name="mint">Двор</string>
 </resources>
