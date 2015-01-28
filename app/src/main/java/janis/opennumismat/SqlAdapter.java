@@ -588,7 +588,7 @@ public class SqlAdapter extends BaseAdapter {
                 "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
                 (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
                 " ORDER BY image ASC" +
-                ") GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+                ") GROUP BY title, value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar" +
                 " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
         return database.rawQuery(sql, params_arr);
@@ -1168,6 +1168,36 @@ public class SqlAdapter extends BaseAdapter {
 
                 database.update("coins", values, "title=? AND series=? AND subjectshort=?",
                         new String[] {cursor.getString(0), cursor.getString(1), cursor.getString(2)});
+            }
+            else if (action.equals("update_desc")) {
+                Long src_id = patch_cursor.getLong(1);
+                Long dst_id = patch_cursor.getLong(2);
+
+                sql = "SELECT title, series, subjectshort FROM coins" +
+                        " WHERE coins.id=?";
+                Cursor src_cursor = patch_db.rawQuery(sql, new String[] {src_id.toString()});
+                if (!src_cursor.moveToFirst())
+                    return false;
+
+                sql = "SELECT title, series, subjectshort, obversedesign, reversedesign, subject" +
+                        " FROM coins" +
+                        " WHERE coins.id=?";
+
+                Cursor cursor = patch_db.rawQuery(sql, new String[] {dst_id.toString()});
+                if (!cursor.moveToFirst())
+                    return false;
+
+                ContentValues values = new ContentValues();
+                values.put("updatedat", timestamp);
+                values.put("title", cursor.getString(0));
+                values.put("series", cursor.getString(1));
+                values.put("subjectshort", cursor.getString(2));
+                values.put("obversedesign", cursor.getString(3));
+                values.put("reversedesign", cursor.getString(4));
+                values.put("subject", cursor.getString(5));
+
+                database.update("coins", values, "title=? AND series=? AND subjectshort=?",
+                        new String[] {src_cursor.getString(0), src_cursor.getString(1), src_cursor.getString(2)});
             }
         }
 
