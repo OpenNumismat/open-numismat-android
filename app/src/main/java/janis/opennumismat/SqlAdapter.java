@@ -393,7 +393,7 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private Coin fillExtra(Coin coin) {
-        Cursor extra_cursor = database.rawQuery("SELECT subject, issuedate," +
+        Cursor extra_cursor = database.rawQuery("SELECT subject, issuedate, mint," +
                 " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
                 " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
                 " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
@@ -1068,7 +1068,7 @@ public class SqlAdapter extends BaseAdapter {
                 coin = new Coin(cursor);
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
 
-                Cursor extra_cursor = patch_db.rawQuery("SELECT subject, issuedate," +
+                Cursor extra_cursor = patch_db.rawQuery("SELECT subject, issuedate, mint," +
                         " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
                         " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
                         " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
@@ -1112,6 +1112,8 @@ public class SqlAdapter extends BaseAdapter {
                     values.put("year", coin.year);
                 if (!coin.mintmark.isEmpty())
                     values.put("mintmark", coin.mintmark);
+                if (!coin.mint.isEmpty())
+                    values.put("mint", coin.mint);
                 if (coin.mintage != 0)
                     values.put("mintage", coin.mintage);
                 if (!coin.quality.isEmpty())

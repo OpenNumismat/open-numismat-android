@@ -40,8 +40,9 @@ public class Coin implements Parcelable {
 
     private static final int SUBJECT_EX_COLUMN = 0;
     private static final int DATE_EX_COLUMN = 1;
-    private static final int OBVERSE_IMAGE_EX_COLUMN = 2;
-    private static final int REVERSE_IMAGE_EX_COLUMN = 3;
+    private static final int MINT_EX_COLUMN = 2;
+    private static final int OBVERSE_IMAGE_EX_COLUMN = 3;
+    private static final int REVERSE_IMAGE_EX_COLUMN = 4;
 
     private long id;
     public String title;
@@ -50,6 +51,7 @@ public class Coin implements Parcelable {
     public String country;
     public long year;
     public String mintmark;
+    public String mint;
     public long mintage;
     public String series;
     public byte[] image;
@@ -149,6 +151,7 @@ public class Coin implements Parcelable {
         country = in.readString();
         year = in.readLong();
         mintmark = in.readString();
+        mint = in.readString();
         mintage = in.readLong();
         series = in.readString();
         subject = in.readString();
@@ -198,6 +201,7 @@ public class Coin implements Parcelable {
         out.writeString(country);
         out.writeLong(year);
         out.writeString(mintmark);
+        out.writeString(mint);
         out.writeLong(mintage);
         out.writeString(series);
         out.writeString(subject);
@@ -287,6 +291,18 @@ public class Coin implements Parcelable {
             return "";
     }
     public String getMaterial() { return material; }
+    public String getMint() {
+        if (!mint.isEmpty()) {
+            if (!mintmark.isEmpty())
+                return mint + " (" + mintmark + ")";
+            else
+                return mint;
+        }
+        if (!mintmark.isEmpty())
+            return mintmark;
+
+        return "";
+    }
     public String getCount() {
         return String.format(Locale.getDefault(), "%d", count);
     }
@@ -346,6 +362,10 @@ public class Coin implements Parcelable {
             date = "";
         else
             date = cursor.getString(DATE_EX_COLUMN);
+        if (cursor.isNull(MINT_EX_COLUMN))
+            mint = "";
+        else
+            mint = cursor.getString(MINT_EX_COLUMN);
         obverse_image = cursor.getBlob(OBVERSE_IMAGE_EX_COLUMN);
         reverse_image = cursor.getBlob(REVERSE_IMAGE_EX_COLUMN);
     }

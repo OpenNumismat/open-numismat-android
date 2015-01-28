@@ -25,7 +25,6 @@
     <string name="series">Series</string>
     <string name="date_of_issue">Date of issue</string>
     <string name="year">Year</string>
-    <string name="mintmark">Mint</string>
     <string name="price">Price</string>
     <string name="material">Material</string>
     <string name="cancel">Cancel</string>
@@ -101,4 +100,5 @@
     <string name="apply_update">New update are available</string>
     <string name="apply">Apply</string>
     <string name="no_updates_available">No updates available</string>
+    <string name="mint">Mint</string>
 </resources>

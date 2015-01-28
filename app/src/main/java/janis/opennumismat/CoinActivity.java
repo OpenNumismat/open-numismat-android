@@ -105,6 +105,16 @@ public class CoinActivity extends ActionBarActivity {
             text.setText(coin.getYear());
             coin_details.addView(text);
         }
+        if (!coin.getMint().isEmpty()) {
+            text = new TextView(this);
+            text.setText(getString(R.string.mint) + COIN_DETAILS_DELIMITER);
+            coin_details.addView(text);
+
+            text = new TextView(this);
+            text.setTypeface(null, Typeface.BOLD);
+            text.setText(coin.getMint());
+            coin_details.addView(text);
+        }
         if (!coin.getMintage().isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.mintage) + COIN_DETAILS_DELIMITER);
@@ -116,17 +126,7 @@ public class CoinActivity extends ActionBarActivity {
             coin_details.addView(text);
         }
 /*
-        TODO: Enable mintmark and price fields
-        if (!coin.getMintmark().isEmpty()) {
-            text = new TextView(this);
-            text.setText(getString(R.string.mintmark) + COIN_DETAILS_DELIMITER);
-            coin_details.addView(text);
-
-            text = new TextView(this);
-            text.setTypeface(null, Typeface.BOLD);
-            text.setText(coin.getMintmark());
-            coin_details.addView(text);
-        }
+        TODO: Enable price fields
         if (!coin.getPrices().isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.price) + COIN_DETAILS_DELIMITER);
