@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by v.ignatov on 17.10.2014.
@@ -22,6 +23,9 @@ public class AboutActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        TextView version_text = (TextView) findViewById(R.id.text_version);
+        version_text.setText(getString(R.string.version) + ": " + BuildConfig.VERSION_NAME);
     }
 
     @Override
