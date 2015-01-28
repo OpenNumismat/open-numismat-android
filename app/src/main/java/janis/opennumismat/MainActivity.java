@@ -126,13 +126,13 @@ public class MainActivity extends ActionBarActivity {
             String density;
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            if (metrics.densityDpi <= metrics.DENSITY_MEDIUM)
+            if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM)
                 density = "MDPI";
-            else if (metrics.densityDpi <= metrics.DENSITY_HIGH)
+            else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH)
                 density = "HDPI";
-            else if (metrics.densityDpi <= metrics.DENSITY_XHIGH)
+            else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH)
                 density = "XHDPI";
-            else if (metrics.densityDpi <= metrics.DENSITY_XXHIGH)
+            else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH)
                 density = "XXHDPI";
             else
                 density = "XXXHDPI";
@@ -171,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
                     if (key.equals("sort_order")) {
                         adapter.refresh();
                     } else if (key.equals("filter_field")) {
-                        adapter.setFilterField(prefs.getString(key, adapter.DEFAULT_FILTER));
+                        adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
                         adapter.refresh();
 
                         title = adapter.getFilter() + " ▼";
@@ -567,8 +567,6 @@ public class MainActivity extends ActionBarActivity {
                 toast.show();
 
                 setResult(RESULT_CANCELED);
-
-                return;
             }
         }
 
@@ -595,7 +593,7 @@ public class MainActivity extends ActionBarActivity {
                 while ((count=is.read(data)) != -1)
                 {
                     total += count;
-                    int temp_progress = (int)total*100/lenghtOfFile;
+                    int temp_progress = total*100/lenghtOfFile;
                     if (temp_progress != progress) {
                         progress = temp_progress;
                         h.sendEmptyMessage(total);

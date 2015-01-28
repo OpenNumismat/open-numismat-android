@@ -973,20 +973,22 @@ public class SqlAdapter extends BaseAdapter {
                 }
 
                 grade = grading_cursor.getString(0);
-                if (grade.equals("Unc")) {
-                    coin.count_unc = grading_cursor.getInt(1);
-                }
-                else if (grade.equals("AU")) {
-                    coin.count_au = grading_cursor.getInt(1);
-                }
-                else if (grade.equals("XF")) {
-                    coin.count_xf += grading_cursor.getInt(1);
-                }
-                else if (grade.equals("VF")) {
-                    coin.count_vf = grading_cursor.getInt(1);
-                }
-                else if (grade.equals("F")) {
-                    coin.count_f = grading_cursor.getInt(1);
+                switch (grade) {
+                    case "Unc":
+                        coin.count_unc = grading_cursor.getInt(1);
+                        break;
+                    case "AU":
+                        coin.count_au = grading_cursor.getInt(1);
+                        break;
+                    case "XF":
+                        coin.count_xf += grading_cursor.getInt(1);
+                        break;
+                    case "VF":
+                        coin.count_vf = grading_cursor.getInt(1);
+                        break;
+                    case "F":
+                        coin.count_f = grading_cursor.getInt(1);
+                        break;
                 }
             }
 

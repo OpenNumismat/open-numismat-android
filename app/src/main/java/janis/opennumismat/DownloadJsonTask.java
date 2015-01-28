@@ -51,9 +51,7 @@ public class DownloadJsonTask extends AsyncTask<String, Void, JSONObject> {
             String str = new String(outString.toByteArray());
 
             return new JSONObject(str);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
