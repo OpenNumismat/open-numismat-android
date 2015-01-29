@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
-  <string name="version">Versão: 0.4</string>
+  <string name="version">Versão</string>
   <string name="license">Licença: GPL v3</string>
-  <string name="title_section_statistics">Statistics</string>
+  <string name="title_section_statistics">Estatísticas</string>
   <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
   <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
   <string name="action_open">Abrir</string>
@@ -24,7 +24,6 @@
   <string name="series">Série</string>
   <string name="date_of_issue">Data de emissão</string>
   <string name="year">Ano</string>
-  <string name="mintmark">Cunho</string>
   <string name="price">Preço</string>
   <string name="material">Material</string>
   <string name="cancel">Cancelar</string>
@@ -90,10 +89,15 @@
     <item>series</item>
   </string-array>
   <string-array name="navigation_drawer_items">
-    <item>Collection</item>
-    <item>Statistics</item>
+    <item>Coleção</item>
+    <item>Estatísticas</item>
   </string-array>
-  <string name="total_count">Total count</string>
-  <string name="collected_count">Collected</string>
-  <string name="coins_count">Coins count</string>
+  <string name="total_count">Total</string>
+  <string name="collected_count">Colecionadas</string>
+  <string name="coins_count">Contagem de moedas</string>
+  <string name="action_update">Atualizar</string>
+  <string name="apply_update">Nova atualização disponível</string>
+  <string name="apply">Aplicar</string>
+  <string name="no_updates_available">Sem atualizações disponíveis</string>
+  <string name="mint">Cunhagem</string>
 </resources>
