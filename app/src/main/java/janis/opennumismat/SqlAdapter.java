@@ -458,6 +458,7 @@ public class SqlAdapter extends BaseAdapter {
             sql_grade = " AND grade = '" + grade + "'";
         }
         String sql = "SELECT id, image, obverseimg, reverseimg FROM coins WHERE status='owned'" +
+                " AND " + makeFilter(coin.title.isEmpty(), "title") +
                 " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
                 " AND " + makeFilter(coin.series.isEmpty(), "series") +
                 " AND " + makeFilter(coin.value == 0, "value") +
@@ -475,6 +476,9 @@ public class SqlAdapter extends BaseAdapter {
                 " ORDER BY id DESC" + " LIMIT " + Integer.toString(count);
         ArrayList<String> params = new ArrayList<>();
 
+        if (!coin.title.isEmpty()) {
+            params.add(coin.title);
+        }
         if (!coin.subject_short.isEmpty()) {
             params.add(coin.subject_short);
         }
@@ -837,6 +841,7 @@ public class SqlAdapter extends BaseAdapter {
 
     private long getCoinsCount(Coin coin) {
         String sql = "SELECT COUNT(*) FROM coins WHERE status='owned'" +
+                " AND " + makeFilter(coin.title.isEmpty(), "title") +
                 " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
                 " AND " + makeFilter(coin.series.isEmpty(), "series") +
                 " AND " + makeFilter(coin.value == 0, "value") +
@@ -852,6 +857,9 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar");
         ArrayList<String> params = new ArrayList<>();
 
+        if (!coin.title.isEmpty()) {
+            params.add(coin.title);
+        }
         if (!coin.subject_short.isEmpty()) {
             params.add(coin.subject_short);
         }
@@ -905,6 +913,7 @@ public class SqlAdapter extends BaseAdapter {
     private Coin getCoinsGrade(Coin coin) {
         if (pref.getBoolean("use_grading", false)) {
             String sql = "SELECT grade, COUNT(grade) FROM coins WHERE status='owned'" +
+                    " AND " + makeFilter(coin.title.isEmpty(), "title") +
                     " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
                     " AND " + makeFilter(coin.series.isEmpty(), "series") +
                     " AND " + makeFilter(coin.value == 0, "value") +
@@ -921,6 +930,9 @@ public class SqlAdapter extends BaseAdapter {
                     " GROUP BY grade";
             ArrayList<String> params = new ArrayList<>();
 
+            if (!coin.title.isEmpty()) {
+                params.add(coin.title);
+            }
             if (!coin.subject_short.isEmpty()) {
                 params.add(coin.subject_short);
             }
