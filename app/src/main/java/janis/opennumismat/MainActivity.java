@@ -316,8 +316,13 @@ public class MainActivity extends ActionBarActivity {
             case 1:
                 fragment = new StatisticsFragment();
                 ((StatisticsFragment)fragment).setAdapter(adapter);
-                title = navigationDrawerItems[position];
-                setTitle(title);
+                if (adapter != null) {
+                    title = navigationDrawerItems[position];
+                    setTitle(title);
+                }
+                else {
+                    setTitle(R.string.app_name);
+                }
                 text.setOnClickListener(null);
                 break;
 
@@ -506,12 +511,14 @@ public class MainActivity extends ActionBarActivity {
             String text;
             View rootView = inflater.inflate(R.layout.statistics_fragment, container, false);
 
-            text = getString(R.string.total_count) + ": " + adapter.getTotalCount();
-            ((TextView) rootView.findViewById(R.id.total_count)).setText(text);
-            text = getString(R.string.collected_count) + ": " + adapter.getCollectedCount();
-            ((TextView) rootView.findViewById(R.id.collected_count)).setText(text);
-            text = getString(R.string.coins_count) + ": " + adapter.getCoinsCount();
-            ((TextView) rootView.findViewById(R.id.coins_count)).setText(text);
+            if (adapter != null) {
+                text = getString(R.string.total_count) + ": " + adapter.getTotalCount();
+                ((TextView) rootView.findViewById(R.id.total_count)).setText(text);
+                text = getString(R.string.collected_count) + ": " + adapter.getCollectedCount();
+                ((TextView) rootView.findViewById(R.id.collected_count)).setText(text);
+                text = getString(R.string.coins_count) + ": " + adapter.getCoinsCount();
+                ((TextView) rootView.findViewById(R.id.coins_count)).setText(text);
+            }
 
             return rootView;
         }
