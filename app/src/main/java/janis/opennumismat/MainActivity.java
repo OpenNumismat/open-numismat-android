@@ -197,7 +197,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
         MenuItem item = menu.findItem(R.id.action_update);
-        item.setVisible(adapter != null);
+        if (item != null)
+            item.setVisible(adapter != null);
 
         return super.onCreateOptionsMenu(menu);
     }
