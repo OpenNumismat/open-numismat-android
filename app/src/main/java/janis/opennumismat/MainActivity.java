@@ -512,12 +512,9 @@ public class MainActivity extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.statistics_fragment, container, false);
 
             if (adapter != null) {
-                text = getString(R.string.total_count) + ": " + adapter.getTotalCount();
-                ((TextView) rootView.findViewById(R.id.total_count)).setText(text);
-                text = getString(R.string.collected_count) + ": " + adapter.getCollectedCount();
-                ((TextView) rootView.findViewById(R.id.collected_count)).setText(text);
-                text = getString(R.string.coins_count) + ": " + adapter.getCoinsCount();
-                ((TextView) rootView.findViewById(R.id.coins_count)).setText(text);
+                ListView lView = (ListView) rootView.findViewById(R.id.lview);
+                SqlAdapter.StatisticsListAdapter st_adapter = adapter.getStatisticsAdapter(getActivity());
+                lView.setAdapter(st_adapter);
             }
 
             return rootView;

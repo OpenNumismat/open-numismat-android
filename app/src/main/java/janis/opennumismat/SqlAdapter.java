@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1225,5 +1226,94 @@ public class SqlAdapter extends BaseAdapter {
         patch_db.close();
 
         return true;
+    }
+
+    private static class StatisticsEntry {
+        private final String title;
+        private final Integer total;
+        private final Integer collected;
+
+        private StatisticsEntry(String title, int total, int collected) {
+            this.title = title;
+            this.total = total;
+            this.collected = collected;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getCount() {
+            return collected.toString() + " / " + total.toString();
+        }
+    }
+
+    public class StatisticsListAdapter extends ArrayAdapter<StatisticsEntry> {
+        private final Context context;
+        private final List values;
+
+        public StatisticsListAdapter(Context context, List values) {
+            super(context, R.layout.statistics_item, values);
+            this.context = context;
+            this.values = values;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (null == convertView) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.statistics_item, null);
+            }
+
+            StatisticsEntry entry = (StatisticsEntry)values.get(position);
+
+            TextView title = (TextView) convertView.findViewById(R.id.title);
+            title.setText(entry.getTitle());
+            TextView description = (TextView) convertView.findViewById(R.id.count);
+            description.setText(entry.getCount());
+
+            return convertView;
+        }
+    }
+
+    public StatisticsListAdapter getStatisticsAdapter(Context context) {
+        List<StatisticsEntry> list = new ArrayList<>();
+        Cursor count_cursor;
+        int total, collected;
+        int total_total = 0, total_collected = 0;
+
+        String sql = "SELECT " + filter_field + ", COUNT(id) FROM coins" +
+                " WHERE status='demo'" +
+                " GROUP BY " + filter_field +
+                " ORDER BY " + filter_field + " ASC";
+        Cursor group_cursor = database.rawQuery(sql, new String[]{});
+        while(group_cursor.moveToNext()) {
+            sql = "SELECT COUNT(id) FROM coins" +
+                    " WHERE status='owned' AND " + filter_field + "=?";
+            count_cursor = database.rawQuery(sql,
+                    new String[]{group_cursor.getString(0)});
+            if (!count_cursor.moveToFirst()) {
+                continue;
+            }
+
+            collected = group_cursor.getInt(1);
+            total = count_cursor.getInt(0);
+            total_collected += collected;
+            total_total += total;
+            list.add(new StatisticsEntry(group_cursor.getString(0), collected, total));
+        }
+
+        Resources res = context.getResources();
+        String title;
+        if (filter_field.equals("series"))
+            title = res.getString(R.string.filter_all_series);
+        else if (filter_field.equals("country"))
+            title = res.getString(R.string.filter_all_countries);
+        else
+            title = res.getString(R.string.filter_all);
+
+        list.add(0, new StatisticsEntry(title, total_collected, total_total));
+
+        return new StatisticsListAdapter(context, list);
     }
 }
