@@ -195,6 +195,14 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_update);
+        item.setVisible(adapter != null);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
