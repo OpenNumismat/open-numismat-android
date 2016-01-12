@@ -1282,25 +1282,39 @@ public class SqlAdapter extends BaseAdapter {
         int total, collected;
         int total_total = 0, total_collected = 0;
 
-        String sql = "SELECT " + filter_field + ", COUNT(id) FROM coins" +
+        String sql = "SELECT COUNT(id), " + filter_field + " FROM coins" +
                 " WHERE status='demo'" +
                 " GROUP BY " + filter_field +
                 " ORDER BY " + filter_field + " ASC";
         Cursor group_cursor = database.rawQuery(sql, new String[]{});
         while(group_cursor.moveToNext()) {
+            String filter;
+            ArrayList<String> params = new ArrayList<>();
+
             sql = "SELECT COUNT(id) FROM coins" +
-                    " WHERE status='owned' AND " + filter_field + "=?";
-            count_cursor = database.rawQuery(sql,
-                    new String[]{group_cursor.getString(0)});
+                    " WHERE status='owned' AND " + makeFilter(false, filter_field);
+
+            filter = group_cursor.getString(1);
+            if (filter_field.contains(",")) {
+                filter = group_cursor.getString(2) + " " + filter;
+                params.add(group_cursor.getString(1));
+                params.add(group_cursor.getString(2));
+            }
+            else
+                params.add(filter);
+            String[] params_arr = new String[params.size()];
+            params_arr = params.toArray(params_arr);
+
+            count_cursor = database.rawQuery(sql, params_arr);
             if (!count_cursor.moveToFirst()) {
                 continue;
             }
 
-            collected = group_cursor.getInt(1);
+            collected = group_cursor.getInt(0);
             total = count_cursor.getInt(0);
             total_collected += collected;
             total_total += total;
-            list.add(new StatisticsEntry(group_cursor.getString(0), collected, total));
+            list.add(new StatisticsEntry(filter, collected, total));
         }
 
         Resources res = context.getResources();
