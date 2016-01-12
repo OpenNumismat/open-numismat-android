@@ -292,36 +292,36 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getTotalCount() {
-        String sql = "SELECT id FROM coins" +
+        String sql = "SELECT COUNT(id) FROM coins" +
                 " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar";
         Cursor cursor = database.rawQuery(sql, new String[]{});
         if(cursor.moveToFirst()) {
-            return cursor.getCount();
+            return cursor.getInt(0);
         }
 
         return 0;
     }
 
     public int getCollectedCount() {
-        String sql = "SELECT id FROM coins" +
+        String sql = "SELECT COUNT(id) FROM coins" +
                 " WHERE status='owned'" +
                 " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar";
         Cursor cursor = database.rawQuery(sql, new String[]{});
         if(cursor.moveToFirst()) {
-            return cursor.getCount();
+            return cursor.getInt(0);
         }
 
         return 0;
     }
 
     public int getCoinsCount() {
-        String sql = "SELECT id FROM coins" +
+        String sql = "SELECT COUNT(id) FROM coins" +
                 " WHERE status='owned'";
         Cursor cursor = database.rawQuery(sql, new String[]{});
         if(cursor.moveToFirst()) {
-            return cursor.getCount();
+            return cursor.getInt(0);
         }
 
         return 0;
@@ -1240,12 +1240,21 @@ public class SqlAdapter extends BaseAdapter {
             this.collected = collected;
         }
 
+        private StatisticsEntry(String title, int collected) {
+            this.title = title;
+            this.total = null;
+            this.collected = collected;
+        }
+
         public String getTitle() {
             return title;
         }
 
         public String getCount() {
-            return collected.toString() + " / " + total.toString();
+            if (total == null)
+                return collected.toString();
+            else
+                return collected.toString() + " / " + total.toString();
         }
     }
 
@@ -1347,6 +1356,8 @@ public class SqlAdapter extends BaseAdapter {
             title = res.getString(R.string.filter_all);
 
         list.add(0, new StatisticsEntry(title, total_collected, total_total));
+
+        list.add(new StatisticsEntry(res.getString(R.string. coins_count), getCoinsCount()));
 
         return new StatisticsListAdapter(context, list);
     }
