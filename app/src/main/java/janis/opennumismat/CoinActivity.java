@@ -125,19 +125,7 @@ public class CoinActivity extends ActionBarActivity {
             text.setText(coin.getMintage());
             coin_details.addView(text);
         }
-/*
-        TODO: Enable price fields
-        if (!coin.getPrices().isEmpty()) {
-            text = new TextView(this);
-            text.setText(getString(R.string.price) + COIN_DETAILS_DELIMITER);
-            coin_details.addView(text);
 
-            text = new TextView(this);
-            text.setTypeface(null, Typeface.BOLD);
-            text.setText(coin.getPrices());
-            coin_details.addView(text);
-        }
-*/
         if (!coin.getMaterial().isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.material) + COIN_DETAILS_DELIMITER);
@@ -146,6 +134,17 @@ public class CoinActivity extends ActionBarActivity {
             text = new TextView(this);
             text.setTypeface(null, Typeface.BOLD);
             text.setText(coin.getMaterial());
+            coin_details.addView(text);
+        }
+
+        if (!coin.getPrices().isEmpty()) {
+            text = new TextView(this);
+            text.setText(getString(R.string.price) + COIN_DETAILS_DELIMITER);
+            coin_details.addView(text);
+
+            text = new TextView(this);
+            text.setTypeface(null, Typeface.BOLD);
+            text.setText(coin.getPrices());
             coin_details.addView(text);
         }
 

@@ -395,7 +395,8 @@ public class SqlAdapter extends BaseAdapter {
 
     private Coin fillExtra(Coin coin) {
         Cursor extra_cursor = database.rawQuery("SELECT subject, issuedate, mint," +
-                " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg," +
+                " price1, price2, price3, price4 FROM coins" +
                 " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
                 " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
                 " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});

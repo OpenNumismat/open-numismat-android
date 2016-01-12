@@ -43,6 +43,10 @@ public class Coin implements Parcelable {
     private static final int MINT_EX_COLUMN = 2;
     private static final int OBVERSE_IMAGE_EX_COLUMN = 3;
     private static final int REVERSE_IMAGE_EX_COLUMN = 4;
+    private static final int PRICE1_EX_COLUMN = 5;
+    private static final int PRICE2_EX_COLUMN = 6;
+    private static final int PRICE3_EX_COLUMN = 7;
+    private static final int PRICE4_EX_COLUMN = 8;
 
     private long id;
     public String title;
@@ -73,6 +77,10 @@ public class Coin implements Parcelable {
     public int count_xf;
     public int count_vf;
     public int count_f;
+    public String price_unc;
+    public String price_xf;
+    public String price_vf;
+    public String price_f;
 
     public Coin(Cursor cursor) {
         id = cursor.getLong(ID_COLUMN);
@@ -138,6 +146,7 @@ public class Coin implements Parcelable {
             edgevar = cursor.getString(EDGEVAR_COLUMN);
 
         count = count_unc = count_au = count_xf = count_vf = count_f = 0;
+        price_unc = price_xf = price_vf = price_f = "";
         grade = SqlAdapter.DEFAULT_GRADE;
     }
 
@@ -164,6 +173,10 @@ public class Coin implements Parcelable {
         date = in.readString();
         quality = in.readString();
         count = in.readLong();
+        price_unc = in.readString();
+        price_xf = in.readString();
+        price_vf = in.readString();
+        price_f = in.readString();
 
         length = in.readInt();
         if (length > 0) {
@@ -214,6 +227,10 @@ public class Coin implements Parcelable {
         out.writeString(date);
         out.writeString(quality);
         out.writeLong(count);
+        out.writeString(price_unc);
+        out.writeString(price_xf);
+        out.writeString(price_vf);
+        out.writeString(price_f);
         if (obverse_image != null) {
             out.writeInt(obverse_image.length);
             out.writeByteArray(obverse_image);
@@ -303,6 +320,35 @@ public class Coin implements Parcelable {
 
         return "";
     }
+    public String getPrices() {
+        String min_price = null, max_price = null;
+
+        if (!price_unc.isEmpty()) {
+            max_price = price_unc;
+            min_price = price_unc;
+        }
+        if (!price_xf.isEmpty()) {
+            if (max_price == null)
+                max_price = price_xf;
+            min_price = price_xf;
+        }
+        if (!price_vf.isEmpty()) {
+            if (max_price == null)
+                max_price = price_vf;
+            min_price = price_vf;
+        }
+        if (!price_f.isEmpty()) {
+            if (max_price == null)
+                max_price = price_f;
+            min_price = price_f;
+        }
+
+        if (min_price == null)
+            return "";
+        if (!min_price.equals(max_price))
+            return min_price + " - " + max_price;
+        return min_price;
+    }
     public String getCount() {
         return String.format(Locale.getDefault(), "%d", count);
     }
@@ -368,6 +414,23 @@ public class Coin implements Parcelable {
             mint = cursor.getString(MINT_EX_COLUMN);
         obverse_image = cursor.getBlob(OBVERSE_IMAGE_EX_COLUMN);
         reverse_image = cursor.getBlob(REVERSE_IMAGE_EX_COLUMN);
+
+        if (cursor.isNull(PRICE1_EX_COLUMN))
+            price_f = "";
+        else
+            price_f = cursor.getString(PRICE1_EX_COLUMN);
+        if (cursor.isNull(PRICE2_EX_COLUMN))
+            price_vf = "";
+        else
+            price_vf = cursor.getString(PRICE2_EX_COLUMN);
+        if (cursor.isNull(PRICE3_EX_COLUMN))
+            price_xf = "";
+        else
+            price_xf = cursor.getString(PRICE3_EX_COLUMN);
+        if (cursor.isNull(PRICE4_EX_COLUMN))
+            price_unc = "";
+        else
+            price_unc = cursor.getString(PRICE4_EX_COLUMN);
     }
 
     @Override
