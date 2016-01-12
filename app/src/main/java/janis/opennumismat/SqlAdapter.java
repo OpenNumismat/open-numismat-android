@@ -1280,8 +1280,11 @@ public class SqlAdapter extends BaseAdapter {
     public StatisticsListAdapter getStatisticsAdapter(Context context) {
         List<StatisticsEntry> list = new ArrayList<>();
         Cursor count_cursor;
+        StatisticsEntry empty_entry = null;
         int total, collected;
         int total_total = 0, total_collected = 0;
+
+        Resources res = context.getResources();
 
         String sql = "SELECT COUNT(id), " + filter_field + " FROM coins" +
                 " WHERE status='demo'" +
@@ -1292,20 +1295,24 @@ public class SqlAdapter extends BaseAdapter {
             String filter;
             ArrayList<String> params = new ArrayList<>();
 
+            if (group_cursor.isNull(1))
+                filter = "";
+            else
+                filter = group_cursor.getString(1);
             sql = "SELECT COUNT(id) FROM coins" +
-                    " WHERE status='owned' AND " + makeFilter(false, filter_field);
+                    " WHERE status='owned' AND " + makeFilter(filter.isEmpty(), filter_field);
 
-            filter = group_cursor.getString(1);
             if (filter_field.contains(",")) {
                 filter = group_cursor.getString(2) + " " + filter;
                 params.add(group_cursor.getString(1));
                 params.add(group_cursor.getString(2));
             }
-            else
-                params.add(filter);
+            else {
+                if (!filter.isEmpty())
+                    params.add(filter);
+            }
             String[] params_arr = new String[params.size()];
             params_arr = params.toArray(params_arr);
-
             count_cursor = database.rawQuery(sql, params_arr);
             if (!count_cursor.moveToFirst()) {
                 continue;
@@ -1315,10 +1322,22 @@ public class SqlAdapter extends BaseAdapter {
             total = count_cursor.getInt(0);
             total_collected += collected;
             total_total += total;
-            list.add(new StatisticsEntry(filter, collected, total));
+
+            if (filter.isEmpty()) {
+                if (filter_field.equals("series"))
+                    filter = res.getString(R.string.filter_empty_series);
+                else
+                    filter = res.getString(R.string.filter_empty);
+
+                empty_entry = new StatisticsEntry(filter, collected, total);
+            }
+            else
+                list.add(new StatisticsEntry(filter, collected, total));
         }
 
-        Resources res = context.getResources();
+        if (empty_entry != null)
+            list.add(empty_entry);
+
         String title;
         if (filter_field.equals("series"))
             title = res.getString(R.string.filter_all_series);
