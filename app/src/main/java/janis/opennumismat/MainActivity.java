@@ -174,8 +174,15 @@ public class MainActivity extends ActionBarActivity {
                         adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
                         adapter.refresh();
 
-                        title = adapter.getFilter() + " ▼";
-                        setTitle(title);
+                        if (listView.isItemChecked(0)) {
+                            title = adapter.getFilter() + " ▼";
+                            setTitle(title);
+                        }
+                        else {
+                            FragmentManager fragmentManager = getFragmentManager();
+                            Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
+                            ((StatisticsFragment)fragment).refreshAdapter();
+                        }
                     }
                 }
             }
@@ -497,6 +504,7 @@ public class MainActivity extends ActionBarActivity {
 
     public static class StatisticsFragment extends Fragment {
         private SqlAdapter adapter;
+        private ListView saveListView;
 
         public StatisticsFragment() {
             // Empty constructor required for fragment subclasses
@@ -508,16 +516,18 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            String text;
             View rootView = inflater.inflate(R.layout.statistics_fragment, container, false);
+            saveListView = (ListView) rootView.findViewById(R.id.lview);
 
-            if (adapter != null) {
-                ListView lView = (ListView) rootView.findViewById(R.id.lview);
-                SqlAdapter.StatisticsListAdapter st_adapter = adapter.getStatisticsAdapter(getActivity());
-                lView.setAdapter(st_adapter);
-            }
+            refreshAdapter();
 
             return rootView;
+        }
+
+        public void refreshAdapter() {
+            if (adapter != null) {
+                saveListView.setAdapter(adapter.getStatisticsAdapter(getActivity()));
+            }
         }
     }
 
