@@ -292,25 +292,25 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getTotalCount() {
-        String sql = "SELECT COUNT(id) FROM coins" +
+        String sql = "SELECT id FROM coins" +
                 " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar";
         Cursor cursor = database.rawQuery(sql, new String[]{});
         if(cursor.moveToFirst()) {
-            return cursor.getInt(0);
+            return cursor.getCount();
         }
 
         return 0;
     }
 
     public int getCollectedCount() {
-        String sql = "SELECT COUNT(id) FROM coins" +
+        String sql = "SELECT id FROM coins" +
                 " WHERE status='owned'" +
                 " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar";
         Cursor cursor = database.rawQuery(sql, new String[]{});
         if(cursor.moveToFirst()) {
-            return cursor.getInt(0);
+            return cursor.getCount();
         }
 
         return 0;
@@ -1234,7 +1234,7 @@ public class SqlAdapter extends BaseAdapter {
         private final Integer total;
         private final Integer collected;
 
-        private StatisticsEntry(String title, int total, int collected) {
+        private StatisticsEntry(String title, int collected, int total) {
             this.title = title;
             this.total = total;
             this.collected = collected;
@@ -1308,8 +1308,9 @@ public class SqlAdapter extends BaseAdapter {
                 filter = "";
             else
                 filter = group_cursor.getString(1);
-            sql = "SELECT COUNT(id) FROM coins" +
-                    " WHERE status='owned' AND " + makeFilter(filter.isEmpty(), filter_field);
+            sql = "SELECT id FROM coins" +
+                    " WHERE status='owned' AND " + makeFilter(filter.isEmpty(), filter_field) +
+                    " GROUP BY " + filter_field;
 
             if (filter_field.contains(",")) {
                 filter = group_cursor.getString(2) + " " + filter;
@@ -1323,12 +1324,9 @@ public class SqlAdapter extends BaseAdapter {
             String[] params_arr = new String[params.size()];
             params_arr = params.toArray(params_arr);
             count_cursor = database.rawQuery(sql, params_arr);
-            if (!count_cursor.moveToFirst()) {
-                continue;
-            }
 
-            collected = group_cursor.getInt(0);
-            total = count_cursor.getInt(0);
+            collected = count_cursor.getCount();
+            total = group_cursor.getInt(0);
             total_collected += collected;
             total_total += total;
 
