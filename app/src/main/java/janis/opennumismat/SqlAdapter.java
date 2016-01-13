@@ -291,11 +291,64 @@ public class SqlAdapter extends BaseAdapter {
         return cursor.getCount() + groups.size();
     }
 
-    public int getTotalCount() {
-        String sql = "SELECT id FROM coins" +
-                " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+    public int getTotalCount(String filter) {
+        String sql = "SELECT id FROM coins";
+        if (filter != null) {
+            sql += " WHERE " + makeFilter(filter.isEmpty(), filter_field);
+        }
+        sql += " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
                 " quality, material, variety, obversevar, reversevar, edgevar";
-        Cursor cursor = database.rawQuery(sql, new String[]{});
+
+        ArrayList<String> params = new ArrayList<>();
+        if (filter != null) {
+            if (filter_field.contains(",")) {
+                String[] parts = filter.split(" ");
+                params.add(parts.length > 1 ? parts[1] : "");
+                params.add(parts[0]);
+            } else {
+                if (!filter.isEmpty())
+                    params.add(filter);
+            }
+        }
+        String[] params_arr = new String[params.size()];
+        params_arr = params.toArray(params_arr);
+
+        Cursor cursor = database.rawQuery(sql, params_arr);
+        if(cursor.moveToFirst()) {
+            return cursor.getCount();
+        }
+
+        return 0;
+    }
+
+    public int getTotalCount() {
+        return getTotalCount(null);
+    }
+
+    public int getCollectedCount(String filter) {
+        String sql = "SELECT id FROM coins" +
+                " WHERE status='owned'";
+        if (filter != null) {
+            sql += " AND " + makeFilter(filter.isEmpty(), filter_field);
+        }
+        sql += " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
+                " quality, material, variety, obversevar, reversevar, edgevar";
+
+        ArrayList<String> params = new ArrayList<>();
+        if (filter != null) {
+            if (filter_field.contains(",")) {
+                String[] parts = filter.split(" ");
+                params.add(parts.length > 1 ? parts[1] : "");
+                params.add(parts[0]);
+            } else {
+                if (!filter.isEmpty())
+                    params.add(filter);
+            }
+        }
+        String[] params_arr = new String[params.size()];
+        params_arr = params.toArray(params_arr);
+
+        Cursor cursor = database.rawQuery(sql, params_arr);
         if(cursor.moveToFirst()) {
             return cursor.getCount();
         }
@@ -304,16 +357,7 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getCollectedCount() {
-        String sql = "SELECT id FROM coins" +
-                " WHERE status='owned'" +
-                " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
-                " quality, material, variety, obversevar, reversevar, edgevar";
-        Cursor cursor = database.rawQuery(sql, new String[]{});
-        if(cursor.moveToFirst()) {
-            return cursor.getCount();
-        }
-
-        return 0;
+        return getCollectedCount(null);
     }
 
     public int getCoinsCount() {
@@ -1288,47 +1332,27 @@ public class SqlAdapter extends BaseAdapter {
 
     public StatisticsListAdapter getStatisticsAdapter(Context context) {
         List<StatisticsEntry> list = new ArrayList<>();
-        Cursor count_cursor;
         StatisticsEntry empty_entry = null;
         int total, collected;
-        int total_total = 0, total_collected = 0;
 
         Resources res = context.getResources();
 
-        String sql = "SELECT COUNT(id), " + filter_field + " FROM coins" +
-                " WHERE status='demo'" +
+        String sql = "SELECT " + filter_field + " FROM coins" +
                 " GROUP BY " + filter_field +
                 " ORDER BY " + filter_field + " ASC";
         Cursor group_cursor = database.rawQuery(sql, new String[]{});
         while(group_cursor.moveToNext()) {
-            String filter;
-            ArrayList<String> params = new ArrayList<>();
-
-            if (group_cursor.isNull(1))
+            if (group_cursor.isNull(0))
                 filter = "";
-            else
-                filter = group_cursor.getString(1);
-            sql = "SELECT id FROM coins" +
-                    " WHERE status='owned' AND " + makeFilter(filter.isEmpty(), filter_field) +
-                    " GROUP BY " + filter_field;
-
-            if (filter_field.contains(",")) {
-                filter = group_cursor.getString(2) + " " + filter;
-                params.add(group_cursor.getString(1));
-                params.add(group_cursor.getString(2));
-            }
             else {
-                if (!filter.isEmpty())
-                    params.add(filter);
+                if (filter_field.contains(","))
+                    filter = group_cursor.getString(1) + ' ' + group_cursor.getString(0);
+                else
+                    filter = group_cursor.getString(0);
             }
-            String[] params_arr = new String[params.size()];
-            params_arr = params.toArray(params_arr);
-            count_cursor = database.rawQuery(sql, params_arr);
 
-            collected = count_cursor.getCount();
-            total = group_cursor.getInt(0);
-            total_collected += collected;
-            total_total += total;
+            collected = getCollectedCount(filter);
+            total = getTotalCount(filter);
 
             if (filter.isEmpty()) {
                 if (filter_field.equals("series"))
@@ -1341,19 +1365,24 @@ public class SqlAdapter extends BaseAdapter {
             else
                 list.add(new StatisticsEntry(filter, collected, total));
         }
+        group_cursor.close();
 
         if (empty_entry != null)
             list.add(empty_entry);
 
         String title;
-        if (filter_field.equals("series"))
-            title = res.getString(R.string.filter_all_series);
-        else if (filter_field.equals("country"))
-            title = res.getString(R.string.filter_all_countries);
-        else
-            title = res.getString(R.string.filter_all);
-
-        list.add(0, new StatisticsEntry(title, total_collected, total_total));
+        switch (filter_field) {
+            case "series":
+                title = res.getString(R.string.filter_all_series);
+                break;
+            case "country":
+                title = res.getString(R.string.filter_all_countries);
+                break;
+            default:
+                title = res.getString(R.string.filter_all);
+                break;
+        }
+        list.add(0, new StatisticsEntry(title, getCollectedCount(), getTotalCount()));
 
         list.add(new StatisticsEntry(res.getString(R.string. coins_count), getCoinsCount()));
 
