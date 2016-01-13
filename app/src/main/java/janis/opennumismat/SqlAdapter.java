@@ -314,11 +314,13 @@ public class SqlAdapter extends BaseAdapter {
         params_arr = params.toArray(params_arr);
 
         Cursor cursor = database.rawQuery(sql, params_arr);
+        int count = 0;
         if(cursor.moveToFirst()) {
-            return cursor.getCount();
+            count = cursor.getCount();
         }
+        cursor.close();
 
-        return 0;
+        return count;
     }
 
     public int getTotalCount() {
@@ -349,11 +351,13 @@ public class SqlAdapter extends BaseAdapter {
         params_arr = params.toArray(params_arr);
 
         Cursor cursor = database.rawQuery(sql, params_arr);
+        int count = 0;
         if(cursor.moveToFirst()) {
-            return cursor.getCount();
+            count = cursor.getCount();
         }
+        cursor.close();
 
-        return 0;
+        return count;
     }
 
     public int getCollectedCount() {
@@ -364,11 +368,13 @@ public class SqlAdapter extends BaseAdapter {
         String sql = "SELECT COUNT(id) FROM coins" +
                 " WHERE status='owned'";
         Cursor cursor = database.rawQuery(sql, new String[]{});
+        int count = 0;
         if(cursor.moveToFirst()) {
-            return cursor.getInt(0);
+            count = cursor.getInt(0);
         }
+        cursor.close();
 
-        return 0;
+        return count;
     }
 
     public String getCatalogTitle() {
@@ -406,6 +412,7 @@ public class SqlAdapter extends BaseAdapter {
                         new String[]{Long.toString(cursor.getLong(Coin.IMAGE_COLUMN))});
                 if (extra_cursor.moveToFirst())
                     coin.image = extra_cursor.getBlob(0);
+                extra_cursor.close();
             }
             return coin;
         } else {
@@ -587,6 +594,7 @@ public class SqlAdapter extends BaseAdapter {
             long id = cursor.getLong(0);
             database.delete("coins", "id = ?", new String[] {Long.toString(id)});
         }
+        cursor.close();
     }
 
     //Методы для работы с базой данных
@@ -632,6 +640,7 @@ public class SqlAdapter extends BaseAdapter {
             if (!group.title.isEmpty())
                 groups.add(group);
         }
+        group_cursor.close();
 
         //Список колонок базы, которые следует включить в результат
         sql = "SELECT * FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
@@ -650,15 +659,20 @@ public class SqlAdapter extends BaseAdapter {
                     " GROUP BY " + filter_field +
                     " ORDER BY " + filter_field + " ASC", new String[]{});
 
-            filters = new ArrayList<String>();
+            filters = new ArrayList<>();
             boolean empty_present = false;
             Resources res = context.getResources();
-            if (filter_field.equals("series"))
-                filters.add(res.getString(R.string.filter_all_series));
-            else if (filter_field.equals("country"))
-                filters.add(res.getString(R.string.filter_all_countries));
-            else
-                filters.add(res.getString(R.string.filter_all));
+            switch (filter_field) {
+                case "series":
+                    filters.add(res.getString(R.string.filter_all_series));
+                    break;
+                case "country":
+                    filters.add(res.getString(R.string.filter_all_countries));
+                    break;
+                default:
+                    filters.add(res.getString(R.string.filter_all));
+                    break;
+            }
             while (group_cursor.moveToNext()) {
                 String val = group_cursor.getString(0);
                 if (val == null || val.isEmpty()) {
@@ -671,6 +685,7 @@ public class SqlAdapter extends BaseAdapter {
                     filters.add(val);
                 }
             }
+            group_cursor.close();
             if (empty_present)
                 if (filter_field.equals("series"))
                     filters.add(res.getString(R.string.filter_empty_series));
@@ -694,6 +709,7 @@ public class SqlAdapter extends BaseAdapter {
             values.put("value", field);
             database.insert("settings", null, values);
         }
+        filter_field_cursor.close();
 
         filter_field = field;
         filters = null;
@@ -724,12 +740,14 @@ public class SqlAdapter extends BaseAdapter {
     public String getFilter() {
         Resources res = context.getResources();
         if (filter == null) {
-            if (filter_field.equals("series"))
-                return res.getString(R.string.filter_all_series);
-            else if (filter_field.equals("country"))
-                return res.getString(R.string.filter_all_countries);
-            else
-                return res.getString(R.string.filter_all);
+            switch (filter_field) {
+                case "series":
+                    return res.getString(R.string.filter_all_series);
+                case "country":
+                    return res.getString(R.string.filter_all_countries);
+                default:
+                    return res.getString(R.string.filter_all);
+            }
         }
         else if (filter.equals("")) {
             if (filter_field.equals("series"))
@@ -772,6 +790,7 @@ public class SqlAdapter extends BaseAdapter {
             if (type.equals("Mobile"))
                 isMobile = true;
         }
+        type_cursor.close();
 
         Cursor version_cursor = database.rawQuery("SELECT value FROM settings" +
                 " WHERE title = 'Version'", new String[] {});
@@ -831,6 +850,7 @@ public class SqlAdapter extends BaseAdapter {
                             values.put("material", material);
                             database.update("coins", values, "id=?", new String[] {Long.toString(id)});
                         }
+                        cursor.close();
 
                         version = 6;
 
@@ -878,6 +898,7 @@ public class SqlAdapter extends BaseAdapter {
         else {
             filter_field = DEFAULT_FILTER;
         }
+        filter_field_cursor.close();
         SharedPreferences.Editor ed = pref.edit();
         ed.putString("filter_field", filter_field);
         ed.apply();
@@ -1049,6 +1070,7 @@ public class SqlAdapter extends BaseAdapter {
                         break;
                 }
             }
+            grading_cursor.close();
 
             if (coin.count_unc > 0)
                 coin.grade = "Unc";
