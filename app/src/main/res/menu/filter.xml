@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/filter_group"
+        android:checkableBehavior="single">
+
+        <item android:id="@+id/filter_all"
+            android:title="@string/filter_all"
+            android:orderInCategory="100" />
+        <item android:id="@+id/filter_present"
+            android:title="@string/filter_present"
+            android:orderInCategory="200" />
+        <!--item android:id="@+id/filter_need"
+            android:title="@string/filter_need"
+            android:orderInCategory="300" /-->
+        <item android:id="@+id/filter_for_change"
+            android:title="@string/filter_for_change"
+            android:orderInCategory="400" />
+        <!--item android:id="@+id/filter_not_unc"
+            android:title="@string/filter_not_unc"
+            android:orderInCategory="500" /-->
+
+    </group>
+</menu>
