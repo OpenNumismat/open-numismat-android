@@ -53,6 +53,7 @@ public class SqlAdapter extends BaseAdapter {
     private List<String> filters;
     private String filter;
     private String filter_field;
+    private int main_filter_id = R.id.filter_all;
 
     static class Group {
         public Integer count;
@@ -621,11 +622,29 @@ public class SqlAdapter extends BaseAdapter {
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
 
-        sql = "SELECT year, COUNT(id) FROM coins" +
-                " WHERE status='demo'" +
-                (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
-                " GROUP BY year" +
-                " ORDER BY year " + order;
+        switch (main_filter_id) {
+            case R.id.filter_present:
+                sql = "SELECT year, COUNT(id) AS cc FROM coins" +
+                        " WHERE status='owned'" +
+                        (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                        " GROUP BY year" +
+                        " ORDER BY year " + order;
+                break;
+            case R.id.filter_for_change:
+                sql = "SELECT * FROM (SELECT year, COUNT(id) AS cc FROM coins" +
+                        " WHERE status='owned'" +
+                        (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                        " GROUP BY year" +
+                        " ORDER BY year " + order + ") WHERE cc>1";
+                break;
+            default:
+                sql = "SELECT year, COUNT(id) FROM coins" +
+                        (filter != null ? (" WHERE" + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                        " GROUP BY year" +
+                        " ORDER BY year " + order;
+                break;
+        }
+
         Cursor group_cursor = database.rawQuery(sql, params_arr);
         int position = 0;
         groups = new ArrayList<>();
@@ -643,13 +662,36 @@ public class SqlAdapter extends BaseAdapter {
         group_cursor.close();
 
         //Список колонок базы, которые следует включить в результат
-        sql = "SELECT * FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
-                "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
-                (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
-                " ORDER BY image ASC" +
-                ") GROUP BY title, value, unit, year, country, mintmark, series, subjectshort," +
-                " quality, material, variety, obversevar, reversevar, edgevar" +
-                " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
+        switch (main_filter_id) {
+            case R.id.filter_present:
+                sql = "SELECT * FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
+                        "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
+                        " WHERE status='owned'" + (filter != null ? " AND " + (makeFilter(filter.isEmpty(), filter_field)) : "") +
+                        " ORDER BY image ASC" +
+                        ") GROUP BY title, value, unit, year, country, mintmark, series, subjectshort," +
+                        " quality, material, variety, obversevar, reversevar, edgevar" +
+                        " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
+                break;
+            case R.id.filter_for_change:
+                sql = "SELECT * FROM (SELECT *, COUNT(id) AS cc FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
+                        "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
+                        " WHERE status='owned'" + (filter != null ? " AND " + (makeFilter(filter.isEmpty(), filter_field)) : "") +
+                        " ORDER BY image ASC" +
+                        ") GROUP BY title, value, unit, year, country, mintmark, series, subjectshort," +
+                        " quality, material, variety, obversevar, reversevar, edgevar" +
+                        " ORDER BY year " + order + ", issuedate " + order + ", id ASC) WHERE cc>1";
+                break;
+            default:
+                sql = "SELECT * FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
+                        "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
+                        (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                        " ORDER BY image ASC" +
+                        ") GROUP BY title, value, unit, year, country, mintmark, series, subjectshort," +
+                        " quality, material, variety, obversevar, reversevar, edgevar" +
+                        " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
+                break;
+        }
+
         return database.rawQuery(sql, params_arr);
     }
 
@@ -757,6 +799,19 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         return filter;
+    }
+
+    public void setMainFilter(int id) {
+        if (main_filter_id == id)
+            return;
+
+        main_filter_id = id;
+
+        refresh();
+    }
+
+    public int getMainFilter() {
+        return main_filter_id;
     }
 
     public void close() {

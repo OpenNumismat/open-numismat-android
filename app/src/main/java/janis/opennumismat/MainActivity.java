@@ -207,6 +207,11 @@ public class MainActivity extends ActionBarActivity {
         if (item != null)
             item.setVisible(adapter != null);
 
+        item = menu.findItem(R.id.action_filter);
+        if (item != null)
+            item.setVisible(adapter != null);
+        registerForContextMenu(toolbar);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -216,7 +221,11 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_open) {
+        if (id == R.id.action_filter) {
+            openContextMenu(toolbar);
+            return true;
+        }
+        else if (id == R.id.action_open) {
             openFileDialog();
             return true;
         }
@@ -365,15 +374,26 @@ public class MainActivity extends ActionBarActivity {
                     menu.add(0, i, 0, list.get(i));
                 }
                 break;
+
+            case R.id.toolbar:
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.filter, menu);
+                menu.findItem(adapter.getMainFilter()).setChecked(true);
+                break;
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        String filter = adapter.getFilters().get(item.getItemId());
-        adapter.setFilter(filter);
-        title = adapter.getFilter() + " ▼";
-        setTitle(title);
+        if (item.getGroupId() == R.id.filter_group) {
+            adapter.setMainFilter(item.getItemId());
+        }
+        else {
+            String filter = adapter.getFilters().get(item.getItemId());
+            adapter.setFilter(filter);
+            title = adapter.getFilter() + " ▼";
+            setTitle(title);
+        }
         return super.onContextItemSelected(item);
     }
 

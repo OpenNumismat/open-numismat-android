@@ -7,6 +7,7 @@
     <string name="title_section_statistics">Statistics</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_filter">Filter</string>
     <string name="action_open">Open</string>
     <string name="action_download">Download</string>
     <string name="action_settings">Settings</string>
@@ -93,6 +94,10 @@
         <item>Collection</item>
         <item>Statistics</item>
     </string-array>
+    <string name="filter_present">Is present</string>
+    <string name="filter_need">Is needed</string>
+    <string name="filter_for_change">For change (>1)</string>
+    <string name="filter_not_unc">There, but not Unc</string>
     <string name="total_count">Total count</string>
     <string name="collected_count">Collected</string>
     <string name="coins_count">Coins count</string>
