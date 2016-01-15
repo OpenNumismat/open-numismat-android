@@ -36,8 +36,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ipaulpro.afilechooser.utils.FileUtils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,12 +53,8 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
-    private static final String PREF_LAST_PATH = "last_path";
-    private static final int REQUEST_CHOOSER = 1;
-    private static final int REQUEST_DOWNLOADER = 2;
-
-    private static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
-
+    public final static String DB_NAME = "std-commemorative-us_mobile.db";
+    public final static String PACKAGE = "org.janis.opennumismat";
     public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
     public final static String EXTRA_COIN_IMAGE = "org.janis.opennumismat.COIN_IMAGE";
 
@@ -143,25 +137,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // Load latest collection
-        String path = pref.getString(PREF_LAST_PATH, "");
+        String path = "/data/data/" + PACKAGE + "/databases/" + DB_NAME;
         if (!path.isEmpty()) {
-            openFile(path, true);
-        }
-        else {
-            AlertDialog.Builder ad = new AlertDialog.Builder(this);
-            ad.setMessage(R.string.where_first);
-            ad.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    openDownloadDialog();
-                }
-            });
-            ad.setNeutralButton(R.string.open, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    openFileDialog();
-                }
-            });
-            ad.setCancelable(true);
-            ad.show();
+            openFile(path);
         }
 
         prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -216,19 +194,7 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_open) {
-            openFileDialog();
-            return true;
-        }
-        else if (id == R.id.action_download) {
-            openDownloadDialog();
-            return true;
-        }
-        else if (id == R.id.action_update) {
-            new DownloadListTask().execute(UPDATE_URL);
-            return true;
-        }
-        else if (id == R.id.action_preferences) {
+        if (id == R.id.action_preferences) {
             startActivity(new Intent(this, PreferencesActivity.class));
             return true;
         }
@@ -241,51 +207,6 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void openFileDialog() {
-        Intent getContentIntent = FileUtils.createGetContentIntent();
-
-        Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
-        startActivityForResult(intent, REQUEST_CHOOSER);
-    }
-
-    private void openDownloadDialog() {
-        Intent intent = new Intent(this, DownloadActivity.class);
-        startActivityForResult(intent, REQUEST_DOWNLOADER);
-    }
-
-    ProgressDialog pd;
-    Handler h;
-    private void downloadUpdate(DownloadEntry entry) {
-        File targetDirectory = new File(Environment.getExternalStorageDirectory() + File.separator + DownloadActivity.TARGET_DIR);
-        if(!targetDirectory.exists()){
-            targetDirectory.mkdir();
-        }
-        entry.file = new File(targetDirectory, entry.file_name);
-
-        pd = new ProgressDialog(this);
-        pd.setMessage(getString(R.string.downloading));
-        // меняем стиль на индикатор
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        // включаем анимацию ожидания
-        pd.setIndeterminate(true);
-        pd.show();
-        h = new Handler() {
-            public void handleMessage(Message msg) {
-                // выключаем анимацию ожидания
-                pd.setIndeterminate(false);
-                if (msg.what < pd.getMax()) {
-                    pd.setProgress(msg.what);
-                } else {
-                    pd.dismiss();
-                }
-            }
-        };
-
-        new DownloadFileTask().execute(entry);
-
-        entry.file.delete();
     }
 
     /* The click listener for ListView in the navigation drawer */
@@ -406,35 +327,7 @@ public class MainActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CHOOSER:
-            case REQUEST_DOWNLOADER:
-                if (resultCode == RESULT_OK) {
-
-                    final Uri uri = data.getData();
-
-                    // Get the File path from the Uri
-                    String path = FileUtils.getPath(this, uri);
-                    if (path != null) {
-                        // TODO handle non-primary volumes
-                        if (path.equals("TODO")) {
-                            Toast toast = Toast.makeText(
-                                    getApplicationContext(), getString(R.string.could_not_open_sd), Toast.LENGTH_LONG
-                            );
-                            toast.show();
-                        }
-                        else if (FileUtils.isLocal(path)) {
-                            openFile(path, false);
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    private void openFile(String path, boolean first) {
+    private void openFile(String path) {
         try {
             if (adapter != null) {
                 adapter.close();
@@ -450,21 +343,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         selectItem(0);
-
-        if (adapter != null) {
-            if (!first) {
-                SharedPreferences.Editor ed = pref.edit();
-                ed.putString(PREF_LAST_PATH, path);
-                ed.apply();
-            }
-        }
-        else {
-            if (first) {
-                SharedPreferences.Editor ed = pref.edit();
-                ed.remove(PREF_LAST_PATH);
-                ed.apply();
-            }
-        }
     }
 
     public static class MainFragment extends Fragment {
@@ -561,147 +439,6 @@ public class MainActivity extends ActionBarActivity {
 
         public String getDescription() {
             return file_name + ", " + size + ", " + date;
-        }
-    }
-
-    private class DownloadFileTask extends AsyncTask<DownloadEntry, Void, String> {
-        private DownloadEntry entry;
-
-        @Override
-        protected String doInBackground(DownloadEntry... entries) {
-            entry = entries[0];
-            return downloadData();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                File file = new File(result);
-                Uri uri = Uri.fromFile(file);
-                setResult(RESULT_OK, new Intent().setData(uri));
-
-                adapter.update(result, entry.title);
-                adapter.refresh();
-            }
-            else {
-                Toast toast = Toast.makeText(
-                        MainActivity.this, getString(R.string.could_not_download_file) + '\n' + entry.getUrl(), Toast.LENGTH_LONG
-                );
-                toast.show();
-
-                setResult(RESULT_CANCELED);
-            }
-        }
-
-        private String downloadData(){
-            try{
-                URL url  = new URL(entry.getUrl());
-                URLConnection connection = url.openConnection();
-                connection.connect();
-
-                int lenghtOfFile = connection.getContentLength();
-
-                InputStream is = url.openStream();
-
-                FileOutputStream fos = new FileOutputStream(entry.getFile());
-
-                byte data[] = new byte[1024];
-
-                int count;
-                int total = 0;
-                int progress = 0;
-
-                pd.setMax(lenghtOfFile);
-                h.sendEmptyMessage(progress);
-                while ((count=is.read(data)) != -1)
-                {
-                    total += count;
-                    int temp_progress = total*100/lenghtOfFile;
-                    if (temp_progress != progress) {
-                        progress = temp_progress;
-                        h.sendEmptyMessage(total);
-                    }
-
-                    fos.write(data, 0, count);
-                }
-                h.sendEmptyMessage(lenghtOfFile);
-
-                is.close();
-                fos.close();
-
-                return entry.getFile().getPath();
-
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
-
-    private class DownloadListTask extends DownloadJsonTask {
-        private final Integer LIST_VERSION = 1;
-
-        @Override
-        protected void onPostExecute(JSONObject json) {
-            if (json == null) {
-                Toast toast = Toast.makeText(
-                        MainActivity.this, getString(R.string.could_not_download_list) + '\n' + url, Toast.LENGTH_LONG
-                );
-                toast.show();
-
-                return;
-            }
-
-            try {
-                if (json.getInt("version") != LIST_VERSION)
-                    return;
-
-                String density = pref.getString("density", "XHDPI");
-                String catalog = adapter.getCatalogTitle();
-
-                JSONArray cats = json.getJSONArray("catalogues");
-                for (int i = 0; i < cats.length(); i++) {
-                    JSONObject cat = cats.getJSONObject(i);
-                    String file = cat.getString("file");
-                    if (file.equals(catalog)) {
-                        JSONArray upds = cat.getJSONArray("updates");
-                        for (int j = 0; j < upds.length(); j++) {
-                            JSONObject upd = upds.getJSONObject(j);
-
-                            if (!adapter.checkUpdate(upd.getString("title"))) {
-                                final DownloadEntry entry = new DownloadEntry(upd.getString("title"),
-                                        upd.getString("date"), upd.getJSONObject("size").getString(density),
-                                        upd.getString("file"), upd.getJSONObject("url").getString(density));
-
-                                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
-                                ad.setMessage(R.string.apply_update);
-                                ad.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int arg1) {
-                                        downloadUpdate(entry);
-                                    }
-                                });
-                                ad.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int arg1) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                ad.setCancelable(true);
-                                ad.show();
-
-                                return;
-                            }
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            Toast toast = Toast.makeText(
-                    MainActivity.this, getString(R.string.no_updates_available), Toast.LENGTH_LONG
-            );
-            toast.show();
         }
     }
 }

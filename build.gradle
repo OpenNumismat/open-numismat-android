@@ -15,7 +15,3 @@ allprojects {
         jcenter()
     }
 }
-
-//dependencies {
-//    compile project(':aFileChooser')
-//}
