@@ -30,7 +30,7 @@
 
     <LinearLayout
         android:id="@+id/CountLayout"
-        android:layout_width="96dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
         android:clickable="false"
@@ -38,7 +38,7 @@
         android:focusableInTouchMode="false">
         <TextView
             android:id="@+id/count"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:gravity="right"
