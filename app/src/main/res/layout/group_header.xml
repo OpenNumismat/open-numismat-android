@@ -3,7 +3,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical|right"
+    android:gravity="center_vertical|end"
     android:orientation="horizontal">
 
     <TextView
@@ -11,10 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:text="title"
+        android:text=""
         android:textSize="18sp"
         android:textColor="?android:textColorPrimary"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorPrimaryDark"
         android:paddingLeft="10dp"
         android:paddingRight="10dp" />
 
