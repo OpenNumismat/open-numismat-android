@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -45,15 +44,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -266,11 +261,8 @@ public class MainActivity extends ActionBarActivity {
     ProgressDialog pd;
     Handler h;
     private void downloadUpdate(DownloadEntry entry) {
-        File targetDirectory = new File(Environment.getExternalStorageDirectory() + File.separator + DownloadActivity.TARGET_DIR);
-        if(!targetDirectory.exists()){
-            targetDirectory.mkdir();
-        }
-        entry.file = new File(targetDirectory, entry.file_name);
+        entry.file = new File(getCacheDir(), entry.file_name);
+//        entry.file = new File(getExternalCacheDir(), entry.file_name);
 
         pd = new ProgressDialog(this);
         pd.setMessage(getString(R.string.downloading));
