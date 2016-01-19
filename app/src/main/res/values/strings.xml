@@ -103,4 +103,5 @@
     <string name="mint">Mint</string>
     <string name="auto_update">Check for updates automatically</string>
     <string name="available_update">Update is available</string>
+    <string name="not_connected">Internet connection not available</string>
 </resources>

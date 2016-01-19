@@ -4,11 +4,14 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -224,11 +227,13 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_download) {
-            openDownloadDialog();
+            if (checkConnection())
+                openDownloadDialog();
             return true;
         }
         else if (id == R.id.action_update) {
-            new DownloadListTask().execute(UPDATE_URL);
+            if (checkConnection())
+                new DownloadListTask().execute(UPDATE_URL);
             return true;
         }
         else if (id == R.id.action_preferences) {
@@ -468,6 +473,22 @@ public class MainActivity extends ActionBarActivity {
                 ed.commit();
             }
         }
+    }
+
+    private boolean checkConnection() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnected())
+            return true;
+        else {
+            Toast toast = Toast.makeText(
+                    getApplicationContext(), getString(R.string.not_connected), Toast.LENGTH_LONG
+            );
+            toast.show();
+        }
+
+        return false;
     }
 
     public static class MainFragment extends Fragment {
