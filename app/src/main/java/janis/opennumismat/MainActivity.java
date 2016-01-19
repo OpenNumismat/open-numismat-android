@@ -55,11 +55,11 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
-    private static final String PREF_LAST_PATH = "last_path";
+    public static final String PREF_LAST_PATH = "last_path";
     private static final int REQUEST_CHOOSER = 1;
     private static final int REQUEST_DOWNLOADER = 2;
 
-    private static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
+    public static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
 
     public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
     public final static String EXTRA_COIN_IMAGE = "org.janis.opennumismat.COIN_IMAGE";
@@ -141,6 +141,9 @@ public class MainActivity extends ActionBarActivity {
             ed.putString("density", density);
             ed.apply();
         }
+
+        if (pref.getBoolean("auto_update", false))
+            startService(new Intent(this, UpdateService.class));
 
         // Load latest collection
         String path = pref.getString(PREF_LAST_PATH, "");
@@ -455,14 +458,14 @@ public class MainActivity extends ActionBarActivity {
             if (!first) {
                 SharedPreferences.Editor ed = pref.edit();
                 ed.putString(PREF_LAST_PATH, path);
-                ed.apply();
+                ed.commit();
             }
         }
         else {
             if (first) {
                 SharedPreferences.Editor ed = pref.edit();
                 ed.remove(PREF_LAST_PATH);
-                ed.apply();
+                ed.commit();
             }
         }
     }

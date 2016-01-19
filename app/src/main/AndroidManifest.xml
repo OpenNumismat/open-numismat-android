@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -23,32 +24,23 @@
         </activity>
         <activity
             android:name=".PreferencesActivity"
-            android:label="@string/action_preferences"
-            />
+            android:label="@string/action_preferences" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings"
-            />
+            android:label="@string/action_settings" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/action_about"
-            />
-        <activity
-            android:name=".CoinActivity"
-            />
-        <activity
-            android:name=".ImageActivity"
-            />
+            android:label="@string/action_about" />
+        <activity android:name=".CoinActivity" />
+        <activity android:name=".ImageActivity" />
         <activity
             android:name=".DownloadActivity"
-            android:label="@string/action_download"
-            />
-
+            android:label="@string/action_download" />
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
-            android:icon="@drawable/ic_chooser"
             android:enabled="@bool/use_activity"
             android:exported="true"
+            android:icon="@drawable/ic_chooser"
             android:label="@string/choose_file" >
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -59,6 +51,28 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".UpdateService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":updater" >
+        </service>
+        <receiver
+            android:name=".UpdateReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":updater" >
+        </receiver>
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":updater" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

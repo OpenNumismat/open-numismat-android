@@ -1,5 +1,6 @@
 package janis.opennumismat;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -8,6 +9,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 /**
@@ -50,6 +52,12 @@ public class SettingsActivity extends ActionBarActivity implements
             Preference pref = getPreference(key);
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());
+        }
+        else if (key.equals("auto_update")) {
+            if (sharedPreferences.getBoolean("auto_update", false))
+                startService(new Intent(this, UpdateService.class));
+            else
+                stopService(new Intent(this, UpdateService.class));
         }
     }
 

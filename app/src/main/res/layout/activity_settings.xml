@@ -5,6 +5,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <CheckBoxPreference
+        android:key="auto_update"
+        android:defaultValue="false"
+        android:title="@string/auto_update" />
+    <CheckBoxPreference
         android:key="use_grading"
         android:defaultValue="false"
         android:title="@string/use_grading" />
