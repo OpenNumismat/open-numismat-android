@@ -171,11 +171,9 @@ public class DownloadActivity extends ActionBarActivity {
             });
             ad.setCancelable(true);
             ad.show();
-
-            return;
         }
-
-        startDownload(entry);
+        else
+            startDownload(entry);
     }
 
     ProgressDialog pd;
@@ -296,7 +294,7 @@ public class DownloadActivity extends ActionBarActivity {
 
                 byte data[] = new byte[1024];
 
-                int count = 0;
+                int count;
                 int total = 0;
                 int progress = 0;
 
@@ -305,7 +303,7 @@ public class DownloadActivity extends ActionBarActivity {
                 while ((count=is.read(data)) != -1)
                 {
                     total += count;
-                    int temp_progress = (int)total*100/lenghtOfFile;
+                    int temp_progress = total*100/lenghtOfFile;
                     if (temp_progress != progress) {
                         progress = temp_progress;
                         h.sendEmptyMessage(total);
