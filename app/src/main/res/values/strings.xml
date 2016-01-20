@@ -16,6 +16,7 @@
     <string name="could_not_open_database">Could not open database</string>
     <string name="could_not_download_list">Could not download catalogues list</string>
     <string name="could_not_download_file">Could not download catalogue</string>
+    <string name="could_not_create_file">Could not create database</string>
     <string name="could_not_parse_list">Could not parse catalogues list</string>
     <string name="could_not_open_sd">File access to the SD card is restricted on your device. Try to move file to internal memory.</string>
     <string name="country">Country</string>

@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,12 +29,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -264,14 +261,24 @@ public class DownloadActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result != null) {
+            if (result != null && !result.isEmpty()) {
                 Uri uri = Uri.fromFile(new File(result));
                 setResult(RESULT_OK, new Intent().setData(uri));
             }
             else {
-                Toast toast = Toast.makeText(
-                        DownloadActivity.this, getString(R.string.could_not_download_file) + '\n' + entry.getUrl(), Toast.LENGTH_LONG
-                );
+                pd.cancel();
+
+                Toast toast;
+                if (result.isEmpty()) {
+                    toast = Toast.makeText(
+                            DownloadActivity.this, getString(R.string.could_not_create_file) + '\n' + entry.getFile().getPath(), Toast.LENGTH_LONG
+                    );
+                }
+                else {
+                    toast = Toast.makeText(
+                            DownloadActivity.this, getString(R.string.could_not_download_file) + '\n' + entry.getUrl(), Toast.LENGTH_LONG
+                    );
+                }
                 toast.show();
 
                 setResult(RESULT_CANCELED);
@@ -318,6 +325,9 @@ public class DownloadActivity extends ActionBarActivity {
 
                 return entry.getFile().getPath();
 
+            }catch(FileNotFoundException e){
+                e.printStackTrace();
+                return "";
             }catch(Exception e){
                 e.printStackTrace();
             }
