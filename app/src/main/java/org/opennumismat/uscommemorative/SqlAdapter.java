@@ -1,4 +1,4 @@
-package janis.opennumismat;
+package org.opennumismat.uscommemorative;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;

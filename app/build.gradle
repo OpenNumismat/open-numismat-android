@@ -12,7 +12,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '20.0.0'
     defaultConfig {
-        applicationId 'janis.opennumismat'
+        applicationId 'org.opennumismat.uscommemorative'
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 7

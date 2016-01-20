@@ -1,4 +1,4 @@
-package janis.opennumismat;
+package org.opennumismat.uscommemorative;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -24,7 +24,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -153,31 +152,30 @@ public class MainActivity extends ActionBarActivity {
                     openDownloadDialog();
                 }
             });
-            ad.setCancelable(true);
             ad.show();
         }
 
         prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
                                                   String key) {
-                if (adapter != null) {
-                    if (key.equals("sort_order")) {
-                        adapter.refresh();
-                    } else if (key.equals("filter_field")) {
-                        adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
-                        adapter.refresh();
+            if (adapter != null) {
+                if (key.equals("sort_order")) {
+                    adapter.refresh();
+                } else if (key.equals("filter_field")) {
+                    adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
+                    adapter.refresh();
 
-                        if (listView.isItemChecked(0)) {
-                            title = adapter.getFilter() + " ▼";
-                            setTitle(title);
-                        }
-                        else {
-                            FragmentManager fragmentManager = getFragmentManager();
-                            Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
-                            ((StatisticsFragment)fragment).refreshAdapter();
-                        }
+                    if (listView.isItemChecked(0)) {
+                        title = adapter.getFilter() + " ▼";
+                        setTitle(title);
+                    }
+                    else {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
+                        ((StatisticsFragment)fragment).refreshAdapter();
                     }
                 }
+            }
             }
         };
         pref.registerOnSharedPreferenceChangeListener(prefListener);

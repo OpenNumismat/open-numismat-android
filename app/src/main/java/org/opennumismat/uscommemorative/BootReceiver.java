@@ -1,4 +1,4 @@
-package janis.opennumismat;
+package org.opennumismat.uscommemorative;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
