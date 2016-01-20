@@ -1,4 +1,4 @@
-package org.opennumismat.uscommemorative;
+package org.opennumismat.uscommemoratives;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

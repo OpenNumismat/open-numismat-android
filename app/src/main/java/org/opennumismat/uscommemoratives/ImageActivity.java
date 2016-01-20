@@ -1,4 +1,4 @@
-package org.opennumismat.uscommemorative;
+package org.opennumismat.uscommemoratives;
 
 import android.content.Intent;
 import android.os.Bundle;

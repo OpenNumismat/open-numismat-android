@@ -1,6 +1,5 @@
-package org.opennumismat.uscommemorative;
+package org.opennumismat.uscommemoratives;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -14,7 +13,7 @@ import android.view.MenuItem;
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class SettingsActivity extends ActionBarActivity implements
+public class PreferencesActivity extends ActionBarActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     SettingsFr fragment;
 
@@ -47,16 +46,10 @@ public class SettingsActivity extends ActionBarActivity implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals("sort_order") || key.equals("density")) {
+        if (key.equals("filter_field")) {
             Preference pref = getPreference(key);
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());
-        }
-        else if (key.equals("auto_update")) {
-            if (sharedPreferences.getBoolean("auto_update", false))
-                startService(new Intent(this, UpdateService.class));
-            else
-                stopService(new Intent(this, UpdateService.class));
         }
     }
 
@@ -77,7 +70,7 @@ public class SettingsActivity extends ActionBarActivity implements
         public void onCreate(final Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.layout.activity_settings);
+            addPreferencesFromResource(R.layout.activity_preferences);
         }
     }
 

@@ -1,4 +1,4 @@
-package org.opennumismat.uscommemorative;
+package org.opennumismat.uscommemoratives;
 
 import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;

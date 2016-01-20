@@ -1,4 +1,4 @@
-package org.opennumismat.uscommemorative;
+package org.opennumismat.uscommemoratives;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -152,6 +152,7 @@ public class MainActivity extends ActionBarActivity {
                     openDownloadDialog();
                 }
             });
+            ad.setCancelable(true);
             ad.show();
         }
 
