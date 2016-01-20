@@ -20,7 +20,6 @@
             android:theme="@style/AppTheme2" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -38,21 +37,6 @@
         <activity
             android:name=".DownloadActivity"
             android:label="@string/action_download" />
-        <activity
-            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
-            android:enabled="@bool/use_activity"
-            android:exported="true"
-            android:icon="@drawable/ic_chooser"
-            android:label="@string/choose_file" >
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.OPENABLE" />
-
-                <data android:mimeType="*/*" />
-            </intent-filter>
-        </activity>
 
         <service
             android:name=".UpdateService"

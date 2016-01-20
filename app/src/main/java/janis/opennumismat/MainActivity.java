@@ -38,8 +38,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ipaulpro.afilechooser.utils.FileUtils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +52,6 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
     public static final String PREF_LAST_PATH = "last_path";
-    private static final int REQUEST_CHOOSER = 1;
     private static final int REQUEST_DOWNLOADER = 2;
 
     public static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
@@ -156,11 +153,6 @@ public class MainActivity extends ActionBarActivity {
                     openDownloadDialog();
                 }
             });
-            ad.setNeutralButton(R.string.open, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    openFileDialog();
-                }
-            });
             ad.setCancelable(true);
             ad.show();
         }
@@ -217,11 +209,7 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_open) {
-            openFileDialog();
-            return true;
-        }
-        else if (id == R.id.action_download) {
+        if (id == R.id.action_download) {
             if (checkConnection())
                 openDownloadDialog();
             return true;
@@ -244,13 +232,6 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void openFileDialog() {
-        Intent getContentIntent = FileUtils.createGetContentIntent();
-
-        Intent intent = Intent.createChooser(getContentIntent, getString(R.string.file_chooser));
-        startActivityForResult(intent, REQUEST_CHOOSER);
     }
 
     private void openDownloadDialog() {
@@ -409,25 +390,15 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CHOOSER:
             case REQUEST_DOWNLOADER:
                 if (resultCode == RESULT_OK) {
 
                     final Uri uri = data.getData();
 
                     // Get the File path from the Uri
-                    String path = FileUtils.getPath(this, uri);
+                    String path = uri.getPath();
                     if (path != null) {
-                        // TODO handle non-primary volumes
-                        if (path.equals("TODO")) {
-                            Toast toast = Toast.makeText(
-                                    getApplicationContext(), getString(R.string.could_not_open_sd), Toast.LENGTH_LONG
-                            );
-                            toast.show();
-                        }
-                        else if (FileUtils.isLocal(path)) {
-                            openFile(path, false);
-                        }
+                        openFile(path, false);
                     }
                 }
                 break;
