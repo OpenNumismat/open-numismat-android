@@ -9,12 +9,12 @@ android {
             storePassword 'pfzwpfzw'
         }
     }
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion '20.0.0'
     defaultConfig {
         applicationId 'janis.opennumismat'
         minSdkVersion 15
-        targetSdkVersion 19
+        targetSdkVersion 23
         versionCode 7
         versionName '0.5'
     }
@@ -31,7 +31,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:21.+'
-    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:support-v4:23.+'
+    compile 'com.android.support:appcompat-v7:23.0.+'
     compile project(':aFileChooser')
 }
