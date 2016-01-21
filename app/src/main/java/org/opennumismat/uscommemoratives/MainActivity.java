@@ -3,7 +3,6 @@ package org.opennumismat.uscommemoratives;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,11 +11,7 @@ import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +19,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,16 +38,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
     public static final String PREF_LAST_PATH = "last_path";
-    private static final int REQUEST_DOWNLOADER = 2;
 
     public static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
 
@@ -141,7 +132,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Load latest collection
         String path = pref.getString(PREF_LAST_PATH, "");
-        if (!path.isEmpty()) {
+        if (!path.isEmpty() && false) {
             openFile(path, true);
         }
         else {
@@ -149,34 +140,38 @@ public class MainActivity extends ActionBarActivity {
             ad.setMessage(R.string.where_first);
             ad.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int arg1) {
-                    openDownloadDialog();
+                    final DownloadEntry entry = new DownloadEntry("title",
+                            "date", "size",
+                            "std-commemorative-us.db",
+                            "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db");
+                    downloadCatalog(entry);
                 }
             });
-            ad.setCancelable(true);
+            ad.setCancelable(false);
             ad.show();
         }
 
         prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
                                                   String key) {
-            if (adapter != null) {
-                if (key.equals("sort_order")) {
-                    adapter.refresh();
-                } else if (key.equals("filter_field")) {
-                    adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
-                    adapter.refresh();
+                if (adapter != null) {
+                    if (key.equals("sort_order")) {
+                        adapter.refresh();
+                    } else if (key.equals("filter_field")) {
+                        adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
+                        adapter.refresh();
 
-                    if (listView.isItemChecked(0)) {
-                        title = adapter.getFilter() + " ▼";
-                        setTitle(title);
-                    }
-                    else {
-                        FragmentManager fragmentManager = getFragmentManager();
-                        Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
-                        ((StatisticsFragment)fragment).refreshAdapter();
+                        if (listView.isItemChecked(0)) {
+                            title = adapter.getFilter() + " ▼";
+                            setTitle(title);
+                        }
+                        else {
+                            FragmentManager fragmentManager = getFragmentManager();
+                            Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
+                            ((StatisticsFragment)fragment).refreshAdapter();
+                        }
                     }
                 }
-            }
             }
         };
         pref.registerOnSharedPreferenceChangeListener(prefListener);
@@ -208,12 +203,7 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_download) {
-            if (checkConnection())
-                openDownloadDialog();
-            return true;
-        }
-        else if (id == R.id.action_update) {
+        if (id == R.id.action_update) {
             if (checkConnection())
                 new DownloadListTask().execute(UPDATE_URL);
             return true;
@@ -233,39 +223,17 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void openDownloadDialog() {
-        Intent intent = new Intent(this, DownloadActivity.class);
-        startActivityForResult(intent, REQUEST_DOWNLOADER);
-    }
-
-    ProgressDialog pd;
-    Handler h;
     private void downloadUpdate(DownloadEntry entry) {
-        entry.file = new File(getCacheDir(), entry.file_name);
+        entry.setFile(new File(getCacheDir(), entry.file_name()));
 //        entry.file = new File(getExternalCacheDir(), entry.file_name);
 
-        pd = new ProgressDialog(this);
-        pd.setMessage(getString(R.string.downloading));
-        // меняем стиль на индикатор
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        // включаем анимацию ожидания
-        pd.setIndeterminate(true);
-        pd.show();
-        h = new Handler() {
-            public void handleMessage(Message msg) {
-                // выключаем анимацию ожидания
-                pd.setIndeterminate(false);
-                if (msg.what < pd.getMax()) {
-                    pd.setProgress(msg.what);
-                } else {
-                    pd.dismiss();
-                }
-            }
-        };
+        new DownloadUpdateTask(this, entry).execute();
+    }
 
-        new DownloadFileTask().execute(entry);
+    private void downloadCatalog(DownloadEntry entry) {
+        entry.setFile(new File(getFilesDir(), entry.file_name()));
 
-        entry.file.delete();
+        new DownloadCatalogTask(this, entry).execute();
     }
 
     /* The click listener for ListView in the navigation drawer */
@@ -388,20 +356,6 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_DOWNLOADER:
-                if (resultCode == RESULT_OK) {
-
-                    final Uri uri = data.getData();
-
-                    // Get the File path from the Uri
-                    String path = uri.getPath();
-                    if (path != null) {
-                        openFile(path, false);
-                    }
-                }
-                break;
-        }
     }
 
     private void openFile(String path, boolean first) {
@@ -517,111 +471,36 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private static class DownloadEntry {
-        private final String title;
-        private final String date;
-        private final String size;
-        private final String file_name;
-        private final String url;
-        public File file;
-
-        private DownloadEntry(String title, String date, String size, String file, String url) {
-            this.title = title;
-            this.date = date;
-            this.size = size;
-            this.file_name = file;
-            this.url = url;
+    private class DownloadCatalogTask extends DownloadFileTask {
+        public DownloadCatalogTask(Context context, DownloadEntry entry) {
+            super(context, entry);
         }
 
-        public String getTitle() {
-            return title;
-        }
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
 
-        public String getUrl() {
-            return url;
-        }
-
-        public File getFile() {
-            return file;
-        }
-
-        public String getDescription() {
-            return file_name + ", " + size + ", " + date;
+            if (result == 0) {
+                openFile(entry.file().getPath(), false);
+            }
         }
     }
 
-    private class DownloadFileTask extends AsyncTask<DownloadEntry, Void, String> {
-        private DownloadEntry entry;
-
-        @Override
-        protected String doInBackground(DownloadEntry... entries) {
-            entry = entries[0];
-            return downloadData();
+    private class DownloadUpdateTask extends DownloadFileTask {
+        public DownloadUpdateTask(Context context, DownloadEntry entry) {
+            super(context, entry);
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                File file = new File(result);
-                Uri uri = Uri.fromFile(file);
-                setResult(RESULT_OK, new Intent().setData(uri));
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
 
-                adapter.update(result, entry.title);
+            if (result == 0) {
+                adapter.update(entry.file().getPath(), entry.title());
                 adapter.refresh();
+
+                entry.file().delete();
             }
-            else {
-                Toast toast = Toast.makeText(
-                        MainActivity.this, getString(R.string.could_not_download_file) + '\n' + entry.getUrl(), Toast.LENGTH_LONG
-                );
-                toast.show();
-
-                setResult(RESULT_CANCELED);
-            }
-        }
-
-        private String downloadData(){
-            try{
-                URL url  = new URL(entry.getUrl());
-                URLConnection connection = url.openConnection();
-                connection.connect();
-
-                int lenghtOfFile = connection.getContentLength();
-
-                InputStream is = url.openStream();
-
-                FileOutputStream fos = new FileOutputStream(entry.getFile());
-
-                byte data[] = new byte[1024];
-
-                int count;
-                int total = 0;
-                int progress = 0;
-
-                pd.setMax(lenghtOfFile);
-                h.sendEmptyMessage(progress);
-                while ((count=is.read(data)) != -1)
-                {
-                    total += count;
-                    int temp_progress = total*100/lenghtOfFile;
-                    if (temp_progress != progress) {
-                        progress = temp_progress;
-                        h.sendEmptyMessage(total);
-                    }
-
-                    fos.write(data, 0, count);
-                }
-                h.sendEmptyMessage(lenghtOfFile);
-
-                is.close();
-                fos.close();
-
-                return entry.getFile().getPath();
-
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-            return null;
         }
     }
 

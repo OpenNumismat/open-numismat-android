@@ -34,9 +34,6 @@
             android:label="@string/action_about" />
         <activity android:name=".CoinActivity" />
         <activity android:name=".ImageActivity" />
-        <activity
-            android:name=".DownloadActivity"
-            android:label="@string/action_download" />
 
         <service
             android:name=".UpdateService"
