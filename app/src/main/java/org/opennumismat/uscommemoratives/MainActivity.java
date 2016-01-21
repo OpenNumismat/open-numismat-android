@@ -11,7 +11,9 @@ import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -212,8 +216,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void downloadUpdate(DownloadEntry entry) {
-        entry.setFile(new File(getCacheDir(), entry.file_name()));
-//        entry.file = new File(getExternalCacheDir(), entry.file_name);
+        if (pref.getBoolean("use_external", false)) {
+            entry.setFile(new File(getExternalCacheDir(), entry.file_name()));
+        }
+        else {
+            entry.setFile(new File(getCacheDir(), entry.file_name()));
+        }
 
         new DownloadUpdateTask(this, entry).execute();
     }
@@ -221,10 +229,19 @@ public class MainActivity extends ActionBarActivity {
     private void startDownloadDialog() {
         checkConnection();
 
+        View view = View.inflate(this, R.layout.download_dialog, null);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+
         AlertDialog.Builder ad = new AlertDialog.Builder(this);
-        ad.setMessage(R.string.where_first);
-        ad.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
+        ad.setTitle(R.string.download);
+        ad.setView(view);
+//        ad.setMessage(R.string.where_first);
+        ad.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
+                SharedPreferences.Editor ed = pref.edit();
+                ed.putBoolean("use_external", checkBox.isChecked());
+                ed.apply();
+
                 final DownloadEntry entry = new DownloadEntry("title",
                         "date", "size",
                         "std-commemorative-us.db",
@@ -237,7 +254,26 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void downloadCatalog(DownloadEntry entry) {
-        entry.setFile(new File(getFilesDir(), entry.file_name()));
+        File targetDirectory = getFilesDir();
+
+        if (pref.getBoolean("use_external", false)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                File[] externalFilesDirs = getExternalFilesDirs(null);
+                for (File f : externalFilesDirs) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        targetDirectory = f;
+                        if (!Environment.isExternalStorageEmulated(f)) {
+                            break;
+                        }
+                    } else
+                        targetDirectory = f;
+                }
+            } else {
+                targetDirectory = getExternalFilesDir(null);
+            }
+        }
+
+        entry.setFile(new File(targetDirectory, entry.file_name()));
 
         new DownloadCatalogTask(this, entry).execute();
     }

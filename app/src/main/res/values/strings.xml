@@ -34,7 +34,7 @@
     <string name="change_count">Change coins count</string>
     <string name="not_implemented_for_desktop">Not yet implemented for desktop version of collection</string>
     <string name="downloading">Downloading</string>
-    <string name="download">Download from web</string>
+    <string name="download">Download catalog</string>
     <string name="where_first">Where from get collection for working?</string>
     <string name="open">Open existent</string>
     <string name="replace">File already exists. Overwrite it?</string>
@@ -105,4 +105,5 @@
     <string name="auto_update">Check for updates automatically</string>
     <string name="available_update">Update is available</string>
     <string name="not_connected">Internet connection not available</string>
+    <string name="use_external">Save on external storage</string>
 </resources>
