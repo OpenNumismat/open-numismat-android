@@ -229,23 +229,60 @@ public class MainActivity extends ActionBarActivity {
     private void startDownloadDialog() {
         checkConnection();
 
+        DownloadEntry entry_m = new DownloadEntry("Commemorative US coins",
+                "2014-11-10", "23.5MB",
+                "std-commemorative-us.db",
+                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_mdpi.db");
+        DownloadEntry entry_h = new DownloadEntry("Commemorative US coins",
+                "2014-11-10", "25.7MB",
+                "std-commemorative-us.db",
+                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_hdpi.db");
+        DownloadEntry entry_xh = new DownloadEntry("Commemorative US coins",
+                "2014-11-10", "28.4MB",
+                "std-commemorative-us.db",
+                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db");
+        DownloadEntry entry_xxh = new DownloadEntry("Commemorative US coins",
+                "2014-11-10", "35.7MB",
+                "std-commemorative-us.db",
+                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxhdpi.db");
+        DownloadEntry entry_xxxh = new DownloadEntry("Commemorative US coins",
+                "2014-11-10", "45.2MB",
+                "std-commemorative-us.db",
+                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxxhdpi.db");
+
+        final DownloadEntry entry;
+        if (pref.getString("density", "").equals("MDPI")) {
+            entry = entry_m;
+        }
+        else if (pref.getString("density", "").equals("HDPI")) {
+            entry = entry_h;
+        }
+        else if (pref.getString("density", "").equals("XHDPI")) {
+            entry = entry_xh;
+        }
+        else if (pref.getString("density", "").equals("XXHDPI")) {
+            entry = entry_xxh;
+        }
+        else if (pref.getString("density", "").equals("XXXHDPI")) {
+            entry = entry_xxxh;
+        }
+        else {
+            entry = entry_xh;
+        }
+
         View view = View.inflate(this, R.layout.download_dialog, null);
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
 
         AlertDialog.Builder ad = new AlertDialog.Builder(this);
         ad.setTitle(R.string.download);
+        ad.setMessage(getString(R.string.download_ext, entry.title(), entry.size()));
         ad.setView(view);
-//        ad.setMessage(R.string.where_first);
         ad.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
                 SharedPreferences.Editor ed = pref.edit();
                 ed.putBoolean("use_external", checkBox.isChecked());
                 ed.apply();
 
-                final DownloadEntry entry = new DownloadEntry("title",
-                        "date", "size",
-                        "std-commemorative-us.db",
-                        "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db");
                 downloadCatalog(entry);
             }
         });

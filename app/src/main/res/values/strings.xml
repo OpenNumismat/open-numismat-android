@@ -106,4 +106,5 @@
     <string name="available_update">Update is available</string>
     <string name="not_connected">Internet connection not available</string>
     <string name="use_external">Save on external storage</string>
+    <string name="download_ext">Before start we should download %1$s catalog from web (%2$s)</string>
 </resources>

@@ -28,6 +28,9 @@ public class DownloadEntry {
     public String url() {
         return url;
     }
+    public String size() {
+        return size;
+    }
 
     public File file() {
         return file;
