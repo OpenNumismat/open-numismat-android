@@ -49,17 +49,17 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Integer> {
     protected void onPostExecute(Integer result) {
         pd.dismiss();
 
-        if (result == R.string.could_not_create_file) {
-            Toast toast = Toast.makeText(
-                    context, context.getString(R.string.could_not_create_file) + '\n' + entry.file().getPath(), Toast.LENGTH_LONG
-            );
-            toast.show();
-        }
-        else if (result == R.string.could_not_download_file) {
-            Toast toast = Toast.makeText(
-                    context, context.getString(R.string.could_not_download_file) + '\n' + entry.url(), Toast.LENGTH_LONG
-            );
-            toast.show();
+        if (result != 0) {
+            String text = "";
+
+            if (result == R.string.could_not_create_file) {
+                text = context.getString(R.string.could_not_create_file) + '\n' + entry.file().getPath();
+            }
+            else if (result == R.string.could_not_download_file) {
+                text = context.getString(R.string.could_not_download_file) + '\n' + entry.url();
+            }
+
+            Toast.makeText(context, text, Toast.LENGTH_LONG).show();
         }
     }
 

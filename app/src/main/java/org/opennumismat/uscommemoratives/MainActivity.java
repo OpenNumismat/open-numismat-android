@@ -136,19 +136,7 @@ public class MainActivity extends ActionBarActivity {
             openFile(path, true);
         }
         else {
-            AlertDialog.Builder ad = new AlertDialog.Builder(this);
-            ad.setMessage(R.string.where_first);
-            ad.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    final DownloadEntry entry = new DownloadEntry("title",
-                            "date", "size",
-                            "std-commemorative-us.db",
-                            "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db");
-                    downloadCatalog(entry);
-                }
-            });
-            ad.setCancelable(false);
-            ad.show();
+            startDownloadDialog();
         }
 
         prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -228,6 +216,24 @@ public class MainActivity extends ActionBarActivity {
 //        entry.file = new File(getExternalCacheDir(), entry.file_name);
 
         new DownloadUpdateTask(this, entry).execute();
+    }
+
+    private void startDownloadDialog() {
+        checkConnection();
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);
+        ad.setMessage(R.string.where_first);
+        ad.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                final DownloadEntry entry = new DownloadEntry("title",
+                        "date", "size",
+                        "std-commemorative-us.db",
+                        "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db");
+                downloadCatalog(entry);
+            }
+        });
+        ad.setCancelable(false);
+        ad.show();
     }
 
     private void downloadCatalog(DownloadEntry entry) {
@@ -482,6 +488,9 @@ public class MainActivity extends ActionBarActivity {
 
             if (result == 0) {
                 openFile(entry.file().getPath(), false);
+            }
+            else {
+                startDownloadDialog();
             }
         }
     }
