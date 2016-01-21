@@ -34,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -249,45 +250,59 @@ public class MainActivity extends ActionBarActivity {
                 "2014-11-10", "45.2MB",
                 "std-commemorative-us.db",
                 "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxxhdpi.db");
+        final DownloadEntry[] entries = {entry_m, entry_h, entry_xh, entry_xxh, entry_xxxh};
 
-        final DownloadEntry entry;
-        if (pref.getString("density", "").equals("MDPI")) {
-            entry = entry_m;
-        }
-        else if (pref.getString("density", "").equals("HDPI")) {
-            entry = entry_h;
-        }
-        else if (pref.getString("density", "").equals("XHDPI")) {
-            entry = entry_xh;
-        }
-        else if (pref.getString("density", "").equals("XXHDPI")) {
-            entry = entry_xxh;
-        }
-        else if (pref.getString("density", "").equals("XXXHDPI")) {
-            entry = entry_xxxh;
-        }
-        else {
-            entry = entry_xh;
-        }
+        int selection;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM)
+            selection = 0;
+        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH)
+            selection = 1;
+        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH)
+            selection = 2;
+        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH)
+            selection = 3;
+        else
+            selection = 4;
+        DownloadEntry entry = entries[selection];
 
         View view = View.inflate(this, R.layout.download_dialog, null);
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+        final Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        spinner.setSelection(selection);
 
         AlertDialog.Builder ad = new AlertDialog.Builder(this);
         ad.setTitle(R.string.download);
-        ad.setMessage(getString(R.string.download_ext, entry.title(), entry.size()));
         ad.setView(view);
+        ad.setMessage(getString(R.string.download_ext, entry.title(), entry.size()));
         ad.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
+                int pos = spinner.getSelectedItemPosition();
+
                 SharedPreferences.Editor ed = pref.edit();
                 ed.putBoolean("use_external", checkBox.isChecked());
+                String[] densities = getResources().getStringArray(R.array.densities);
+                ed.putString("density", densities[pos]);
                 ed.apply();
 
-                downloadCatalog(entry);
+                downloadCatalog(entries[pos]);
             }
         });
         ad.setCancelable(false);
-        ad.show();
+        final AlertDialog dialog = ad.show();
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                DownloadEntry entry = entries[position];
+                dialog.setMessage(getString(R.string.download_ext, entry.title(), entry.size()));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
     }
 
     private void downloadCatalog(DownloadEntry entry) {
