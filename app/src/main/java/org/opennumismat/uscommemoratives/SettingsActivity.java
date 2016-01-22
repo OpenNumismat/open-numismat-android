@@ -47,7 +47,7 @@ public class SettingsActivity extends ActionBarActivity implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals("sort_order") || key.equals("density")) {
+        if (key.equals("sort_order") || key.equals("filter_field")) {
             Preference pref = getPreference(key);
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());

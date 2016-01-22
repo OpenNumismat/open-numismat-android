@@ -115,26 +115,6 @@ public class MainActivity extends ActionBarActivity {
 
         // Set default density
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!pref.contains("density")) {
-            String density;
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM)
-                density = "MDPI";
-            else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH)
-                density = "HDPI";
-            else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH)
-                density = "XHDPI";
-            else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH)
-                density = "XXHDPI";
-            else
-                density = "XXXHDPI";
-
-            SharedPreferences.Editor ed = pref.edit();
-            ed.putString("density", density);
-            ed.apply();
-        }
-
         if (pref.getBoolean("auto_update", false))
             startService(new Intent(this, UpdateService.class));
 
@@ -202,10 +182,6 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_update) {
             if (checkConnection())
                 new DownloadListTask().execute(UPDATE_URL);
-            return true;
-        }
-        else if (id == R.id.action_preferences) {
-            startActivity(new Intent(this, PreferencesActivity.class));
             return true;
         }
         else if (id == R.id.action_settings) {

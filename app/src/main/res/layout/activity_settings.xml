@@ -12,31 +12,32 @@
         android:key="use_grading"
         android:defaultValue="false"
         android:title="@string/use_grading" />
+    <CheckBoxPreference
+        android:key="show_zero"
+        android:defaultValue="true"
+        android:summary="@string/show_zero_desc"
+        android:title="@string/show_zero" />
     <ListPreference
         android:key="sort_order"
         android:entries="@array/sorts"
         android:entryValues="@array/sort_values"
         android:defaultValue="0"
         android:summary="%s"
-        android:title="@string/sort_coins">
-    </ListPreference>
-    <CheckBoxPreference
-        android:key="show_zero"
-        android:defaultValue="true"
-        android:summary="@string/show_zero_desc"
-        android:title="@string/show_zero">
-    </CheckBoxPreference>
+        android:title="@string/sort_coins" />
     <ListPreference
+        android:key="filter_field"
+        android:entries="@array/filter_fields"
+        android:entryValues="@array/filter_field_vals"
+        android:defaultValue="series"
+        android:summary="%s"
+        android:title="@string/filter_field"
+        android:persistent="true" />
+    <!--ListPreference
         android:key="density"
         android:entries="@array/densities"
         android:entryValues="@array/densities"
         android:defaultValue="0"
         android:summary="%s"
         android:title="@string/density">
-    </ListPreference>
-    <!--EditTextPreference
-        android:key="address"
-        android:summary="Address for notifications"
-        android:title="Address">
-    </EditTextPreference-->
+    </ListPreference-->
 </PreferenceScreen>
