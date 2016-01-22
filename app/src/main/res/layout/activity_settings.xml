@@ -11,7 +11,13 @@
     <CheckBoxPreference
         android:key="use_grading"
         android:defaultValue="false"
+        android:summary="@string/use_grading_desc"
         android:title="@string/use_grading" />
+    <CheckBoxPreference
+        android:key="use_mint"
+        android:defaultValue="false"
+        android:summary="@string/use_mint_desc"
+        android:title="@string/use_mint" />
     <CheckBoxPreference
         android:key="show_zero"
         android:defaultValue="true"

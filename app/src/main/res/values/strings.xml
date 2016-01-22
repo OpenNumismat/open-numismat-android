@@ -61,7 +61,7 @@
         <item>XXHDPI</item>
         <item>XXXHDPI</item>
     </string-array>
-    <string name="use_grading">Use grading</string>
+    <string name="use_grading">Grading</string>
     <string name="ok">Ok</string>
     <string name="fine">Fine</string>
     <string name="very_fine">Very Fine</string>
@@ -81,12 +81,12 @@
     <string name="filter_empty_series">Without series</string>
     <string name="filter_field">Filter by</string>
     <string-array name="filter_fields">
-        <item>Country</item>
+        <!--item>Country</item-->
         <item>Denomination</item>
         <item>Series</item>
     </string-array>
     <string-array name="filter_field_vals">
-        <item>country</item>
+        <!--item>country</item-->
         <item>unit,value</item>
         <item>series</item>
     </string-array>
@@ -107,4 +107,7 @@
     <string name="not_connected">Internet connection not available</string>
     <string name="use_external">Save on external storage</string>
     <string name="download_ext">Before start we should download %1$s catalog from web (%2$s)</string>
+    <string name="use_grading_desc">Show coins grading</string>
+    <string name="use_mint">Mint</string>
+    <string name="use_mint_desc">Separate coins by mint</string>
 </resources>

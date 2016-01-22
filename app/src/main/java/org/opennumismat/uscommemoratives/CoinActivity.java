@@ -45,6 +45,7 @@ public class CoinActivity extends ActionBarActivity {
 
         GridLayout coin_details = (GridLayout) findViewById(R.id.coin_details);
         TextView text;
+        /*
         if (!coin.getCountry().isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.country) + COIN_DETAILS_DELIMITER);
@@ -55,6 +56,7 @@ public class CoinActivity extends ActionBarActivity {
             text.setText(coin.getCountry());
             coin_details.addView(text);
         }
+        */
         if (!coin.getDenomination().isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.denomination) + COIN_DETAILS_DELIMITER);
