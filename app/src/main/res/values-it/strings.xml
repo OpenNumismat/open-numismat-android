@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name">Open Numismat</string>
+  <string name="app_name">US Commemoratives</string>
   <string name="version">Versione</string>
   <string name="license">Licenza: GPL v3</string>
   <string name="title_section_statistics">Statistiche</string>
