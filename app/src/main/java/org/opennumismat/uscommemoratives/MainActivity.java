@@ -43,6 +43,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -137,7 +140,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Load latest collection
         String path = pref.getString(PREF_LAST_PATH, "");
-        if (!path.isEmpty() && false) {
+        if (!path.isEmpty()) {
             openFile(path, true);
         }
         else {
@@ -227,44 +230,66 @@ public class MainActivity extends ActionBarActivity {
         new DownloadUpdateTask(this, entry).execute();
     }
 
+    private JSONObject loadJSONFromAsset() {
+        JSONObject json;
+
+        try {
+            InputStream is = getAssets().open("list.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String str = new String(buffer, "UTF-8");
+            json = new JSONObject(str);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return json;
+    }
+
     private void startDownloadDialog() {
         checkConnection();
-
-        DownloadEntry entry_m = new DownloadEntry("Commemorative US coins",
-                "2014-11-10", "23.5MB",
-                "std-commemorative-us.db",
-                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_mdpi.db");
-        DownloadEntry entry_h = new DownloadEntry("Commemorative US coins",
-                "2014-11-10", "25.7MB",
-                "std-commemorative-us.db",
-                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_hdpi.db");
-        DownloadEntry entry_xh = new DownloadEntry("Commemorative US coins",
-                "2014-11-10", "28.4MB",
-                "std-commemorative-us.db",
-                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db");
-        DownloadEntry entry_xxh = new DownloadEntry("Commemorative US coins",
-                "2014-11-10", "35.7MB",
-                "std-commemorative-us.db",
-                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxhdpi.db");
-        DownloadEntry entry_xxxh = new DownloadEntry("Commemorative US coins",
-                "2014-11-10", "45.2MB",
-                "std-commemorative-us.db",
-                "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxxhdpi.db");
-        final DownloadEntry[] entries = {entry_m, entry_h, entry_xh, entry_xxh, entry_xxxh};
 
         int selection;
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM)
+        if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM) {
             selection = 0;
-        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH)
+        }
+        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH) {
             selection = 1;
-        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH)
+        }
+        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH) {
             selection = 2;
-        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH)
+        }
+        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH) {
             selection = 3;
-        else
+        }
+        else {
             selection = 4;
+        }
+
+        JSONObject json = loadJSONFromAsset();
+        List<DownloadEntry> entries_arr = new ArrayList<>();
+        try {
+            JSONArray cats = json.getJSONArray("catalogues");
+            JSONObject cat = cats.getJSONObject(0);
+            String[] densities = {"MDPI", "HDPI", "XHDPI", "XXHDPI", "XXXHDPI"};
+            for (String density: densities) {
+                entries_arr.add(
+                        new DownloadEntry(cat.getString("title"),
+                            cat.getString("date"), cat.getJSONObject("size").getString(density),
+                            cat.getString("file"), cat.getJSONObject("url").getString(density))
+                );
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final DownloadEntry[] entries = {entries_arr.get(0), entries_arr.get(1), entries_arr.get(2),
+                entries_arr.get(3), entries_arr.get(4)};
         DownloadEntry entry = entries[selection];
 
         View view = View.inflate(this, R.layout.download_dialog, null);

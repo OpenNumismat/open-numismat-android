@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "density": ["MDPI", "HDPI", "XHDPI", "XXHDPI", "XXXHDPI"],
+  "catalogues": [
+    {
+      "title": "Commemorative US coins",
+      "date": "2014-11-10",
+      "lang": "en",
+      "file": "std-commemorative-us.db",
+      "size": {"MDPI": "23.5MB", "HDPI": "25.7MB", "XHDPI": "28.4MB", "XXHDPI": "35.7MB", "XXXHDPI": "45.2MB"},
+      "url": {
+        "MDPI": "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_mdpi.db",
+        "HDPI": "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_hdpi.db",
+        "XHDPI": "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xhdpi.db",
+        "XXHDPI": "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxhdpi.db",
+        "XXXHDPI": "https://github.com/OpenNumismat/catalogues-mobile/releases/download/std-commemorative-us_2014-11-10/std-commemorative-us_xxxhdpi.db"
+      }
+    }
+  ]
+}
