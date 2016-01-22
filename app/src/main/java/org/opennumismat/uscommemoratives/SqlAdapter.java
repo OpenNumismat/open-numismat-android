@@ -39,13 +39,11 @@ import java.util.List;
  * Created by v.ignatov on 20.10.2014.
  */
 public class SqlAdapter extends BaseAdapter {
-    private static final int DB_VERSION = 6;
-    private static final int DB_NATIVE_VERSION = 3;
+    private static final int DB_VERSION = 1;
     public static final String DEFAULT_GRADE = "XF";
     public static final String DEFAULT_FILTER = "series";
 
     private int version;
-    private boolean isMobile;
     private Cursor cursor;
     private SQLiteDatabase database;
     private Context context;
@@ -129,8 +127,6 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         ImageView imageView = (ImageView) rowView.findViewById(R.id.coin_image);
-        if (!isMobile)
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setImageBitmap(coin.getImageBitmap());
 
         LinearLayout count_layout = (LinearLayout) rowView.findViewById(R.id.CountLayout);
@@ -292,23 +288,12 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getTotalCount(String filter) {
-        String sql = "SELECT id FROM coins";
+        ArrayList<String> params = new ArrayList<>();
+        String sql = "SELECT COUNT(id) FROM descriptions";
         if (filter != null) {
             sql += " WHERE " + makeFilter(filter.isEmpty(), filter_field);
-        }
-        sql += " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
-                " quality, material, variety, obversevar, reversevar, edgevar";
-
-        ArrayList<String> params = new ArrayList<>();
-        if (filter != null) {
-            if (filter_field.contains(",")) {
-                String[] parts = filter.split(" ");
-                params.add(parts.length > 1 ? parts[1] : "");
-                params.add(parts[0]);
-            } else {
-                if (!filter.isEmpty())
-                    params.add(filter);
-            }
+            if (!filter.isEmpty())
+                params.add(filter);
         }
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
@@ -316,7 +301,7 @@ public class SqlAdapter extends BaseAdapter {
         Cursor cursor = database.rawQuery(sql, params_arr);
         int count = 0;
         if(cursor.moveToFirst()) {
-            count = cursor.getCount();
+            count = cursor.getInt(0);
         }
         cursor.close();
 
@@ -328,24 +313,13 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getCollectedCount(String filter) {
-        String sql = "SELECT id FROM coins" +
-                " WHERE status='owned'";
-        if (filter != null) {
-            sql += " AND " + makeFilter(filter.isEmpty(), filter_field);
-        }
-        sql += " GROUP BY value, unit, year, country, mintmark, series, subjectshort," +
-                " quality, material, variety, obversevar, reversevar, edgevar";
-
         ArrayList<String> params = new ArrayList<>();
+        String sql = "SELECT COUNT(coins.id) FROM coins" +
+                " INNER JOIN descriptions ON descriptions.id=coins.description_id";
         if (filter != null) {
-            if (filter_field.contains(",")) {
-                String[] parts = filter.split(" ");
-                params.add(parts.length > 1 ? parts[1] : "");
-                params.add(parts[0]);
-            } else {
-                if (!filter.isEmpty())
-                    params.add(filter);
-            }
+            sql += " WHERE " + makeFilter(filter.isEmpty(), filter_field);
+            if (!filter.isEmpty())
+                params.add(filter);
         }
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
@@ -353,7 +327,7 @@ public class SqlAdapter extends BaseAdapter {
         Cursor cursor = database.rawQuery(sql, params_arr);
         int count = 0;
         if(cursor.moveToFirst()) {
-            count = cursor.getCount();
+            count = cursor.getInt(0);
         }
         cursor.close();
 
@@ -365,8 +339,7 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getCoinsCount() {
-        String sql = "SELECT COUNT(id) FROM coins" +
-                " WHERE status='owned'";
+        String sql = "SELECT COUNT(id) FROM coins";
         Cursor cursor = database.rawQuery(sql, new String[]{});
         int count = 0;
         if(cursor.moveToFirst()) {
@@ -405,15 +378,7 @@ public class SqlAdapter extends BaseAdapter {
             if (coin.count > 0) {
                 coin = getCoinsGrade(coin);
             }
-            if (isMobile) {
-                coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
-            } else {
-                Cursor extra_cursor = database.rawQuery("SELECT image FROM images WHERE id = ?",
-                        new String[]{Long.toString(cursor.getLong(Coin.IMAGE_COLUMN))});
-                if (extra_cursor.moveToFirst())
-                    coin.image = extra_cursor.getBlob(0);
-                extra_cursor.close();
-            }
+            coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
             return coin;
         } else {
             throw new CursorIndexOutOfBoundsException(
@@ -445,12 +410,12 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private Coin fillExtra(Coin coin) {
-        Cursor extra_cursor = database.rawQuery("SELECT subject, issuedate, mint," +
-                " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg," +
-                " price1, price2, price3, price4 FROM coins" +
-                " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
-                " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
-                " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
+        Cursor extra_cursor = database.rawQuery("SELECT subject, issuedate, mint, material," +
+                " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg" +
+                " FROM descriptions" +
+                " LEFT JOIN photos AS obverseimg ON descriptions.obverseimg = obverseimg.id" +
+                " LEFT JOIN photos AS reverseimg ON descriptions.reverseimg = reverseimg.id" +
+                " WHERE descriptions.id = ?", new String[]{Long.toString(coin.getId())});
         if (extra_cursor.moveToFirst())
             coin.addExtra(extra_cursor);
 
@@ -491,14 +456,6 @@ public class SqlAdapter extends BaseAdapter {
                 values.put("quality", coin.quality);
             if (!coin.material.isEmpty())
                 values.put("material", coin.material);
-            if (!coin.variety.isEmpty())
-                values.put("variety", coin.variety);
-            if (!coin.obversevar.isEmpty())
-                values.put("obversevar", coin.obversevar);
-            if (!coin.reversevar.isEmpty())
-                values.put("reversevar", coin.reversevar);
-            if (!coin.edgevar.isEmpty())
-                values.put("edgevar", coin.edgevar);
             values.put("grade", grade);
 
             database.insert("coins", null, values);
@@ -521,10 +478,6 @@ public class SqlAdapter extends BaseAdapter {
                 " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
                 " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
                 " AND " + makeFilter(coin.material.isEmpty(), "material") +
-                " AND " + makeFilter(coin.variety.isEmpty(), "variety") +
-                " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
-                " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
-                " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar") +
                 sql_grade +
                 " ORDER BY id DESC" + " LIMIT " + Integer.toString(count);
         ArrayList<String> params = new ArrayList<>();
@@ -559,38 +512,12 @@ public class SqlAdapter extends BaseAdapter {
         if (!coin.material.isEmpty()) {
             params.add(coin.material);
         }
-        if (!coin.variety.isEmpty()) {
-            params.add(coin.variety);
-        }
-        if (!coin.obversevar.isEmpty()) {
-            params.add(coin.obversevar);
-        }
-        if (!coin.reversevar.isEmpty()) {
-            params.add(coin.reversevar);
-        }
-        if (!coin.edgevar.isEmpty()) {
-            params.add(coin.edgevar);
-        }
 
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
         Cursor cursor = database.rawQuery(sql, params_arr);
 
         while (cursor.moveToNext()) {
-            if (!isMobile) {
-                long image_id = cursor.getLong(1);
-                if (image_id > 0)
-                    database.delete("images", "id = ?", new String[] {Long.toString(image_id)});
-
-                long photo_id;
-                photo_id = cursor.getLong(2);
-                if (photo_id > 0)
-                    database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
-                photo_id = cursor.getLong(3);
-                if (photo_id > 0)
-                    database.delete("photos", "id = ?", new String[] {Long.toString(photo_id)});
-            }
-
             long id = cursor.getLong(0);
             database.delete("coins", "id = ?", new String[] {Long.toString(id)});
         }
@@ -610,20 +537,13 @@ public class SqlAdapter extends BaseAdapter {
 
         ArrayList<String> params = new ArrayList<>();
         if (filter != null && !filter.isEmpty()) {
-            if (filter_field.contains(",")) {
-                String[] parts = filter.split(" ");
-                params.add(parts[1]);
-                params.add(parts[0]);
-            }
-            else
-                params.add(filter);
+            params.add(filter);
         }
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
 
-        sql = "SELECT year, COUNT(id) FROM coins" +
-                " WHERE status='demo'" +
-                (filter != null ? (" AND " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+        sql = "SELECT year, COUNT(id) FROM descriptions" +
+                (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
                 " GROUP BY year" +
                 " ORDER BY year " + order;
         Cursor group_cursor = database.rawQuery(sql, params_arr);
@@ -643,19 +563,16 @@ public class SqlAdapter extends BaseAdapter {
         group_cursor.close();
 
         //Список колонок базы, которые следует включить в результат
-        sql = "SELECT * FROM (SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
-                "quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
+        sql = "SELECT id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                "image FROM descriptions" +
                 (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
-                " ORDER BY image ASC" +
-                ") GROUP BY title, value, unit, year, country, mintmark, series, subjectshort," +
-                " quality, material, variety, obversevar, reversevar, edgevar" +
                 " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
         return database.rawQuery(sql, params_arr);
     }
 
     public List<String> getFilters() {
         if (filters == null) {
-            Cursor group_cursor = database.rawQuery("SELECT " + filter_field + " FROM coins" +
+            Cursor group_cursor = database.rawQuery("SELECT " + filter_field + " FROM descriptions" +
                     " GROUP BY " + filter_field +
                     " ORDER BY " + filter_field + " ASC", new String[]{});
 
@@ -679,9 +596,6 @@ public class SqlAdapter extends BaseAdapter {
                     empty_present = true;
                 }
                 else {
-                    if (filter_field.equals("unit,value"))
-                        val = group_cursor.getString(1) + " " + val;
-
                     filters.add(val);
                 }
             }
@@ -781,109 +695,26 @@ public class SqlAdapter extends BaseAdapter {
         MyDbErrorHandler databaseErrorHandler = new MyDbErrorHandler();
         database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE, databaseErrorHandler);
 
-        isMobile = false;
         String type = "unknown";
         Cursor type_cursor = database.rawQuery("SELECT value FROM settings" +
                 " WHERE title = 'Type'", new String[] {});
         if (type_cursor.moveToFirst()) {
             type = type_cursor.getString(0);
-            if (type.equals("Mobile"))
-                isMobile = true;
         }
         type_cursor.close();
+        if (!type.equals("MobilePro")) {
+            throw new SQLiteException("Wrong DB format");
+        }
 
         Cursor version_cursor = database.rawQuery("SELECT value FROM settings" +
                 " WHERE title = 'Version'", new String[] {});
         if (version_cursor.moveToFirst()) {
-            String version_str = version_cursor.getString(0);
-            if (version_str.equals("M2")) {
+            version = Integer.parseInt(version_cursor.getString(0));
+            if (version > DB_VERSION) {
                 Toast toast = Toast.makeText(
-                        context, R.string.old_db_version, Toast.LENGTH_LONG
+                        context, R.string.new_db_version, Toast.LENGTH_LONG
                 );
                 toast.show();
-                throw new SQLiteException("Wrong DB format");
-            }
-            else {
-                version = Integer.parseInt(version_cursor.getString(0));
-                if (isMobile) {
-                    if (version == 4) {
-                        database.execSQL("ALTER TABLE coins ADD COLUMN obversevar STRING");
-                        database.execSQL("ALTER TABLE coins ADD COLUMN reversevar STRING");
-                        database.execSQL("ALTER TABLE coins ADD COLUMN edgevar STRING");
-                        database.execSQL("UPDATE settings SET value='5' WHERE title='Version'");
-                        database.execSQL("UPDATE settings SET value='country' WHERE title='Filter' AND value='countries'");
-
-                        version = 5;
-
-                        Toast toast = Toast.makeText(
-                                context, R.string.upgraded_db_version, Toast.LENGTH_LONG
-                        );
-                        toast.show();
-                    }
-                    if (version == 5) {
-                        database.execSQL("UPDATE coins SET title=NULL WHERE title=''");
-                        database.execSQL("UPDATE coins SET subjectshort=NULL WHERE subjectshort=''");
-                        database.execSQL("UPDATE coins SET series=NULL WHERE series=''");
-                        database.execSQL("UPDATE coins SET country=NULL WHERE country=''");
-                        database.execSQL("UPDATE coins SET unit=NULL WHERE unit=''");
-                        database.execSQL("UPDATE coins SET mintmark=NULL WHERE mintmark=''");
-                        database.execSQL("UPDATE coins SET material=NULL WHERE material=''");
-                        database.execSQL("UPDATE coins SET quality=NULL WHERE quality=''");
-                        database.execSQL("UPDATE coins SET variety=NULL WHERE variety=''");
-                        database.execSQL("UPDATE coins SET obversevar=NULL WHERE obversevar=''");
-                        database.execSQL("UPDATE coins SET reversevar=NULL WHERE reversevar=''");
-                        database.execSQL("UPDATE coins SET edgevar=NULL WHERE edgevar=''");
-                        database.execSQL("UPDATE settings SET value='6' WHERE title='Version'");
-
-                        File f = new File(path);
-                        database.execSQL("INSERT INTO settings VALUES ('File', '" + f.getName() + "')");
-
-                        Cursor cursor = database.rawQuery("SELECT a.id, b.material FROM coins AS a" +
-                                " INNER JOIN coins b ON a.title = b.title WHERE a.status='owned'" +
-                                " AND b.status='demo' AND a.material IS NULL AND b.material NOT NULL",
-                                new String[]{});
-                        while (cursor.moveToNext()) {
-                            Long id = cursor.getLong(0);
-                            String material = cursor.getString(1);
-
-                            ContentValues values = new ContentValues();
-                            values.put("material", material);
-                            database.update("coins", values, "id=?", new String[] {Long.toString(id)});
-                        }
-                        cursor.close();
-
-                        version = 6;
-
-                        Toast toast = Toast.makeText(
-                                context, R.string.upgraded_db_version, Toast.LENGTH_LONG
-                        );
-                        toast.show();
-                    }
-
-                    if (version > DB_VERSION) {
-                        Toast toast = Toast.makeText(
-                                context, R.string.new_db_version, Toast.LENGTH_LONG
-                        );
-                        toast.show();
-                    }
-                }
-                else if (type.equals("OpenNumismat")) {
-                    if (version > DB_NATIVE_VERSION) {
-                        Toast toast = Toast.makeText(
-                                context, R.string.new_db_version, Toast.LENGTH_LONG
-                        );
-                        toast.show();
-                    }
-                    else if (version < DB_NATIVE_VERSION) {
-                        Toast toast = Toast.makeText(
-                                context, R.string.old_db_version, Toast.LENGTH_LONG
-                        );
-                        toast.show();
-                    }
-                }
-                else {
-                    throw new SQLiteException("Wrong DB format");
-                }
             }
         }
         else {
@@ -907,69 +738,8 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private long getCoinsCount(Coin coin) {
-        String sql = "SELECT COUNT(*) FROM coins WHERE status='owned'" +
-                " AND " + makeFilter(coin.title.isEmpty(), "title") +
-                " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
-                " AND " + makeFilter(coin.series.isEmpty(), "series") +
-                " AND " + makeFilter(coin.value == 0, "value") +
-                " AND " + makeFilter(coin.country.isEmpty(), "country") +
-                " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
-                " AND " + makeFilter(coin.year == 0, "year") +
-                " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
-                " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
-                " AND " + makeFilter(coin.material.isEmpty(), "material") +
-                " AND " + makeFilter(coin.variety.isEmpty(), "variety") +
-                " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
-                " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
-                " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar");
-        ArrayList<String> params = new ArrayList<>();
-
-        if (!coin.title.isEmpty()) {
-            params.add(coin.title);
-        }
-        if (!coin.subject_short.isEmpty()) {
-            params.add(coin.subject_short);
-        }
-        if (!coin.series.isEmpty()) {
-            params.add(coin.series);
-        }
-        if (coin.value > 0) {
-            params.add(Long.toString(coin.value));
-        }
-        if (!coin.country.isEmpty()) {
-            params.add(coin.country);
-        }
-        if (!coin.unit.isEmpty()) {
-            params.add(coin.unit);
-        }
-        if (coin.year > 0) {
-            params.add(Long.toString(coin.year));
-        }
-        if (!coin.mintmark.isEmpty()) {
-            params.add(coin.mintmark);
-        }
-        if (!coin.quality.isEmpty()) {
-            params.add(coin.quality);
-        }
-        if (!coin.material.isEmpty()) {
-            params.add(coin.material);
-        }
-        if (!coin.variety.isEmpty()) {
-            params.add(coin.variety);
-        }
-        if (!coin.obversevar.isEmpty()) {
-            params.add(coin.obversevar);
-        }
-        if (!coin.reversevar.isEmpty()) {
-            params.add(coin.reversevar);
-        }
-        if (!coin.edgevar.isEmpty()) {
-            params.add(coin.edgevar);
-        }
-
-        String[] params_arr = new String[params.size()];
-        params_arr = params.toArray(params_arr);
-        Cursor extra_cursor = database.rawQuery(sql, params_arr);
+        String sql = "SELECT COUNT(*) FROM coins WHERE description_id=?";
+        Cursor extra_cursor = database.rawQuery(sql, new String[]{Long.toString(coin.getId())});
 
         if (extra_cursor.moveToFirst())
             return extra_cursor.getLong(0);
@@ -990,10 +760,6 @@ public class SqlAdapter extends BaseAdapter {
                     " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
                     " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
                     " AND " + makeFilter(coin.material.isEmpty(), "material") +
-                    " AND " + makeFilter(coin.variety.isEmpty(), "variety") +
-                    " AND " + makeFilter(coin.obversevar.isEmpty(), "obversevar") +
-                    " AND " + makeFilter(coin.reversevar.isEmpty(), "reversevar") +
-                    " AND " + makeFilter(coin.edgevar.isEmpty(), "edgevar") +
                     " GROUP BY grade";
             ArrayList<String> params = new ArrayList<>();
 
@@ -1026,18 +792,6 @@ public class SqlAdapter extends BaseAdapter {
             }
             if (!coin.material.isEmpty()) {
                 params.add(coin.material);
-            }
-            if (!coin.variety.isEmpty()) {
-                params.add(coin.variety);
-            }
-            if (!coin.obversevar.isEmpty()) {
-                params.add(coin.obversevar);
-            }
-            if (!coin.reversevar.isEmpty()) {
-                params.add(coin.reversevar);
-            }
-            if (!coin.edgevar.isEmpty()) {
-                params.add(coin.edgevar);
             }
 
             String[] params_arr = new String[params.size()];
@@ -1202,14 +956,6 @@ public class SqlAdapter extends BaseAdapter {
                     values.put("quality", coin.quality);
                 if (!coin.material.isEmpty())
                     values.put("material", coin.material);
-                if (!coin.variety.isEmpty())
-                    values.put("variety", coin.variety);
-                if (!coin.obversevar.isEmpty())
-                    values.put("obversevar", coin.obversevar);
-                if (!coin.reversevar.isEmpty())
-                    values.put("reversevar", coin.reversevar);
-                if (!coin.edgevar.isEmpty())
-                    values.put("edgevar", coin.edgevar);
                 if (!coin.subject.isEmpty())
                     values.put("subject", coin.subject);
                 if (!coin.date.isEmpty())
@@ -1359,7 +1105,7 @@ public class SqlAdapter extends BaseAdapter {
 
         Resources res = context.getResources();
 
-        String sql = "SELECT " + filter_field + " FROM coins" +
+        String sql = "SELECT " + filter_field + " FROM descriptions" +
                 " GROUP BY " + filter_field +
                 " ORDER BY " + filter_field + " ASC";
         Cursor group_cursor = database.rawQuery(sql, new String[]{});
@@ -1367,10 +1113,7 @@ public class SqlAdapter extends BaseAdapter {
             if (group_cursor.isNull(0))
                 filter = "";
             else {
-                if (filter_field.contains(","))
-                    filter = group_cursor.getString(1) + ' ' + group_cursor.getString(0);
-                else
-                    filter = group_cursor.getString(0);
+                filter = group_cursor.getString(0);
             }
 
             collected = getCollectedCount(filter);

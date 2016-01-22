@@ -79,14 +79,14 @@
   <string name="filter_empty_series">Без серии</string>
   <string name="filter_field">Фильтр по</string>
   <string-array name="filter_fields">
-    <item>Страна</item>
+    <!--item>Страна</item-->
     <item>Номинал</item>
     <item>Серия</item>
   </string-array>
   <string-array name="filter_field_vals">
-    <item>country</item>
-    <item>unit,value</item>
-    <item>series</item>
+      <!--item>country</item-->
+      <item>unit</item>
+      <item>series</item>
   </string-array>
   <string-array name="navigation_drawer_items">
     <item>Коллекция</item>

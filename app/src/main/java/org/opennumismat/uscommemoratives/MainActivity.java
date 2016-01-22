@@ -462,6 +462,7 @@ public class MainActivity extends ActionBarActivity {
 
             adapter = new SqlAdapter(this, path);
         } catch (SQLiteException e) {
+            e.printStackTrace();
             Toast toast = Toast.makeText(
                     getApplicationContext(), getString(R.string.could_not_open_database) + '\n' + path, Toast.LENGTH_LONG
             );

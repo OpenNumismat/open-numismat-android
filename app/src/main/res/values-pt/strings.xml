@@ -79,14 +79,14 @@
   <string name="filter_empty_series">Sem séries</string>
   <string name="filter_field">Filtrar por</string>
   <string-array name="filter_fields">
-    <item>País</item>
+    <!--item>País</item-->
     <item>Denominação</item>
     <item>Série</item>
   </string-array>
   <string-array name="filter_field_vals">
-    <item>country</item>
-    <item>unit,value</item>
-    <item>series</item>
+      <!--item>country</item-->
+      <item>unit</item>
+      <item>series</item>
   </string-array>
   <string-array name="navigation_drawer_items">
     <item>Coleção</item>
