@@ -6,12 +6,12 @@ import java.util.Locale;
  * Created by v.ignatov on 20.11.2014.
  */
 public class Grading {
-    public String grade;
+    public int grade;
     public String title;
     public String desc;
     public int count;
 
-    public Grading(String grade, String title, String desc) {
+    public Grading(int grade, String title, String desc) {
         this.grade = grade;
         this.title = title;
         this.desc = desc;

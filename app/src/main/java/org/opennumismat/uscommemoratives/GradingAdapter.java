@@ -45,16 +45,16 @@ public class GradingAdapter extends ArrayAdapter<Grading> {
             count.setVisibility(View.VISIBLE);
 
             GradientDrawable back = (GradientDrawable) count.getBackground();
-            if (grading.grade.equals("Unc"))
+            if (grading.grade >= 60)       // Unc
                 back.setColor(getContext().getResources().getColor(R.color.unc));
-            else if (grading.grade.equals("AU"))
+            else if (grading.grade >= 50)  // AU
                 back.setColor(getContext().getResources().getColor(R.color.au));
-            else if (grading.grade.equals("VF"))
-                back.setColor(getContext().getResources().getColor(R.color.vf));
-            else if (grading.grade.equals("F"))
-                back.setColor(getContext().getResources().getColor(R.color.f));
-            else
+            else if (grading.grade >= 40)  // XF
                 back.setColor(getContext().getResources().getColor(R.color.xf));
+            else if (grading.grade >= 25)  // VF
+                back.setColor(getContext().getResources().getColor(R.color.vf));
+            else
+                back.setColor(getContext().getResources().getColor(R.color.f));
         } else {
             if (!pref.getBoolean("show_zero", true))
                 count.setVisibility(View.GONE);

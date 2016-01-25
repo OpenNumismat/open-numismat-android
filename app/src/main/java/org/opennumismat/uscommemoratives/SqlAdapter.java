@@ -31,7 +31,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,12 @@ import java.util.List;
  */
 public class SqlAdapter extends BaseAdapter {
     private static final int DB_VERSION = 1;
-    public static final String DEFAULT_GRADE = "XF";
+    public static final int GRADE_UNC = 60;
+    public static final int GRADE_AU = 55;
+    public static final int GRADE_XF = 45;
+    public static final int GRADE_VF = 35;
+    public static final int GRADE_F = 15;
+    public static final int GRADE_DEFAULT = GRADE_XF;
     public static final String DEFAULT_FILTER = "series";
 
     private int version;
@@ -104,16 +108,16 @@ public class SqlAdapter extends BaseAdapter {
             count.setVisibility(View.VISIBLE);
 
             GradientDrawable back = (GradientDrawable) count.getBackground();
-            if (coin.grade.equals("Unc"))
+            if (coin.grade >= 60)       // Unc
                 back.setColor(context.getResources().getColor(R.color.unc));
-            else if (coin.grade.equals("AU"))
+            else if (coin.grade >= 50)  // AU
                 back.setColor(context.getResources().getColor(R.color.au));
-            else if (coin.grade.equals("VF"))
-                back.setColor(context.getResources().getColor(R.color.vf));
-            else if (coin.grade.equals("F"))
-                back.setColor(context.getResources().getColor(R.color.f));
-            else
+            else if (coin.grade >= 40)  // XF
                 back.setColor(context.getResources().getColor(R.color.xf));
+            else if (coin.grade >= 25)  // VF
+                back.setColor(context.getResources().getColor(R.color.vf));
+            else
+                back.setColor(context.getResources().getColor(R.color.f));
         } else {
             if (!pref.getBoolean("show_zero", true))
                 count.setVisibility(View.GONE);
@@ -139,7 +143,7 @@ public class SqlAdapter extends BaseAdapter {
             View.OnClickListener {
 
         private Coin coin;
-        private String selected_grade;
+        private int selected_grade;
         private int old_count;
         private Grading grading;
         private GradingAdapter grading_adapter;
@@ -175,19 +179,19 @@ public class SqlAdapter extends BaseAdapter {
 
                 Grading grade;
                 Resources res = context.getResources();
-                grade = new Grading("Unc", res.getString(R.string.Unc), res.getString(R.string.uncirculated));
+                grade = new Grading(GRADE_UNC, res.getString(R.string.Unc), res.getString(R.string.uncirculated));
                 grade.count = coin.count_unc;
                 grading_adapter.add(grade);
-                grade = new Grading("AU", res.getString(R.string.AU), res.getString(R.string.about_uncirculated));
+                grade = new Grading(GRADE_AU, res.getString(R.string.AU), res.getString(R.string.about_uncirculated));
                 grade.count = coin.count_au;
                 grading_adapter.add(grade);
-                grade = new Grading("XF", res.getString(R.string.XF), res.getString(R.string.extremely_fine));
+                grade = new Grading(GRADE_XF, res.getString(R.string.XF), res.getString(R.string.extremely_fine));
                 grade.count = coin.count_xf;
                 grading_adapter.add(grade);
-                grade = new Grading("VF", res.getString(R.string.VF), res.getString(R.string.very_fine));
+                grade = new Grading(GRADE_VF, res.getString(R.string.VF), res.getString(R.string.very_fine));
                 grade.count = coin.count_vf;
                 grading_adapter.add(grade);
-                grade = new Grading("F", res.getString(R.string.F), res.getString(R.string.fine));
+                grade = new Grading(GRADE_F, res.getString(R.string.F), res.getString(R.string.fine));
                 grade.count = coin.count_f;
                 grading_adapter.add(grade);
 
@@ -223,7 +227,7 @@ public class SqlAdapter extends BaseAdapter {
                 old_count = grade.count;
             }
             else {
-                selected_grade = DEFAULT_GRADE;
+                selected_grade = GRADE_DEFAULT;
                 old_count = (int) coin.count;
             }
             grading = grade;
@@ -420,7 +424,7 @@ public class SqlAdapter extends BaseAdapter {
         return coin;
     }
 
-    private void addCoin(Coin coin, int count, String grade) {
+    private void addCoin(Coin coin, int count, int grade) {
         Time now = new Time();
         now.setToNow();
         String timestamp = now.format("%Y-%m-%dT%H:%M:%SZ");
@@ -437,12 +441,13 @@ public class SqlAdapter extends BaseAdapter {
         }
     }
 
-    private void removeCoin(Coin coin, int count, String grade) {
+    private void removeCoin(Coin coin, int count, int grade) {
         ArrayList<String> params = new ArrayList<>();
         params.add(Long.toString(coin.getId()));
         String sql_grade = "";
         if (pref.getBoolean("use_grading", false)) {
-            sql_grade = " AND grade = '" + grade + "'";
+            sql_grade = " AND grade=?";
+            params.add(Integer.toString(grade));
         }
         params.add(Integer.toString(count));
 
@@ -677,98 +682,35 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     private Coin getCoinsGrade(Coin coin) {
+        int grade = GRADE_DEFAULT;
+
         if (pref.getBoolean("use_grading", false)) {
-            String sql = "SELECT grade, COUNT(grade) FROM coins WHERE status='owned'" +
-                    " AND " + makeFilter(coin.title.isEmpty(), "title") +
-                    " AND " + makeFilter(coin.subject_short.isEmpty(), "subjectshort") +
-                    " AND " + makeFilter(coin.series.isEmpty(), "series") +
-                    " AND " + makeFilter(coin.value == 0, "value") +
-                    " AND " + makeFilter(coin.country.isEmpty(), "country") +
-                    " AND " + makeFilter(coin.unit.isEmpty(), "unit") +
-                    " AND " + makeFilter(coin.year == 0, "year") +
-                    " AND " + makeFilter(coin.mintmark.isEmpty(), "mintmark") +
-                    " AND " + makeFilter(coin.quality.isEmpty(), "quality") +
-                    " AND " + makeFilter(coin.material.isEmpty(), "material") +
-                    " GROUP BY grade";
-            ArrayList<String> params = new ArrayList<>();
+            coin.count_unc = coin.count_au = coin.count_xf = coin.count_vf = coin.count_f = 0;
 
-            if (!coin.title.isEmpty()) {
-                params.add(coin.title);
-            }
-            if (!coin.subject_short.isEmpty()) {
-                params.add(coin.subject_short);
-            }
-            if (!coin.series.isEmpty()) {
-                params.add(coin.series);
-            }
-            if (coin.value > 0) {
-                params.add(Long.toString(coin.value));
-            }
-            if (!coin.country.isEmpty()) {
-                params.add(coin.country);
-            }
-            if (!coin.unit.isEmpty()) {
-                params.add(coin.unit);
-            }
-            if (coin.year > 0) {
-                params.add(Long.toString(coin.year));
-            }
-            if (!coin.mintmark.isEmpty()) {
-                params.add(coin.mintmark);
-            }
-            if (!coin.quality.isEmpty()) {
-                params.add(coin.quality);
-            }
-            if (!coin.material.isEmpty()) {
-                params.add(coin.material);
-            }
-
-            String[] params_arr = new String[params.size()];
-            params_arr = params.toArray(params_arr);
-            Cursor grading_cursor = database.rawQuery(sql, params_arr);
-
-            String grade;
+            String sql = "SELECT grade, COUNT(grade) FROM coins WHERE description_id=? GROUP BY grade ORDER BY grade ASC";
+            Cursor grading_cursor = database.rawQuery(sql, new String[]{Long.toString(coin.getId())});
             while(grading_cursor.moveToNext()) {
-                if (grading_cursor.isNull(0) || grading_cursor.getString(0).isEmpty()) {
+                if (grading_cursor.isNull(0) || grading_cursor.getInt(0) == 0) {
                     coin.count_xf += grading_cursor.getInt(1);
                     continue;
                 }
 
-                grade = grading_cursor.getString(0);
-                switch (grade) {
-                    case "Unc":
-                        coin.count_unc = grading_cursor.getInt(1);
-                        break;
-                    case "AU":
-                        coin.count_au = grading_cursor.getInt(1);
-                        break;
-                    case "XF":
-                        coin.count_xf += grading_cursor.getInt(1);
-                        break;
-                    case "VF":
-                        coin.count_vf = grading_cursor.getInt(1);
-                        break;
-                    case "F":
-                        coin.count_f = grading_cursor.getInt(1);
-                        break;
-                }
+                grade = grading_cursor.getInt(0);
+                if (grade >= 60)       // Unc
+                    coin.count_unc += grading_cursor.getInt(1);
+                else if (grade >= 50)  // AU
+                    coin.count_au += grading_cursor.getInt(1);
+                else if (grade >= 40)  // XF
+                    coin.count_xf += grading_cursor.getInt(1);
+                else if (grade >= 25)  // VF
+                    coin.count_vf += grading_cursor.getInt(1);
+                else
+                    coin.count_f += grading_cursor.getInt(1);
             }
             grading_cursor.close();
+        }
 
-            if (coin.count_unc > 0)
-                coin.grade = "Unc";
-            else if (coin.count_au > 0)
-                coin.grade = "AU";
-            else if (coin.count_xf > 0)
-                coin.grade = "XF";
-            else if (coin.count_vf > 0)
-                coin.grade = "VF";
-            else if (coin.count_f > 0)
-                coin.grade = "F";
-        }
-        else {
-            coin.grade = DEFAULT_GRADE;
-        }
+        coin.grade = grade;
 
         return coin;
     }

@@ -53,7 +53,7 @@ public class Coin implements Parcelable {
     public byte[] obverse_image;
     public byte[] reverse_image;
     public String quality;
-    public String grade;
+    public int grade;
     public long count;
     public int count_unc;
     public int count_au;
@@ -102,7 +102,7 @@ public class Coin implements Parcelable {
 
         count = count_unc = count_au = count_xf = count_vf = count_f = 0;
         price_unc = price_xf = price_vf = price_f = "";
-        grade = SqlAdapter.DEFAULT_GRADE;
+        grade = SqlAdapter.GRADE_DEFAULT;
     }
 
     private Coin(Parcel in) {
