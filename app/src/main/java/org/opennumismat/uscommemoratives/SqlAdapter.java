@@ -434,8 +434,7 @@ public class SqlAdapter extends BaseAdapter {
             ContentValues values = new ContentValues();
             values.put("description_id", coin.getId());
             values.put("grade", grade);
-// TODO: Uncomment
-//            values.put("createdat", timestamp);
+            values.put("createdat", timestamp);
 
             database.insert("coins", null, values);
         }
@@ -809,8 +808,6 @@ public class SqlAdapter extends BaseAdapter {
                     values.put("subjectshort", coin.subject_short);
                 if (!coin.series.isEmpty())
                     values.put("series", coin.series);
-                if (coin.value != 0)
-                    values.put("value", coin.value);
                 if (!coin.country.isEmpty())
                     values.put("country", coin.country);
                 if (!coin.unit.isEmpty())

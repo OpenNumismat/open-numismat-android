@@ -37,7 +37,6 @@ public class Coin implements Parcelable {
 
     private long id;
     public String title;
-    public long value;
     public String unit;
     public String country;
     public long year;
@@ -110,7 +109,6 @@ public class Coin implements Parcelable {
 
         id = in.readLong();
         title = in.readString();
-        value = in.readLong();
         unit = in.readString();
         country = in.readString();
         year = in.readLong();
@@ -160,7 +158,6 @@ public class Coin implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
         out.writeString(title);
-        out.writeLong(value);
         out.writeString(unit);
         out.writeString(country);
         out.writeLong(year);
@@ -203,7 +200,10 @@ public class Coin implements Parcelable {
     }
 
     public String getTitle() {
-        return title;
+        if (mintmark.isEmpty())
+            return year + " " + title;
+        else
+            return year + "-" + mintmark + " " + title;
     }
     public String getCountry() {
         return country;
@@ -222,7 +222,7 @@ public class Coin implements Parcelable {
         String desc = "";
         if (!subject_short.isEmpty())
             desc += subject_short + ", ";
-        desc += value + " " + unit;
+        desc += unit;
         if (year > 0)
             desc += ", " + year;
         if (!mintmark.isEmpty())
@@ -241,12 +241,7 @@ public class Coin implements Parcelable {
             return "";
     }
     public String getDenomination() {
-        if (value > 0 && !unit.isEmpty())
-            return Long.toString(value) + ' ' + unit.toLowerCase();
-        else if (value > 0)
-            return Long.toString(value);
-        else
-            return unit.toLowerCase();
+        return unit;
     }
     public String getYear() {
         if (year > 0)
