@@ -496,10 +496,10 @@ public class SqlAdapter extends BaseAdapter {
         group_cursor.close();
 
         //Список колонок базы, которые следует включить в результат
-        sql = "SELECT id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
-                "image FROM descriptions" +
+        sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                "photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
                 (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
-                " ORDER BY year " + order + ", issuedate " + order + ", id ASC";
+                " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id ASC";
         return database.rawQuery(sql, params_arr);
     }
 

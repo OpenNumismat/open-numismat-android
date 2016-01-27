@@ -110,4 +110,7 @@
     <string name="use_grading_desc">Show coins grading</string>
     <string name="use_mint">Mint</string>
     <string name="use_mint_desc">Separate coins by mint</string>
+    <string name="cant_open">Could not open catalog</string>
+    <string name="try_again">Try again</string>
+    <string name="download_new">Download new</string>
 </resources>
