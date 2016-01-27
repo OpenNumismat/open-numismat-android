@@ -480,9 +480,21 @@ public class MainActivity extends ActionBarActivity {
         }
         else {
             if (first) {
-                SharedPreferences.Editor ed = pref.edit();
-                ed.remove(PREF_LAST_PATH);
-                ed.commit();
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                ad.setMessage(R.string.could_not_open_database);
+                ad.setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        String path = pref.getString(PREF_LAST_PATH, "");
+                        openFile(path, true);
+                    }
+                });
+                ad.setNegativeButton(R.string.download_new, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        startDownloadDialog();
+                    }
+                });
+                ad.setCancelable(false);
+                ad.show();
             }
         }
     }
