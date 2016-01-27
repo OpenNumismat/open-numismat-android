@@ -59,7 +59,6 @@
         <item>HDPI</item>
         <item>XHDPI</item>
         <item>XXHDPI</item>
-        <item>XXXHDPI</item>
     </string-array>
     <string name="use_grading">Grading</string>
     <string name="ok">Ok</string>

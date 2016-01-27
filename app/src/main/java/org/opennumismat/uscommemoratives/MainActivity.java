@@ -240,11 +240,8 @@ public class MainActivity extends ActionBarActivity {
         else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH) {
             selection = 2;
         }
-        else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH) {
-            selection = 3;
-        }
         else {
-            selection = 4;
+            selection = 3;
         }
 
         JSONObject json = loadJSONFromAsset();
@@ -252,7 +249,7 @@ public class MainActivity extends ActionBarActivity {
         try {
             JSONArray cats = json.getJSONArray("catalogues");
             JSONObject cat = cats.getJSONObject(0);
-            String[] densities = {"MDPI", "HDPI", "XHDPI", "XXHDPI", "XXXHDPI"};
+            String[] densities = {"MDPI", "HDPI", "XHDPI", "XXHDPI"};
             for (String density: densities) {
                 entries_arr.add(
                         new DownloadEntry(cat.getString("title"),
@@ -265,7 +262,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         final DownloadEntry[] entries = {entries_arr.get(0), entries_arr.get(1), entries_arr.get(2),
-                entries_arr.get(3), entries_arr.get(4)};
+                entries_arr.get(3)};
         DownloadEntry entry = entries[selection];
 
         View view = View.inflate(this, R.layout.download_dialog, null);
