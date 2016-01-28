@@ -292,12 +292,26 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getTotalCount(String filter) {
+        String sql_filter = "";
+        String sql_mint = "";
+        String sql_part = "";
+
+        if (filter != null)
+            sql_filter = makeFilter(filter.isEmpty(), filter_field);
+        if (!pref.getBoolean("use_mint", false))
+            sql_mint = "mintmark != 'P'";
+        if (!sql_filter.isEmpty() || !sql_mint.isEmpty())
+            sql_part += " WHERE ";
+        sql_part += sql_filter;
+        if (!sql_filter.isEmpty() && !sql_mint.isEmpty())
+            sql_part += " AND ";
+        sql_part += sql_mint;
+
         ArrayList<String> params = new ArrayList<>();
         String sql = "SELECT COUNT(id) FROM descriptions";
-        if (filter != null) {
-            sql += " WHERE " + makeFilter(filter.isEmpty(), filter_field);
-            if (!filter.isEmpty())
-                params.add(filter);
+        sql += sql_part;
+        if (filter != null && !filter.isEmpty()) {
+            params.add(filter);
         }
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
@@ -317,13 +331,27 @@ public class SqlAdapter extends BaseAdapter {
     }
 
     public int getCollectedCount(String filter) {
+        String sql_filter = "";
+        String sql_mint = "";
+        String sql_part = "";
+
+        if (filter != null)
+            sql_filter = makeFilter(filter.isEmpty(), filter_field);
+        if (!pref.getBoolean("use_mint", false))
+            sql_mint = "mintmark != 'P'";
+        if (!sql_filter.isEmpty() || !sql_mint.isEmpty())
+            sql_part += " WHERE ";
+        sql_part += sql_filter;
+        if (!sql_filter.isEmpty() && !sql_mint.isEmpty())
+            sql_part += " AND ";
+        sql_part += sql_mint;
+
         ArrayList<String> params = new ArrayList<>();
         String sql = "SELECT coins.id FROM coins" +
                 " LEFT JOIN descriptions ON descriptions.id=coins.description_id";
-        if (filter != null) {
-            sql += " WHERE " + makeFilter(filter.isEmpty(), filter_field);
-            if (!filter.isEmpty())
-                params.add(filter);
+        sql += sql_part;
+        if (filter != null && !filter.isEmpty()) {
+            params.add(filter);
         }
         sql += " GROUP BY descriptions.id";
         String[] params_arr = new String[params.size()];
@@ -375,7 +403,7 @@ public class SqlAdapter extends BaseAdapter {
     @Override
     public Coin getItem(int position) {
         if (cursor.moveToPosition(positionToCursor(position))) {
-            Coin coin = new Coin(cursor);
+            Coin coin = new Coin(cursor, pref.getBoolean("use_mint", false));
             coin.count = getCoinsCount(coin);
             if (coin.count > 0) {
                 coin = getCoinsGrade(coin);
@@ -402,7 +430,7 @@ public class SqlAdapter extends BaseAdapter {
 
     public Coin getFullItem(int position) {
         if (cursor.moveToPosition(positionToCursor(position))) {
-            Coin coin = new Coin(cursor);
+            Coin coin = new Coin(cursor, pref.getBoolean("use_mint", false));
 
             return fillExtra(coin);
         } else {
@@ -461,7 +489,21 @@ public class SqlAdapter extends BaseAdapter {
 
     public Cursor getAllEntries() {
         String sql;
+        String sql_filter = "";
+        String sql_mint = "";
+        String sql_part = "";
         String order;
+
+        if (filter != null)
+            sql_filter = makeFilter(filter.isEmpty(), filter_field);
+        if (!pref.getBoolean("use_mint", false))
+            sql_mint = "mintmark != 'P'";
+        if (!sql_filter.isEmpty() || !sql_mint.isEmpty())
+            sql_part += " WHERE ";
+        sql_part += sql_filter;
+        if (!sql_filter.isEmpty() && !sql_mint.isEmpty())
+            sql_part += " AND ";
+        sql_part += sql_mint;
 
         if (pref.getString("sort_order", "0").equals("0"))
             order = "ASC";
@@ -476,7 +518,7 @@ public class SqlAdapter extends BaseAdapter {
         params_arr = params.toArray(params_arr);
 
         sql = "SELECT year, COUNT(id) FROM descriptions" +
-                (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
+                sql_part +
                 " GROUP BY year" +
                 " ORDER BY year " + order;
         Cursor group_cursor = database.rawQuery(sql, params_arr);
@@ -498,8 +540,8 @@ public class SqlAdapter extends BaseAdapter {
         //Список колонок базы, которые следует включить в результат
         sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
                 "photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
-                (filter != null ? (" WHERE " + makeFilter(filter.isEmpty(), filter_field)) : "") +
-                " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id ASC";
+                sql_part +
+                " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id " + order;
         return database.rawQuery(sql, params_arr);
     }
 
@@ -771,7 +813,7 @@ public class SqlAdapter extends BaseAdapter {
                 Cursor cursor = patch_db.rawQuery(sql, new String[] {id.toString()});
                 if (!cursor.moveToFirst())
                     return false;
-                coin = new Coin(cursor);
+                coin = new Coin(cursor, pref.getBoolean("use_mint", false));
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
 
                 Cursor extra_cursor = patch_db.rawQuery("SELECT subject, issuedate, mint," +

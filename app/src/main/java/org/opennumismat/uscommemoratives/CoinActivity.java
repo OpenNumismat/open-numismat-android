@@ -107,14 +107,15 @@ public class CoinActivity extends ActionBarActivity {
             text.setText(coin.getYear());
             coin_details.addView(text);
         }
-        if (!coin.getMint().isEmpty()) {
+        String mint = coin.getMint();
+        if (!mint.isEmpty()) {
             text = new TextView(this);
             text.setText(getString(R.string.mint) + COIN_DETAILS_DELIMITER);
             coin_details.addView(text);
 
             text = new TextView(this);
             text.setTypeface(null, Typeface.BOLD);
-            text.setText(coin.getMint());
+            text.setText(mint);
             coin_details.addView(text);
         }
         if (!coin.getMintage().isEmpty()) {

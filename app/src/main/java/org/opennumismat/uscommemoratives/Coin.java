@@ -35,6 +35,7 @@ public class Coin implements Parcelable {
     private static final int OBVERSE_IMAGE_EX_COLUMN = 4;
     private static final int REVERSE_IMAGE_EX_COLUMN = 5;
 
+    private boolean use_mint;
     private long id;
     public String title;
     public String unit;
@@ -64,7 +65,9 @@ public class Coin implements Parcelable {
     public String price_vf;
     public String price_f;
 
-    public Coin(Cursor cursor) {
+    public Coin(Cursor cursor, boolean use_mint) {
+        this.use_mint = use_mint;
+
         id = cursor.getLong(ID_COLUMN);
         if (cursor.isNull(TITLE_COLUMN))
             title = "";
@@ -82,11 +85,11 @@ public class Coin implements Parcelable {
             year = 0;
         else
             year = cursor.getLong(YEAR_COLUMN);
-        if (cursor.isNull(MINTMARK_COLUMN))
+        if (!use_mint || cursor.isNull(MINTMARK_COLUMN))
             mintmark = "";
         else
             mintmark = cursor.getString(MINTMARK_COLUMN);
-        if (cursor.isNull(MINTAGE_COLUMN))
+        if (!use_mint || cursor.isNull(MINTAGE_COLUMN))
             mintage = 0;
         else
             mintage = cursor.getLong(MINTAGE_COLUMN);
@@ -350,7 +353,7 @@ public class Coin implements Parcelable {
             date = "";
         else
             date = cursor.getString(DATE_EX_COLUMN);
-        if (cursor.isNull(MINT_EX_COLUMN))
+        if (!use_mint || cursor.isNull(MINT_EX_COLUMN))
             mint = "";
         else
             mint = cursor.getString(MINT_EX_COLUMN);

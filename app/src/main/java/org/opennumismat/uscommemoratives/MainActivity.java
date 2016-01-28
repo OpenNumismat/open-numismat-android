@@ -131,7 +131,7 @@ public class MainActivity extends ActionBarActivity {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
                                                   String key) {
                 if (adapter != null) {
-                    if (key.equals("sort_order")) {
+                    if (key.equals("sort_order") || key.equals("use_mint")) {
                         adapter.refresh();
                     } else if (key.equals("filter_field")) {
                         adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
@@ -478,7 +478,7 @@ public class MainActivity extends ActionBarActivity {
         else {
             if (first) {
                 AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
-                ad.setMessage(R.string.could_not_open_database);
+                ad.setMessage(R.string.cant_open);
                 ad.setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int arg1) {
                         String path = pref.getString(PREF_LAST_PATH, "");
