@@ -12,11 +12,11 @@ android {
     compileSdkVersion 23
     buildToolsVersion '20.0.0'
     defaultConfig {
-        applicationId 'org.opennumismat.uscommemoratives'
+        applicationId 'org.opennumismat.uscoincollection'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 7
-        versionName '0.5'
+        versionCode 1
+        versionName '0.1'
         signingConfig signingConfigs.config
     }
     buildTypes {

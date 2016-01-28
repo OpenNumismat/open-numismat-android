@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name">US Commemoratives</string>
-  <string name="version">Version: 0.4</string>
+  <string name="app_name">US Coin Collection</string>
+  <string name="version">Version</string>
   <string name="license">License: GPL v3</string>
   <string name="title_section_statistics">Statistics</string>
   <string name="title_section_about">O nas</string>
