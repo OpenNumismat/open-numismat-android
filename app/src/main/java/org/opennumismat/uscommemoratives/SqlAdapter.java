@@ -807,17 +807,17 @@ public class SqlAdapter extends BaseAdapter {
             if (action.equals("add")) {
                 Long id = patch_cursor.getLong(1);
 
-                sql = "SELECT id, title, value, unit, year, country, mintmark, mintage, series, subjectshort," +
-                        " quality, material, variety, obversevar, reversevar, edgevar, image, issuedate FROM coins" +
+                sql = "SELECT id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                        " material, image, issuedate FROM descriptions" +
                         " WHERE id=?";
                 Cursor cursor = patch_db.rawQuery(sql, new String[] {id.toString()});
                 if (!cursor.moveToFirst())
                     return false;
-                coin = new Coin(cursor, pref.getBoolean("use_mint", false));
+                coin = new Coin(cursor, true);
                 coin.image = cursor.getBlob(Coin.IMAGE_COLUMN);
 
                 Cursor extra_cursor = patch_db.rawQuery("SELECT subject, issuedate, mint," +
-                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM coins" +
+                        " obverseimg.image AS obverseimg, reverseimg.image AS reverseimg FROM descriptions" +
                         " LEFT JOIN photos AS obverseimg ON coins.obverseimg = obverseimg.id" +
                         " LEFT JOIN photos AS reverseimg ON coins.reverseimg = reverseimg.id" +
                         " WHERE coins.id = ?", new String[]{Long.toString(coin.getId())});
@@ -837,9 +837,6 @@ public class SqlAdapter extends BaseAdapter {
                     return false;
 
                 values = new ContentValues();
-                values.put("status", "demo");
-                values.put("updatedat", timestamp);
-                values.put("createdat", timestamp);
                 values.put("image", coin.image);
                 values.put("obverseimg", obvere_id);
                 values.put("reverseimg", revere_id);
@@ -862,8 +859,6 @@ public class SqlAdapter extends BaseAdapter {
                     values.put("mint", coin.mint);
                 if (coin.mintage != 0)
                     values.put("mintage", coin.mintage);
-                if (!coin.quality.isEmpty())
-                    values.put("quality", coin.quality);
                 if (!coin.material.isEmpty())
                     values.put("material", coin.material);
                 if (!coin.subject.isEmpty())
@@ -919,7 +914,7 @@ public class SqlAdapter extends BaseAdapter {
                 if (!src_cursor.moveToFirst())
                     return false;
 
-                sql = "SELECT title, series, subjectshort, obversedesign, reversedesign, subject" +
+                sql = "SELECT title, series, subjectshort, subject" +
                         " FROM coins" +
                         " WHERE coins.id=?";
 
@@ -928,12 +923,9 @@ public class SqlAdapter extends BaseAdapter {
                     return false;
 
                 ContentValues values = new ContentValues();
-                values.put("updatedat", timestamp);
                 values.put("title", cursor.getString(0));
                 values.put("series", cursor.getString(1));
                 values.put("subjectshort", cursor.getString(2));
-                values.put("obversedesign", cursor.getString(3));
-                values.put("reversedesign", cursor.getString(4));
                 values.put("subject", cursor.getString(5));
 
                 database.update("coins", values, "title=? AND series=? AND subjectshort=?",

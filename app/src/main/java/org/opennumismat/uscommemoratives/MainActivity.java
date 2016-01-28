@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,7 +51,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
     public static final String PREF_LAST_PATH = "last_path";
 
-    public static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-mobile/master/update.json";
+    public static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-pro/master/update_dummy.json";
 
     public final static String EXTRA_COIN_ID = "org.janis.opennumismat.COIN_ID";
     public final static String EXTRA_COIN_IMAGE = "org.janis.opennumismat.COIN_IMAGE";
@@ -619,7 +618,7 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(JSONObject json) {
             if (json == null) {
                 Toast toast = Toast.makeText(
-                        MainActivity.this, getString(R.string.could_not_download_list) + '\n' + url, Toast.LENGTH_LONG
+                        MainActivity.this, getString(R.string.could_not_download_list), Toast.LENGTH_LONG
                 );
                 toast.show();
 

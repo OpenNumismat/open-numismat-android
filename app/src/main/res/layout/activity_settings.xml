@@ -4,10 +4,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <CheckBoxPreference
+    <!--CheckBoxPreference
         android:key="auto_update"
         android:defaultValue="false"
-        android:title="@string/auto_update" />
+        android:title="@string/auto_update" /-->
     <CheckBoxPreference
         android:key="use_grading"
         android:defaultValue="false"
