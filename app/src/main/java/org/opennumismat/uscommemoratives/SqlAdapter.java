@@ -794,10 +794,6 @@ public class SqlAdapter extends BaseAdapter {
                 return false;
         }
 
-        Time now = new Time();
-        now.setToNow();
-        String timestamp = now.format("%Y-%m-%dT%H:%M:%SZ");
-
         String action, sql;
         Coin coin;
         Cursor patch_cursor = patch_db.rawQuery("SELECT action, src_id, dst_id FROM patches",
@@ -883,21 +879,21 @@ public class SqlAdapter extends BaseAdapter {
 
                 ContentValues values = new ContentValues();
                 values.put("image", cursor.getBlob(4));
-                long obvere_id = database.insert("photos", null, values);
-                if (obvere_id < 0)
+                long obverse_id = database.insert("photos", null, values);
+                if (obverse_id < 0)
                     return false;
 
                 values = new ContentValues();
                 values.put("image", cursor.getBlob(5));
-                long revere_id = database.insert("photos", null, values);
-                if (revere_id < 0)
+                long reverse_id = database.insert("photos", null, values);
+                if (reverse_id < 0)
                     return false;
 
                 values = new ContentValues();
                 values.put("updatedat", timestamp);
                 values.put("image", cursor.getBlob(3));
-                values.put("obverseimg", obvere_id);
-                values.put("reverseimg", revere_id);
+                values.put("obverseimg", obverse_id);
+                values.put("reverseimg", reverse_id);
 
                 // TODO: Remove old images
 

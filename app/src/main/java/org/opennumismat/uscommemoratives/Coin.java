@@ -52,7 +52,6 @@ public class Coin implements Parcelable {
     public String date;
     public byte[] obverse_image;
     public byte[] reverse_image;
-    public String quality;
     public int grade;
     public long count;
     public int count_unc;
@@ -123,7 +122,6 @@ public class Coin implements Parcelable {
         subject_short = in.readString();
         material = in.readString();
         date = in.readString();
-        quality = in.readString();
         count = in.readLong();
         price_unc = in.readString();
         price_xf = in.readString();
@@ -172,7 +170,6 @@ public class Coin implements Parcelable {
         out.writeString(subject_short);
         out.writeString(material);
         out.writeString(date);
-        out.writeString(quality);
         out.writeLong(count);
         out.writeString(price_unc);
         out.writeString(price_xf);
