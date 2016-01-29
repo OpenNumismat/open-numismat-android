@@ -112,4 +112,9 @@
     <string name="cant_open">Could not open catalog</string>
     <string name="try_again">Try again</string>
     <string name="download_new">Download new</string>
+    <string name="action_filter">Filter</string>
+    <string name="filter_present">Is present</string>
+    <string name="filter_need">Is needed</string>
+    <string name="filter_for_change">For change (>1)</string>
+    <string name="filter_not_unc">There, but not Unc</string>
 </resources>

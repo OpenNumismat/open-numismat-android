@@ -132,6 +132,8 @@ public class MainActivity extends ActionBarActivity {
                 if (adapter != null) {
                     if (key.equals("sort_order") || key.equals("use_mint")) {
                         adapter.refresh();
+                    } else if (key.equals("use_grading")) {
+                        invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                     } else if (key.equals("filter_field")) {
                         adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
                         adapter.refresh();
@@ -169,6 +171,21 @@ public class MainActivity extends ActionBarActivity {
         if (item != null)
             item.setVisible(adapter != null);
 
+        item = menu.findItem(R.id.action_filter);
+        if (item != null) {
+            item.setVisible(adapter != null);
+            if (adapter != null)
+                menu.findItem(adapter.getMainFilter()).setChecked(true);
+        }
+
+        item = menu.findItem(R.id.filter_not_unc);
+        if (item != null)
+            item.setVisible(pref.getBoolean("use_grading", false));
+
+        item = menu.findItem(R.id.action_filter);
+        if (item != null)
+            item.setVisible(listView.getCheckedItemPositions().get(0, false));
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -178,19 +195,30 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_update) {
-            if (checkConnection())
-                new DownloadListTask().execute(UPDATE_URL);
-            return true;
+        switch (id) {
+            case R.id.action_update:
+                if (checkConnection())
+                    new DownloadListTask().execute(UPDATE_URL);
+                return true;
+
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+
+            case R.id.action_about:
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+
+            case R.id.filter_all:
+            case R.id.filter_present:
+            case R.id.filter_need:
+            case R.id.filter_for_change:
+            case R.id.filter_not_unc:
+                item.setChecked(true);
+                adapter.setMainFilter(id);
+                return true;
         }
-        else if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
-        else if (id == R.id.action_about) {
-            startActivity(new Intent(this, AboutActivity.class));
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 

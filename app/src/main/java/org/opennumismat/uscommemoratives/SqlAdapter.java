@@ -55,6 +55,7 @@ public class SqlAdapter extends BaseAdapter {
     private List<String> filters;
     private String filter;
     private String filter_field;
+    private int main_filter_id = R.id.filter_all;
 
     static class Group {
         public Integer count;
@@ -489,21 +490,46 @@ public class SqlAdapter extends BaseAdapter {
 
     public Cursor getAllEntries() {
         String sql;
+        String sql_main_filter = "";
         String sql_filter = "";
         String sql_mint = "";
         String sql_part = "";
         String order;
 
+        switch (main_filter_id) {
+            case R.id.filter_present:
+            case R.id.filter_for_change:
+            case R.id.filter_not_unc:
+                sql_main_filter = "coins.id NOT NULL";
+                break;
+            case R.id.filter_need:
+                sql_main_filter = "coins.id IS NULL";
+                break;
+        }
+
         if (filter != null)
             sql_filter = makeFilter(filter.isEmpty(), filter_field);
+
         if (!pref.getBoolean("use_mint", false))
             sql_mint = "mintmark != 'P'";
-        if (!sql_filter.isEmpty() || !sql_mint.isEmpty())
-            sql_part += " WHERE ";
-        sql_part += sql_filter;
-        if (!sql_filter.isEmpty() && !sql_mint.isEmpty())
-            sql_part += " AND ";
-        sql_part += sql_mint;
+
+        if (!sql_main_filter.isEmpty()) {
+            sql_part += sql_main_filter;
+        }
+        if (!sql_filter.isEmpty()) {
+            if (!sql_part.isEmpty())
+                sql_part += " AND ";
+            sql_part += sql_filter;
+        }
+        if (!sql_mint.isEmpty()) {
+            if (!sql_part.isEmpty())
+                sql_part += " AND ";
+            sql_part += sql_mint;
+        }
+        if (!sql_part.isEmpty()) {
+            sql_part = " WHERE " + sql_part;
+        }
+
 
         if (pref.getString("sort_order", "0").equals("0"))
             order = "ASC";
@@ -517,10 +543,38 @@ public class SqlAdapter extends BaseAdapter {
         String[] params_arr = new String[params.size()];
         params_arr = params.toArray(params_arr);
 
-        sql = "SELECT year, COUNT(id) FROM descriptions" +
-                sql_part +
-                " GROUP BY year" +
-                " ORDER BY year " + order;
+        if (main_filter_id == R.id.filter_all) {
+            sql = "SELECT year, COUNT(id) FROM descriptions" +
+                    sql_part +
+                    " GROUP BY year" +
+                    " ORDER BY year " + order;
+        }
+        else if (main_filter_id == R.id.filter_not_unc) {
+            sql = "SELECT year, COUNT(id) FROM (SELECT year, grade, descriptions.id FROM descriptions" +
+                    " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
+                    sql_part +
+                    " GROUP BY descriptions.id ORDER BY grade ASC)" +
+                    " WHERE grade < 60" +
+                    " GROUP BY year" +
+                    " ORDER BY year " + order;
+        }
+        else if (main_filter_id == R.id.filter_for_change) {
+            sql = "SELECT year, COUNT(id) FROM (SELECT year, grade, descriptions.id, COUNT(coins.id) AS coins_count FROM descriptions" +
+                    " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
+                    sql_part +
+                    " GROUP BY descriptions.id ORDER BY grade ASC)" +
+                    " WHERE coins_count > 1" +
+                    " GROUP BY year" +
+                    " ORDER BY year " + order;
+        }
+        else {
+            sql = "SELECT year, COUNT(id) FROM (SELECT year, descriptions.id FROM descriptions" +
+                    " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
+                    sql_part +
+                    " GROUP BY descriptions.id)" +
+                    " GROUP BY year" +
+                    " ORDER BY year " + order;
+        }
         Cursor group_cursor = database.rawQuery(sql, params_arr);
         int position = 0;
         groups = new ArrayList<>();
@@ -538,10 +592,45 @@ public class SqlAdapter extends BaseAdapter {
         group_cursor.close();
 
         //Список колонок базы, которые следует включить в результат
-        sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
-                "photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
-                sql_part +
-                " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id " + order;
+        if (main_filter_id == R.id.filter_all) {
+            sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    "photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
+                    sql_part +
+                    " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id ASC";
+        }
+        else if (main_filter_id == R.id.filter_not_unc) {
+            sql = "SELECT descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    "photos.image FROM (" +
+                    "SELECT descriptions.id AS descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    " image AS image_id, grade, issuedate FROM descriptions" +
+                    " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
+                    sql_part +
+                    " GROUP BY descriptions.id" +
+                    " ORDER BY grade ASC)" +
+                    " INNER JOIN photos ON image_id=photos.id" +
+                    " WHERE grade < 60" +
+                    " ORDER BY year " + order + ", issuedate " + order + ", descriptions_id ASC";
+        }
+        else if (main_filter_id == R.id.filter_for_change) {
+            sql = "SELECT descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    "photos.image FROM (" +
+                    "SELECT descriptions.id AS descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    " image AS image_id, issuedate, COUNT(coins.id) AS coins_count FROM descriptions" +
+                    " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
+                    sql_part +
+                    " GROUP BY descriptions.id)" +
+                    " INNER JOIN photos ON image_id=photos.id" +
+                    " WHERE coins_count > 1" +
+                    " ORDER BY year " + order + ", issuedate " + order + ", descriptions_id ASC";
+        }
+        else {
+            sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    " photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
+                    " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
+                    sql_part +
+                    " GROUP BY descriptions.id" +
+                    " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id ASC";
+        }
         return database.rawQuery(sql, params_arr);
     }
 
@@ -646,6 +735,19 @@ public class SqlAdapter extends BaseAdapter {
         }
 
         return filter;
+    }
+
+    public void setMainFilter(int id) {
+        if (main_filter_id == id)
+            return;
+
+        main_filter_id = id;
+
+        refresh();
+    }
+
+    public int getMainFilter() {
+        return main_filter_id;
     }
 
     public void close() {
