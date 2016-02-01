@@ -37,6 +37,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +54,7 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
     public static final String PREF_LAST_PATH = "last_path";
+    private static final String AD_UNIT_ID = "ca-app-pub-2145913411061844/2399725611";
 
     public static final String UPDATE_URL = "https://raw.githubusercontent.com/OpenNumismat/catalogues-pro/master/update_dummy.json";
 
@@ -61,6 +66,7 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Toolbar toolbar;
     private CharSequence title;
+    private InterstitialAd mInterstitialAd;
 
     private String[] navigationDrawerItems;
 
@@ -152,6 +158,30 @@ public class MainActivity extends ActionBarActivity {
             }
         };
         pref.registerOnSharedPreferenceChangeListener(prefListener);
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(AD_UNIT_ID);
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                actionAfterAd();
+            }
+        });
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("7159446E541B66B1921DEA6BFE17219E")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void actionAfterAd() {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     @Override
@@ -202,7 +232,10 @@ public class MainActivity extends ActionBarActivity {
                 return true;
 
             case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                if (mInterstitialAd.isLoaded())
+                    mInterstitialAd.show();
+                else
+                    actionAfterAd();
                 return true;
 
             case R.id.action_about:
