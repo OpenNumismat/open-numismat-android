@@ -13,7 +13,7 @@ import android.widget.TextView;
  * Created by v.ignatov on 17.10.2014.
  */
 public class AboutActivity extends ActionBarActivity {
-    private static final String HOME_URL = "http://opennumismat.github.io";
+    private static final String HOME_URL = "https://www.facebook.com/uscoincollection/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
