@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">US Coin Collection</string>
-  <string name="version">Версия: %1$s (%2$d)</string>
+  <string name="version">Версия</string>
   <string name="license">Лицензия: GPL v3</string>
   <string name="title_section_statistics">Статистика</string>
   <string name="navigation_drawer_open">Открыть панель навигации</string>
@@ -15,6 +15,7 @@
   <string name="could_not_open_database">Не удалось открыть базу данных</string>
   <string name="could_not_download_list">Не удалось скачать список каталогов</string>
   <string name="could_not_download_file">Не удалось скачать каталог</string>
+  <string name="could_not_create_file">Не удалось создать базу данных</string>
   <string name="could_not_parse_list">Не удалось разобрать список каталогов</string>
   <string name="could_not_open_sd">Доступ к файлам на SD-карте не поддерживается на вашем устройстве. Переместите файл во внутреннюю память.</string>
   <string name="country">Страна</string>
@@ -32,7 +33,7 @@
   <string name="change_count">Изменить количество монет</string>
   <string name="not_implemented_for_desktop">Не реализовано для настольной версии коллекции</string>
   <string name="downloading">Скачивание</string>
-  <string name="download">Скачать из web</string>
+  <string name="download">Скачать каталог</string>
   <string name="where_first">Откуда взять коллекцию для работы?</string>
   <string name="open">Открыть имеющуюся</string>
   <string name="replace">Файл уже существует. Перезаписать его?</string>
@@ -58,7 +59,7 @@
     <item>XHDPI</item>
     <item>XXHDPI</item>
   </string-array>
-  <string name="use_grading">Использовать состояние</string>
+  <string name="use_grading">Сохранность</string>
   <string name="ok">ОК</string>
   <string name="fine">Хорошая</string>
   <string name="very_fine">Очень хорошая</string>
@@ -78,15 +79,15 @@
   <string name="filter_empty_series">Без серии</string>
   <string name="filter_field">Фильтр по</string>
   <string-array name="filter_fields">
-    <!--item>Страна</item-->
     <item>Номинал</item>
     <item>Серия</item>
   </string-array>
+  <!--item>Country</item-->
   <string-array name="filter_field_vals">
-      <!--item>country</item-->
-      <item>unit</item>
-      <item>series</item>
+    <item>unit</item>
+    <item>series</item>
   </string-array>
+  <!--item>country</item-->
   <string-array name="navigation_drawer_items">
     <item>Коллекция</item>
     <item>Статистика</item>
@@ -99,4 +100,20 @@
   <string name="apply">Применить</string>
   <string name="no_updates_available">Нет доступных обновлений</string>
   <string name="mint">Двор</string>
+  <string name="auto_update">Проверить обновления</string>
+  <string name="available_update">Доступно обновление</string>
+  <string name="not_connected">Нет соединения с Интернет</string>
+  <string name="use_external">Сохранить на внешнем носителе</string>
+  <string name="download_ext">Перед началом необходимо скачать %1$s каталог из сети (%2$s)</string>
+  <string name="use_grading_desc">Показывать состояние монет</string>
+  <string name="use_mint">Буквы</string>
+  <string name="use_mint_desc">Разделять монеты по дворам</string>
+  <string name="cant_open">Не удалось открыть каталог</string>
+  <string name="try_again">Попробовать еще</string>
+  <string name="download_new">Скачать новый</string>
+  <string name="action_filter">Фильтр</string>
+  <string name="filter_present">В наличии</string>
+  <string name="filter_need">Нужна</string>
+  <string name="filter_for_change">На обмен (&gt;1)</string>
+  <string name="filter_not_unc">Есть на не Unc</string>
 </resources>
