@@ -61,7 +61,7 @@
         <item>XXHDPI</item>
     </string-array>
     <string name="use_grading">Grading</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="fine">Fine</string>
     <string name="very_fine">Very Fine</string>
     <string name="extremely_fine">Extremely Fine</string>
