@@ -204,17 +204,14 @@ public class MainActivity extends AppCompatActivity {
         item = menu.findItem(R.id.action_filter);
         if (item != null) {
             item.setVisible(adapter != null);
-            if (adapter != null)
-                menu.findItem(adapter.getMainFilter()).setChecked(true);
+            if (adapter != null) {
+                item.setVisible(listView.getCheckedItemPositions().get(0, false));
+            }
         }
 
         item = menu.findItem(R.id.filter_not_unc);
         if (item != null)
             item.setVisible(pref.getBoolean("use_grading", false));
-
-        item = menu.findItem(R.id.action_filter);
-        if (item != null)
-            item.setVisible(listView.getCheckedItemPositions().get(0, false));
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -247,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.filter_need:
             case R.id.filter_for_change:
             case R.id.filter_not_unc:
-                item.setChecked(true);
                 adapter.setMainFilter(id);
                 return true;
         }
