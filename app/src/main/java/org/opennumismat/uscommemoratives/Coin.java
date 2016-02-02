@@ -21,12 +21,11 @@ public class Coin implements Parcelable {
     private static final int TITLE_COLUMN = 1;
     private static final int UNIT_COLUMN = 2;
     private static final int YEAR_COLUMN = 3;
-    private static final int COUNTRY_COLUMN = 4;
-    private static final int MINTMARK_COLUMN = 5;
-    private static final int MINTAGE_COLUMN = 6;
-    private static final int SERIES_COLUMN = 7;
-    private static final int SUBJECT_SHORT_COLUMN = 8;
-    public static final int IMAGE_COLUMN = 9;
+    private static final int MINTMARK_COLUMN = 4;
+    private static final int MINTAGE_COLUMN = 5;
+    private static final int SERIES_COLUMN = 6;
+    private static final int SUBJECT_SHORT_COLUMN = 7;
+    public static final int IMAGE_COLUMN = 8;
 
     private static final int SUBJECT_EX_COLUMN = 0;
     private static final int DATE_EX_COLUMN = 1;
@@ -39,7 +38,6 @@ public class Coin implements Parcelable {
     private long id;
     public String title;
     public String unit;
-    public String country;
     public long year;
     public String mintmark;
     public String mint;
@@ -76,10 +74,6 @@ public class Coin implements Parcelable {
             unit = "";
         else
             unit = cursor.getString(UNIT_COLUMN);
-        if (cursor.isNull(COUNTRY_COLUMN))
-            country = "";
-        else
-            country = cursor.getString(COUNTRY_COLUMN);
         if (cursor.isNull(YEAR_COLUMN))
             year = 0;
         else
@@ -112,7 +106,6 @@ public class Coin implements Parcelable {
         id = in.readLong();
         title = in.readString();
         unit = in.readString();
-        country = in.readString();
         year = in.readLong();
         mintmark = in.readString();
         mint = in.readString();
@@ -160,7 +153,6 @@ public class Coin implements Parcelable {
         out.writeLong(id);
         out.writeString(title);
         out.writeString(unit);
-        out.writeString(country);
         out.writeLong(year);
         out.writeString(mintmark);
         out.writeString(mint);
@@ -204,9 +196,6 @@ public class Coin implements Parcelable {
             return year + " " + title;
         else
             return year + "-" + mintmark + " " + title;
-    }
-    public String getCountry() {
-        return country;
     }
     public String getSubject() {
         return subject;

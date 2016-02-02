@@ -593,15 +593,15 @@ public class SqlAdapter extends BaseAdapter {
 
         //Список колонок базы, которые следует включить в результат
         if (main_filter_id == R.id.filter_all) {
-            sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+            sql = "SELECT descriptions.id, title, unit, year, mintmark, mintage, series, subjectshort," +
                     "photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
                     sql_part +
                     " ORDER BY year " + order + ", issuedate " + order + ", descriptions.id ASC";
         }
         else if (main_filter_id == R.id.filter_not_unc) {
-            sql = "SELECT descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+            sql = "SELECT descriptions_id, title, unit, year, mintmark, mintage, series, subjectshort," +
                     "photos.image FROM (" +
-                    "SELECT descriptions.id AS descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    "SELECT descriptions.id AS descriptions_id, title, unit, year, mintmark, mintage, series, subjectshort," +
                     " image AS image_id, grade, issuedate FROM descriptions" +
                     " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
                     sql_part +
@@ -612,9 +612,9 @@ public class SqlAdapter extends BaseAdapter {
                     " ORDER BY year " + order + ", issuedate " + order + ", descriptions_id ASC";
         }
         else if (main_filter_id == R.id.filter_for_change) {
-            sql = "SELECT descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+            sql = "SELECT descriptions_id, title, unit, year, mintmark, mintage, series, subjectshort," +
                     "photos.image FROM (" +
-                    "SELECT descriptions.id AS descriptions_id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                    "SELECT descriptions.id AS descriptions_id, title, unit, year, mintmark, mintage, series, subjectshort," +
                     " image AS image_id, issuedate, COUNT(coins.id) AS coins_count FROM descriptions" +
                     " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
                     sql_part +
@@ -624,7 +624,7 @@ public class SqlAdapter extends BaseAdapter {
                     " ORDER BY year " + order + ", issuedate " + order + ", descriptions_id ASC";
         }
         else {
-            sql = "SELECT descriptions.id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+            sql = "SELECT descriptions.id, title, unit, year, mintmark, mintage, series, subjectshort," +
                     " photos.image FROM descriptions INNER JOIN photos ON descriptions.image=photos.id" +
                     " LEFT OUTER JOIN coins ON descriptions.id = coins.description_id" +
                     sql_part +
@@ -647,9 +647,9 @@ public class SqlAdapter extends BaseAdapter {
                 case "series":
                     filters.add(res.getString(R.string.filter_all_series));
                     break;
-                case "country":
-                    filters.add(res.getString(R.string.filter_all_countries));
-                    break;
+//                case "country":
+//                    filters.add(res.getString(R.string.filter_all_countries));
+//                    break;
                 default:
                     filters.add(res.getString(R.string.filter_all));
                     break;
@@ -702,8 +702,8 @@ public class SqlAdapter extends BaseAdapter {
 
         Resources res = context.getResources();
         if (filter.equals(res.getString(R.string.filter_all)) ||
-                filter.equals(res.getString(R.string.filter_all_series)) ||
-                filter.equals(res.getString(R.string.filter_all_countries))) {
+//                filter.equals(res.getString(R.string.filter_all_countries)) ||
+                filter.equals(res.getString(R.string.filter_all_series))) {
             this.filter = null;
         } else if (filter.equals(res.getString(R.string.filter_empty)) ||
                 filter.equals(res.getString(R.string.filter_empty_series))) {
@@ -721,8 +721,8 @@ public class SqlAdapter extends BaseAdapter {
             switch (filter_field) {
                 case "series":
                     return res.getString(R.string.filter_all_series);
-                case "country":
-                    return res.getString(R.string.filter_all_countries);
+//                case "country":
+//                    return res.getString(R.string.filter_all_countries);
                 default:
                     return res.getString(R.string.filter_all);
             }
@@ -909,7 +909,7 @@ public class SqlAdapter extends BaseAdapter {
             if (action.equals("add")) {
                 Long id = patch_cursor.getLong(1);
 
-                sql = "SELECT id, title, unit, year, country, mintmark, mintage, series, subjectshort," +
+                sql = "SELECT id, title, unit, year, mintmark, mintage, series, subjectshort," +
                         " material, image, issuedate FROM descriptions" +
                         " WHERE id=?";
                 Cursor cursor = patch_db.rawQuery(sql, new String[] {id.toString()});
@@ -949,8 +949,6 @@ public class SqlAdapter extends BaseAdapter {
                     values.put("subjectshort", coin.subject_short);
                 if (!coin.series.isEmpty())
                     values.put("series", coin.series);
-                if (!coin.country.isEmpty())
-                    values.put("country", coin.country);
                 if (!coin.unit.isEmpty())
                     values.put("unit", coin.unit);
                 if (coin.year != 0)
@@ -1144,9 +1142,9 @@ public class SqlAdapter extends BaseAdapter {
             case "series":
                 title = res.getString(R.string.filter_all_series);
                 break;
-            case "country":
-                title = res.getString(R.string.filter_all_countries);
-                break;
+//            case "country":
+//                title = res.getString(R.string.filter_all_countries);
+//                break;
             default:
                 title = res.getString(R.string.filter_all);
                 break;
