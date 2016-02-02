@@ -3,7 +3,8 @@ package org.opennumismat.uscommemoratives;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -11,7 +12,7 @@ import android.widget.ImageView;
 /**
  * Created by v.ignatov on 28.10.2014.
  */
-public class ImageActivity extends ActionBarActivity {
+public class ImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +34,16 @@ public class ImageActivity extends ActionBarActivity {
             coin_image.setImageBitmap(coin.getReverseImageBitmap(maxSize));
         }
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
 
-        actionBar.setTitle(coin.getTitle());
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            actionBar.setTitle(coin.getTitle());
+        }
     }
 
     @Override

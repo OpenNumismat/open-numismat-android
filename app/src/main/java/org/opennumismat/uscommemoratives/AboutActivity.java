@@ -4,7 +4,8 @@ import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class AboutActivity extends ActionBarActivity {
+public class AboutActivity extends AppCompatActivity {
     private static final String HOME_URL = "https://www.facebook.com/uscoincollection/";
 
     @Override
@@ -20,9 +21,14 @@ public class AboutActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         TextView version_text = (TextView) findViewById(R.id.text_version);
         version_text.setText(getString(R.string.version) + ": " + BuildConfig.VERSION_NAME);

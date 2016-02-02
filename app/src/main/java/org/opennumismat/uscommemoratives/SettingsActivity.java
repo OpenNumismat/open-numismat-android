@@ -8,25 +8,35 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 /**
  * Created by v.ignatov on 17.10.2014.
  */
-public class SettingsActivity extends ActionBarActivity implements
+public class SettingsActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
-    SettingsFr fragment;
+    private SettingsFr fragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
-        onCreatePreferenceFragment();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        fragment = new SettingsFr();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, new SettingsFr())
+                .commit();
     }
 
     @Override
@@ -64,20 +74,13 @@ public class SettingsActivity extends ActionBarActivity implements
         return fragment.findPreference(key);
     }
 
-    private void onCreatePreferenceFragment() {
-        fragment = new SettingsFr();
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, fragment)
-                .commit();
-    }
-
     public static class SettingsFr extends PreferenceFragment
     {
         @Override
         public void onCreate(final Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.layout.activity_settings);
+            addPreferencesFromResource(R.layout.fragment_settings);
         }
     }
 
