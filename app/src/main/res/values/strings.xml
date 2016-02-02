@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">US Coin Collection</string>
-    <string name="version">Version</string>
+    <string name="version">Version: %1$s (%2$d)</string>
     <string name="license">License: GPL v3</string>
     <string name="title_section_statistics">Statistics</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

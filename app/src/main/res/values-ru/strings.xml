@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">US Coin Collection</string>
-  <string name="version">Версия</string>
+  <string name="version">Версия: %1$s (%2$d)</string>
   <string name="license">Лицензия: GPL v3</string>
   <string name="title_section_statistics">Статистика</string>
   <string name="navigation_drawer_open">Открыть панель навигации</string>

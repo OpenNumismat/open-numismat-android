@@ -220,6 +220,7 @@ public class Coin implements Parcelable {
 
     public String getDescription(Context context) {
         String desc = "";
+/*
         if (!subject_short.isEmpty())
             desc += subject_short + ", ";
         desc += unit;
@@ -227,10 +228,11 @@ public class Coin implements Parcelable {
             desc += ", " + year;
         if (!mintmark.isEmpty())
             desc += ", " + mintmark;
+*/
+        if (!series.isEmpty())
+            desc += series;
         if (mintage > 0)
             desc += ", " + context.getString(R.string.mintage) + ": " + String.format(Locale.getDefault(), "%,d", mintage);
-        if (!series.isEmpty())
-            desc += ", " + series;
         return desc;
     }
 

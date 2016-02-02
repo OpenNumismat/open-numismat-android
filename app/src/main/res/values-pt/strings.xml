@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">US Coin Collection</string>
-  <string name="version">Versão</string>
+  <string name="version">Versão: %1$s (%2$d)</string>
   <string name="license">Licença: GPL v3</string>
   <string name="title_section_statistics">Estatísticas</string>
   <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
