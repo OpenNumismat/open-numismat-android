@@ -116,5 +116,5 @@
     <string name="filter_present">Is present</string>
     <string name="filter_need">Is needed</string>
     <string name="filter_for_change">For change (>1)</string>
-    <string name="filter_not_unc">There, but not Unc</string>
+    <string name="filter_not_unc">Present, but not Unc</string>
 </resources>
