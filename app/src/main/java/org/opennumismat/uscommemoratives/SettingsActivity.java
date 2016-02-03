@@ -57,21 +57,12 @@ public class SettingsActivity extends AppCompatActivity implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals("sort_order") || key.equals("filter_field")) {
-            Preference pref = getPreference(key);
-            ListPreference listPref = (ListPreference) pref;
-            pref.setSummary(listPref.getEntry());
-        }
-        else if (key.equals("auto_update")) {
+        if (key.equals("auto_update")) {
             if (sharedPreferences.getBoolean("auto_update", false))
                 startService(new Intent(this, UpdateService.class));
             else
                 stopService(new Intent(this, UpdateService.class));
         }
-    }
-
-    private Preference getPreference(String key) {
-        return fragment.findPreference(key);
     }
 
     public static class SettingsFr extends PreferenceFragment
