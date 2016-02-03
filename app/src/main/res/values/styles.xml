@@ -22,7 +22,7 @@
         <item name="android:elevation">4dp</item>
     </style>
 
-    <style name="PopupTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+    <style name="Toolbar.PopupTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:colorBackground">@color/background</item>
     </style>
     <style name="AlertTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">

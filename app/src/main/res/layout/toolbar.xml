@@ -6,7 +6,8 @@
     android:minHeight="?android:attr/actionBarSize"
     android:background="?attr/colorPrimary"
     app:theme="@style/ToolbarTheme"
-    app:popupTheme="@style/PopupTheme"
+    app:popupTheme="@style/Toolbar.PopupTheme"
+    app:titleTextAppearance="@android:style/TextAppearance.Medium"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <Spinner
