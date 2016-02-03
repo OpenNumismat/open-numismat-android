@@ -220,8 +220,8 @@ public class Coin implements Parcelable {
 */
         if (!series.isEmpty())
             desc += series;
-        if (mintage > 0)
-            desc += ", " + context.getString(R.string.mintage) + ": " + String.format(Locale.getDefault(), "%,d", mintage);
+//        if (mintage > 0)
+//            desc += ", " + context.getString(R.string.mintage) + ": " + String.format(Locale.getDefault(), "%,d", mintage);
         return desc;
     }
 
