@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Toolbar toolbar;
-    private CharSequence title;
+    private String title;
     private InterstitialAd mInterstitialAd;
 
     private String[] navigationDrawerItems;
@@ -96,14 +96,14 @@ public class MainActivity extends AppCompatActivity {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                setTitle(title);
+                setMainTitle(title);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setTitle(R.string.app_name);
+                setDefaultTitle();
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             openFile(path, true);
         }
         else {
+            setDefaultTitle();
             startDownloadDialog();
         }
 
@@ -144,11 +145,9 @@ public class MainActivity extends AppCompatActivity {
                         adapter.setFilterField(prefs.getString(key, SqlAdapter.DEFAULT_FILTER));
                         adapter.refresh();
 
-                        if (listView.isItemChecked(0)) {
-                            title = adapter.getFilter() + " ▼";
-                            setTitle(title);
-                        }
-                        else {
+                        updateSpinner();
+
+                        if (listView.isItemChecked(1)) {
                             FragmentManager fragmentManager = getFragmentManager();
                             Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
                             ((StatisticsFragment)fragment).refreshAdapter();
@@ -178,6 +177,26 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void updateSpinner() {
+        List<String> list = adapter.getFilters();
+        Spinner spinner = (Spinner) findViewById(R.id.filter_spinner);
+        ArrayAdapter<String> spinner_adapter = new ArrayAdapter<>(this, R.layout.spinner_item, list);
+        spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinner_adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                String filter = adapter.getFilters().get(position);
+                adapter.setFilter(filter);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
     }
 
     private void actionAfterAd() {
@@ -395,38 +414,20 @@ public class MainActivity extends AppCompatActivity {
     private void selectItem(int position) {
         Fragment fragment;
         Bundle args = new Bundle();
-        TextView text = (TextView) findViewById(R.id.toolbar_title);
 
         switch (position) {
             case 0:
+                setMainTitle(null);
+
                 fragment = new MainFragment();
                 ((MainFragment)fragment).setAdapter(adapter);
-                if (adapter != null) {
-                    text.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            openContextMenu(v);
-                        }
-                    });
-                    title = adapter.getFilter() + " ▼";
-                    setTitle(title);
-                }
-                else {
-                    text.setOnClickListener(null);
-                    setTitle(R.string.app_name);
-                }
                 break;
 
             case 1:
+                setMainTitle(navigationDrawerItems[position]);
+
                 fragment = new StatisticsFragment();
                 ((StatisticsFragment)fragment).setAdapter(adapter);
-                if (adapter != null) {
-                    title = navigationDrawerItems[position];
-                    setTitle(title);
-                }
-                else {
-                    setTitle(R.string.app_name);
-                }
-                text.setOnClickListener(null);
                 break;
 
             default:
@@ -441,36 +442,6 @@ public class MainActivity extends AppCompatActivity {
         // update selected item and title, then close the drawer
         listView.setItemChecked(position, true);
         drawerLayout.closeDrawer(listView);
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-//        getSupportActionBar().setTitle(title);
-        TextView text = (TextView) findViewById(R.id.toolbar_title);
-        text.setText(title);
-        registerForContextMenu(text);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        switch (v.getId()) {
-            case R.id.toolbar_title:
-                List<String> list = adapter.getFilters();
-                for (int i = 0; i < list.size(); i++) {
-                    menu.add(0, i, 0, list.get(i));
-                }
-                break;
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        String filter = adapter.getFilters().get(item.getItemId());
-        adapter.setFilter(filter);
-        title = adapter.getFilter() + " ▼";
-        setTitle(title);
-        return super.onContextItemSelected(item);
     }
 
     /**
@@ -506,6 +477,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
+    private void setMainTitle(String title) {
+        this.title = title;
+
+        View spinner = findViewById(R.id.filter_spinner);
+        if (adapter == null) {
+            spinner.setVisibility(View.GONE);
+            toolbar.setTitle(R.string.app_name);
+        }
+        else {
+            if (title == null || title.isEmpty()) {
+                spinner.setVisibility(View.VISIBLE);
+                toolbar.setTitle("");
+            } else {
+                spinner.setVisibility(View.GONE);
+                toolbar.setTitle(title);
+            }
+        }
+    }
+
+    private void setDefaultTitle() {
+        View spinner = findViewById(R.id.filter_spinner);
+        spinner.setVisibility(View.GONE);
+        toolbar.setTitle(R.string.app_name);
+    }
+
     private void openFile(String path, boolean first) {
         try {
             if (adapter != null) {
@@ -530,8 +526,14 @@ public class MainActivity extends AppCompatActivity {
                 ed.putString(PREF_LAST_PATH, path);
                 ed.commit();
             }
+
+            updateSpinner();
+
+            setMainTitle(null);
         }
         else {
+            setDefaultTitle();
+
             if (first) {
                 AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
                 ad.setMessage(R.string.cant_open);

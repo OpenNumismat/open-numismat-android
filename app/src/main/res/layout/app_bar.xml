@@ -5,7 +5,7 @@
     android:id="@+id/app_bar"
     android:background="?attr/colorPrimary"
     app:theme="@style/ToolbarTheme"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:popupTheme="@style/PopupTheme"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize">
 
