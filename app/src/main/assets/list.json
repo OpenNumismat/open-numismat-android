@@ -4,15 +4,15 @@
   "catalogues": [
     {
       "title": "Commemorative US coins",
-      "date": "2016-01-27",
+      "date": "2016-02-03",
       "lang": "en",
       "file": "std-commemorative-us.db",
-      "size": {"MDPI": "2.64MB", "HDPI": "4.63MB", "XHDPI": "7.12MB", "XXHDPI": "12.7MB"},
+      "size": {"MDPI": "2.63MB", "HDPI": "4.63MB", "XHDPI": "7.12MB", "XXHDPI": "12.7MB"},
       "url": {
-        "MDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-01-27/std-commemorative-us_mdpi.db",
-        "HDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-01-27/std-commemorative-us_hdpi.db",
-        "XHDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-01-27/std-commemorative-us_xhdpi.db",
-        "XXHDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-01-27/std-commemorative-us_xxhdpi.db"
+        "MDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-02-03/std-commemorative-us_mdpi.db",
+        "HDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-02-03/std-commemorative-us_hdpi.db",
+        "XHDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-02-03/std-commemorative-us_xhdpi.db",
+        "XXHDPI": "https://github.com/OpenNumismat/catalogues-pro/releases/download/std-commemorative-us_2016-02-03/std-commemorative-us_xxhdpi.db",
       }
     }
   ]
