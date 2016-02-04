@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -285,6 +286,19 @@ public class SqlAdapter extends BaseAdapter {
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         }
+    }
+
+    public String getFullVersion() {
+        String part;
+
+        Cursor version_cursor = database.rawQuery("SELECT title FROM updates" +
+                " ORDER BY title DESC LIMIT 1", new String[] {});
+        if (version_cursor.moveToFirst())
+            part = version_cursor.getString(0);
+        else
+            part = context.getString(R.string.unknown);
+
+        return Integer.toString(version) + "-" + part;
     }
 
     @Override

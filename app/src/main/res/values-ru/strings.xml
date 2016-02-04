@@ -116,4 +116,8 @@
   <string name="filter_need">Нужна</string>
   <string name="filter_for_change">На обмен (&gt;1)</string>
   <string name="filter_not_unc">Есть на не Unc</string>
+  <string name="version_data">Версия каталога: %1$s</string>
+  <string name="facebook">Facebook</string>
+  <string name="rate">Оценить на Google Play</string>
+  <string name="unknown">неизвестно</string>
 </resources>

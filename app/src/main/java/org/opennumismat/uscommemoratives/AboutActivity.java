@@ -15,6 +15,7 @@ import android.widget.TextView;
  */
 public class AboutActivity extends AppCompatActivity {
     private static final String HOME_URL = "https://www.facebook.com/uscoincollection/";
+    public static final String DB_VERSION_ID = "DB_VERSION_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +31,15 @@ public class AboutActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        TextView version_text = (TextView) findViewById(R.id.text_version);
-        version_text.setText(getString(R.string.version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
+        TextView text = (TextView) findViewById(R.id.text_version);
+        text.setText(getString(R.string.version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String version = extras.getString(DB_VERSION_ID);
+            text = (TextView) findViewById(R.id.text_version_data);
+            text.setText(getString(R.string.version_data, version));
+        }
     }
 
     @Override
@@ -45,8 +53,17 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    public void sendMessage(View view) {
+    public void visitHome(View view) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(HOME_URL));
         startActivity(browserIntent);
+    }
+
+    public void rateApp(View view) {
+        final String appPackageName = getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
     }
 }

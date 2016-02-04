@@ -255,7 +255,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_about:
-                startActivity(new Intent(this, AboutActivity.class));
+                Intent intent = new Intent(this, AboutActivity.class);
+                intent.putExtra(AboutActivity.DB_VERSION_ID, adapter.getFullVersion());
+                startActivity(intent);
                 return true;
 
             case R.id.filter_all:
