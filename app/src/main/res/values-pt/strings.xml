@@ -116,4 +116,8 @@
   <string name="filter_need">É necessário</string>
   <string name="filter_for_change">Para alterar (&gt;1)</string>
   <string name="filter_not_unc">Aí, mas não NC</string>
+  <string name="version_data">Catalogue version: %1$s</string>
+  <string name="facebook">Facebook</string>
+  <string name="rate">Rate in Google Play</string>
+  <string name="unknown">unknown</string>
 </resources>
