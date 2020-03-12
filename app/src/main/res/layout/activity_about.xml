@@ -51,6 +51,13 @@
                 android:text="@string/license"
                 android:id="@+id/textView4" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Updates by hank@github"
+                android:id="@+id/textView5" />
+
         </LinearLayout>
 
     </LinearLayout>
