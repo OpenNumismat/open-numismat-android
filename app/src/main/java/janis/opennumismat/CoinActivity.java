@@ -29,11 +29,11 @@ public class CoinActivity extends AppCompatActivity {
         Coin coin = intent.getParcelableExtra(MainActivity.EXTRA_COIN_ID);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        actionBar.setTitle(coin.getTitle());
-
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(coin.getTitle());
+        }
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int maxSize = metrics.widthPixels > metrics.heightPixels ? metrics.heightPixels : metrics.widthPixels;

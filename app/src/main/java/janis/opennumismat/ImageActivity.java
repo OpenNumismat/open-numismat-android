@@ -20,7 +20,7 @@ public class ImageActivity extends AppCompatActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int maxSize = metrics.widthPixels > metrics.heightPixels ? metrics.heightPixels : metrics.widthPixels;
+        int maxSize = Math.min(metrics.widthPixels, metrics.heightPixels);
 
         Intent intent = getIntent();
         Boolean obverse = intent.getExtras().getBoolean(MainActivity.EXTRA_COIN_IMAGE);
@@ -35,10 +35,11 @@ public class ImageActivity extends AppCompatActivity {
         }
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        actionBar.setTitle(coin.getTitle());
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(coin.getTitle());
+        }
     }
 
     @Override

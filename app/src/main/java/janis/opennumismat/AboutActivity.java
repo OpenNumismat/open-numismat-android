@@ -22,9 +22,10 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         TextView version_text = (TextView) findViewById(R.id.text_version);
         version_text.setText(getString(R.string.version) + ": " + BuildConfig.VERSION_NAME);
     }

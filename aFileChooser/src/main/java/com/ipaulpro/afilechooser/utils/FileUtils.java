@@ -48,7 +48,7 @@ public class FileUtils {
     private FileUtils() {} //private constructor to enforce Singleton pattern
     
     /** TAG for log messages. */
-    static final String TAG = "FileUtils";
+    private static final String TAG = "FileUtils";
     private static final boolean DEBUG = false; // Set to true to enable logging
 
     public static final String MIME_TYPE_AUDIO = "audio/*";
@@ -294,10 +294,19 @@ public class FileUtils {
             else if (isDownloadsDocument(uri)) {
 
                 final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
-                return getDataColumn(context, contentUri, null, null);
+                if(id != null) {
+                    if (id.startsWith("raw:")) {
+                        return id.substring(4);
+                    }
+                    try {
+                        final Uri contentUri = ContentUris.withAppendedId(
+                                Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                        return getDataColumn(context, contentUri, null, null);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+                else return null;
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
