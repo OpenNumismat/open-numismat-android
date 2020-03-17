@@ -14,7 +14,6 @@
         android:text=""
         android:textSize="18sp"
         android:textColor="?android:textColorPrimary"
-        android:background="?attr/colorPrimaryDark"
         android:paddingLeft="10dp"
         android:paddingRight="10dp" />
 

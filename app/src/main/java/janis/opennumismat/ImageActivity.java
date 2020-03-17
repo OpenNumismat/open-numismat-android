@@ -2,16 +2,17 @@ package janis.opennumismat;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * Created by v.ignatov on 28.10.2014.
  */
-public class ImageActivity extends ActionBarActivity {
+public class ImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +20,7 @@ public class ImageActivity extends ActionBarActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int maxSize = metrics.widthPixels > metrics.heightPixels ? metrics.heightPixels : metrics.widthPixels;
+        int maxSize = Math.min(metrics.widthPixels, metrics.heightPixels);
 
         Intent intent = getIntent();
         Boolean obverse = intent.getExtras().getBoolean(MainActivity.EXTRA_COIN_IMAGE);
@@ -34,10 +35,11 @@ public class ImageActivity extends ActionBarActivity {
         }
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        actionBar.setTitle(coin.getTitle());
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(coin.getTitle());
+        }
     }
 
     @Override
