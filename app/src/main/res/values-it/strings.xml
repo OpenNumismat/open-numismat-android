@@ -15,6 +15,7 @@
   <string name="could_not_open_database">Non è stato possibile aprire il database</string>
   <string name="could_not_download_list">Non è stato possibile scaricare l\'elenco dei cataloghi</string>
   <string name="could_not_download_file">Non è stato possibile scaricare il catalogo</string>
+  <string name="could_not_create_file">Non è stato possibile creare il database</string>
   <string name="could_not_parse_list">Non è stato possibile analizzare l\'elenco dei cataloghi</string>
   <string name="could_not_open_sd">L\'accesso ai file sulla scheda SD è ristretto sul tuo dispositivo. Prova a spostare il file nella memoria interna.</string>
   <string name="country">Nazione</string>
@@ -61,16 +62,16 @@
   </string-array>
   <string name="use_grading">Usa la classificazione</string>
   <string name="ok">Ok</string>
-  <string name="fine">Bella</string>
-  <string name="very_fine">Molto bella</string>
-  <string name="extremely_fine">Bellissima</string>
+  <string name="fine">Molto bella</string>
+  <string name="very_fine">Bellissima</string>
+  <string name="extremely_fine">Splendida</string>
   <string name="about_uncirculated">Quasi fior di conio</string>
   <string name="uncirculated">Fior di conio</string>
-  <string name="F">B</string>
-  <string name="VF">MB</string>
-  <string name="XF">BB</string>
-  <string name="AU">QFdc</string>
-  <string name="Unc">Fdc</string>
+  <string name="F">MB</string>
+  <string name="VF">BB</string>
+  <string name="XF">SPL</string>
+  <string name="AU">QFDC</string>
+  <string name="Unc">FDC</string>
   <string name="visit_homepage">Visita la pagina iniziale</string>
   <string name="filter_all">Tutto</string>
   <string name="filter_empty">Vuoto</string>
@@ -100,4 +101,7 @@
   <string name="apply">Applica</string>
   <string name="no_updates_available">Nessun aggiornamento disponibile</string>
   <string name="mint">Mint</string>
+  <string name="auto_update">Cerca automaticamente aggiornamenti</string>
+  <string name="available_update">Aggiornamento disponibile</string>
+  <string name="not_connected">Connessione internet non disponibile</string>
 </resources>

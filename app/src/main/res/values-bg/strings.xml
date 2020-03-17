@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Версия</string>
+  <string name="license">Разрешително: GPL v3</string>
+  <string name="title_section_statistics">Статистика</string>
+  <string name="navigation_drawer_open">Отворяте навигационното чекмедже</string>
+  <string name="navigation_drawer_close">Затворете навигационната чекмедже</string>
+  <string name="action_open">Отваряне</string>
+  <string name="action_download">Изтегли</string>
+  <string name="action_settings">Настройки</string>
+  <string name="action_preferences">Предпочитания</string>
+  <string name="action_about">Относно</string>
+  <string name="file_chooser">Изберете файл</string>
+  <string name="could_not_open_database">Базата данни не можа да се отвори</string>
+  <string name="could_not_download_list">Списъкът с каталози не можа да бъде изтеглен</string>
+  <string name="could_not_download_file">Каталогът не можа да се изтегли</string>
+  <string name="could_not_create_file">Не можа да се създаде база данни</string>
+  <string name="could_not_parse_list">Списъкът на каталозите не може да бъде анализиран</string>
+  <string name="could_not_open_sd">Достъпът до файлове на SD картата е ограничен на вашето устройство. Опитайте да преместите файла във вътрешната памет.</string>
+  <string name="country">Държава</string>
+  <string name="mintage">Тираж</string>
+  <string name="subject_short">Тема</string>
+  <string name="denomination">Деноминация</string>
+  <string name="series">Серия</string>
+  <string name="date_of_issue">В обращение от</string>
+  <string name="year">Година</string>
+  <string name="price">Цена</string>
+  <string name="material">Материал</string>
+  <string name="cancel">Отказ</string>
+  <string name="overwrite">Презаписване</string>
+  <string name="save">Записване</string>
+  <string name="change_count">Променете броя на монетите</string>
+  <string name="not_implemented_for_desktop">Все още не е изпълнена за версията на колекцията за настолни компютри</string>
+  <string name="downloading">Изтегляне</string>
+  <string name="download">Изтеглете от web</string>
+  <string name="where_first">Откъде да получите колекция за работа?</string>
+  <string name="open">Отворете съществуващия</string>
+  <string name="replace">Файлът вече съществува. Презаписване?</string>
+  <string name="new_db_version">Каталог в нов формат. Моля, актуализирайте приложението.</string>
+  <string name="old_db_version">Каталог е в стар неподдържан формат. Моля актуализирайте каталога.</string>
+  <string name="upgraded_db_version">Актуализирана структура на каталузите.</string>
+  <string name="new_xml_version">Каталозите се показват в нов формат. Моля, актуализирайте приложението.</string>
+  <string name="sort_coins">Подреди монети</string>
+  <string-array name="sorts">
+    <item>По дата (най-старите първо)</item>
+    <item>По дата (най-новите първо)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Показване на бутона за добавяне</string>
+  <string name="show_zero_desc">Покажете \"+\" за несъбраните монети</string>
+  <string name="density">Показва плътността на пикселите</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="ok">Ok</string>
+  <string name="fine">отлично F</string>
+  <string name="very_fine">изключително VF</string>
+  <string name="extremely_fine">превъзходно XF</string>
+  <string name="about_uncirculated">почти нециркулирана AUNC</string>
+  <string name="uncirculated">Нециркулирала UNC</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">UNC</string>
+  <string name="visit_homepage">Посетете началната страница</string>
+  <string name="filter_all">Всички</string>
+  <string name="filter_empty">Празно</string>
+  <string name="filter_all_series">Всички серии</string>
+  <string name="filter_all_countries">Всички държави</string>
+  <string name="filter_empty_series">Без серия</string>
+  <string name="filter_field">Филтър по</string>
+  <string-array name="filter_fields">
+    <item>Държава</item>
+    <item>Деноминация</item>
+    <item>Серия</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>държава</item>
+    <item>парична единица, стойност</item>
+    <item>серия</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Колекция</item>
+    <item>Статистика</item>
+  </string-array>
+  <string name="total_count">Общо брой</string>
+  <string name="coins_count">Общо монети</string>
+  <string name="action_update">Актуализация</string>
+  <string name="apply_update">Налична е нова актуализация</string>
+  <string name="apply">Приложи</string>
+  <string name="no_updates_available">Не са налични актуализации</string>
+  <string name="mint">Монетен двор</string>
+  <string name="auto_update">Проверявай за актуализации автоматично</string>
+  <string name="available_update">Налице е актуализация</string>
+  <string name="not_connected">Интернет връзка не е налична</string>
+</resources>

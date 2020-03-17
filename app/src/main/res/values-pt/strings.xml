@@ -11,10 +11,11 @@
   <string name="action_settings">Definições</string>
   <string name="action_preferences">Preferências</string>
   <string name="action_about">Acerca</string>
-  <string name="file_chooser">Selecionar um ficheiro</string>
+  <string name="file_chooser">Seleccionar um ficheiro</string>
   <string name="could_not_open_database">Impossível abrir a base de dados</string>
   <string name="could_not_download_list">Impossível transferir a lista de catálogos</string>
   <string name="could_not_download_file">Impossível transferir catálogo</string>
+  <string name="could_not_create_file">Impossível criar a base de dados</string>
   <string name="could_not_parse_list">Impossível analisar a lista de catálogos</string>
   <string name="could_not_open_sd">Acesso a ficheiros no cartão SD é restrito no seu dispositivo. Tente mover o ficheiro para a memória interna.</string>
   <string name="country">País</string>
@@ -30,16 +31,16 @@
   <string name="overwrite">Substituir</string>
   <string name="save">Gravar</string>
   <string name="change_count">Alterar contagem de moedas</string>
-  <string name="not_implemented_for_desktop">Ainda não implementado para coleção em versão PC</string>
+  <string name="not_implemented_for_desktop">Ainda não implementado para colecção em versão PC</string>
   <string name="downloading">A transferir</string>
   <string name="download">Transferir da web</string>
-  <string name="where_first">De onde obter coleção para trabalhar?</string>
+  <string name="where_first">De onde obter colecção para trabalhar?</string>
   <string name="open">Abrir existente</string>
-  <string name="replace">O ficheiro já existe. Quer substituir?</string>
-  <string name="new_db_version">Catálogo em novo formato. Por favor, atualize a aplicação.</string>
-  <string name="old_db_version">Catálogo num formato antigo não suportado. Por favor, atualize o catálogo.</string>
-  <string name="upgraded_db_version">Estrutura do catálogo atualizada.</string>
-  <string name="new_xml_version">Lista de catálogos em novo formato. Por favor, atualize a aplicação.</string>
+  <string name="replace">O ficheiro já existe. Quer sobrescrever?</string>
+  <string name="new_db_version">Catálogo em novo formato. Por favor, actualize a aplicação.</string>
+  <string name="old_db_version">Catálogo num formato antigo não suportado. Por favor, actualize o catálogo.</string>
+  <string name="upgraded_db_version">Estrutura do catálogo actualizada.</string>
+  <string name="new_xml_version">Lista de catálogos em novo formato. Por favor, actualize a aplicação.</string>
   <string name="sort_coins">Ordenar moedas</string>
   <string-array name="sorts">
     <item>Por data (antigas primeiro)</item>
@@ -50,7 +51,7 @@
     <item>1</item>
   </string-array>
   <string name="show_zero">Mostrar botão Adicionar</string>
-  <string name="show_zero_desc">Mostrar \"+\" para moedas não colecionadas</string>
+  <string name="show_zero_desc">Mostrar \"+\" para moedas não coleccionadas</string>
   <string name="density">Densidade do ecrã</string>
   <string-array name="densities">
     <item>MDPI</item>
@@ -66,11 +67,11 @@
   <string name="extremely_fine">Bela</string>
   <string name="about_uncirculated">Quase não circulada</string>
   <string name="uncirculated">Não circulada</string>
-  <string name="F">F</string>
-  <string name="VF">VF</string>
-  <string name="XF">XF</string>
-  <string name="AU">AU</string>
-  <string name="Unc">Unc</string>
+  <string name="F">BC</string>
+  <string name="VF">MBC</string>
+  <string name="XF">B</string>
+  <string name="AU">QNC</string>
+  <string name="Unc">NC</string>
   <string name="visit_homepage">Visitar a página inicial</string>
   <string name="filter_all">Tudo</string>
   <string name="filter_empty">Vazio</string>
@@ -84,20 +85,23 @@
     <item>Série</item>
   </string-array>
   <string-array name="filter_field_vals">
-    <item>country</item>
-    <item>unit,value</item>
-    <item>series</item>
+    <item>país</item>
+    <item>unidade,valor</item>
+    <item>série</item>
   </string-array>
   <string-array name="navigation_drawer_items">
-    <item>Coleção</item>
+    <item>Colecção</item>
     <item>Estatísticas</item>
   </string-array>
   <string name="total_count">Total</string>
-  <string name="collected_count">Colecionadas</string>
+  <string name="collected_count">Coleccionadas</string>
   <string name="coins_count">Contagem de moedas</string>
-  <string name="action_update">Atualizar</string>
-  <string name="apply_update">Nova atualização disponível</string>
+  <string name="action_update">Actualizar</string>
+  <string name="apply_update">Nova actualização disponível</string>
   <string name="apply">Aplicar</string>
-  <string name="no_updates_available">Sem atualizações disponíveis</string>
+  <string name="no_updates_available">Sem actualizações disponíveis</string>
   <string name="mint">Cunhagem</string>
+  <string name="auto_update">Procurar actualizações automaticamente</string>
+  <string name="available_update">Está disponível uma actualização</string>
+  <string name="not_connected">Sem ligação disponível à Internet</string>
 </resources>

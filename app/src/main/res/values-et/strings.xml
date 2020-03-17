@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="version">Versioon</string>
+  <string name="license">Litsents: GPL v3</string>
+  <string name="title_section_statistics">Statistika</string>
+  <string name="action_open">Ava</string>
+  <string name="action_download">Lae alla</string>
+  <string name="action_settings">Seaded</string>
+  <string name="action_preferences">Eelistused</string>
+  <string name="action_about">Teave</string>
+  <string name="file_chooser">Vali fail</string>
+  <string name="could_not_open_database">Andmebaasi ei saa avada</string>
+  <string name="could_not_download_list">Kataloogide loendit ei saa avada</string>
+  <string name="could_not_download_file">Kataloogi ei saa alla laadida</string>
+  <string name="could_not_create_file">Andmebaasi ei saa luua</string>
+  <string name="country">Riik</string>
+  <string name="mintage">Tiraaž</string>
+  <string name="subject_short">Teema</string>
+  <string name="denomination">Nimiväärtus</string>
+  <string name="series">Seeriad</string>
+  <string name="date_of_issue">Väljalaskeaeg </string>
+  <string name="year">Aasta</string>
+  <string name="price">Hind</string>
+  <string name="material">Materjal</string>
+  <string name="cancel">Tühista</string>
+  <string name="overwrite">Kirjuta üle</string>
+  <string name="save">Salvesta</string>
+  <string name="downloading">Allalaadimine</string>
+  <string name="open">Ava olemasolev</string>
+  <string name="sort_coins">Sorteeri mündid</string>
+  <string-array name="sorts">
+    <item>Kuupäeva järgi (vanemad eespool)</item>
+    <item>Kuupäeva järgi (uuemad eespool)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Näita lisamise nuppu</string>
+  <string name="fine">Ilus</string>
+  <string name="very_fine">Väga ilus</string>
+  <string name="extremely_fine">Eriti ilus</string>
+  <string name="about_uncirculated">Peaaegu ringlemata</string>
+  <string name="uncirculated">Ringlemata</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">UNC</string>
+  <string name="visit_homepage">Külasta kodulehte</string>
+  <string name="filter_all">Kõik</string>
+  <string name="filter_empty">Tühi</string>
+  <string name="filter_all_series">Kõik seeriad</string>
+  <string name="filter_all_countries">Kõik riigid</string>
+  <string name="filter_empty_series">Ilma seeriata</string>
+  <string name="filter_field">Filtreeri</string>
+  <string-array name="navigation_drawer_items">
+    <item>Kollektsioon</item>
+    <item>Statistika</item>
+  </string-array>
+  <string name="total_count">Koguarv</string>
+  <string name="collected_count">Kogutud</string>
+  <string name="coins_count">Müntide arv</string>
+  <string name="action_update">Uuenda</string>
+  <string name="apply_update">Uuendus on saadaval</string>
+  <string name="apply">Rakenda</string>
+  <string name="no_updates_available">Uuendusi pole</string>
+  <string name="mint">Rahapaja</string>
+  <string name="auto_update">Kontrolli uuendusi automaatselt</string>
+  <string name="available_update">Uuendus on saadaval</string>
+  <string name="not_connected">Internetiühendus puudub</string>
+</resources>

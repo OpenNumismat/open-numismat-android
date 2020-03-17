@@ -15,6 +15,7 @@
   <string name="could_not_open_database">Impossible d\'ouvrir la base de données</string>
   <string name="could_not_download_list">Impossible de télécharger la liste de catalogues</string>
   <string name="could_not_download_file">Impossible de télécharger le catalogue</string>
+  <string name="could_not_create_file">Impossible de créer la base de données</string>
   <string name="could_not_parse_list">Impossible de traiter la liste de catalogues</string>
   <string name="could_not_open_sd">L\'accès aux fichiers sur la carte SD est restreint sur votre appareil. Essayez de bouger le fichier dans la mémoire interne. </string>
   <string name="country">Pays</string>
@@ -100,4 +101,7 @@
   <string name="apply">Appliquer</string>
   <string name="no_updates_available">Aucune mise à jour disponible</string>
   <string name="mint">Monnaie</string>
+  <string name="auto_update">Rechercher automatiquement les mise à jour</string>
+  <string name="available_update">Mise à jour disponible</string>
+  <string name="not_connected">Pas de connexion internet</string>
 </resources>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Versie</string>
+  <string name="license">Licentie: GPL v3</string>
+  <string name="title_section_statistics">Statistieken</string>
+  <string name="action_open">Open</string>
+  <string name="action_download">Download</string>
+  <string name="action_settings">Instellingen</string>
+  <string name="action_preferences">Voorkeuren</string>
+  <string name="action_about">Over</string>
+  <string name="file_chooser">Selecteer een bestand</string>
+  <string name="could_not_open_database">kan de database niet openen</string>
+  <string name="could_not_download_list">kan de cataloguslijst niet downloaden</string>
+  <string name="could_not_download_file">kan de catalogus niet downloaden</string>
+  <string name="could_not_create_file">kan de database niet aanmaken</string>
+  <string name="could_not_parse_list">kan de catalogus niet inlezen</string>
+  <string name="could_not_open_sd">toegang tot bestanden op de SD kaart is beperkt op uw apparaat. Probeer het bestand te verplaatsen naar het interne geheugen.</string>
+  <string name="country">Land</string>
+  <string name="mintage">Gemunt</string>
+  <string name="subject_short">Onderwerp</string>
+  <string name="denomination">Benaming</string>
+  <string name="series">Uitvoering</string>
+  <string name="date_of_issue">datum van uitgifte</string>
+  <string name="year">Jaar</string>
+  <string name="price">Prijs</string>
+  <string name="material">Materiaal</string>
+  <string name="cancel">Annuleren</string>
+  <string name="overwrite">Overschrijven</string>
+  <string name="save">Opslaan</string>
+  <string name="change_count">Aantal munten</string>
+  <string name="not_implemented_for_desktop">nog niet geïmplementeerd voor desktop-versie</string>
+  <string name="downloading">downloading</string>
+  <string name="download">Download van internet</string>
+  <string name="open">Open bestaand</string>
+  <string name="replace">Het bestand bestaal al, overschrijven ?</string>
+  <string name="new_db_version">Catalogus is een nieuwer versie, werk de software bij</string>
+  <string name="old_db_version">Catalogus is een oud niet ondersteunde indeling, werk de applicatie bij.</string>
+  <string name="upgraded_db_version">Bijgewerkte catalogus structuur.</string>
+  <string name="new_xml_version">Catalogi lijst in een nieuw formaat. Werk de  applicatie bij.</string>
+  <string name="sort_coins">Sorteer de munten</string>
+  <string-array name="sorts">
+    <item>Op datum (oudste eerst)</item>
+    <item>Op datum (nieuwste eerst)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Toon de ADD knop</string>
+  <string name="show_zero_desc">Toon de \"+\" voor ontbrekende munten</string>
+  <string name="density">Dichtheid van het scherm</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+  </string-array>
+  <string name="ok">Oké</string>
+  <string name="fine">Goed</string>
+  <string name="very_fine">Erg goed</string>
+  <string name="extremely_fine">Uitzonderlijk goed</string>
+  <string name="about_uncirculated">over \"niet in circulatie\"</string>
+  <string name="uncirculated">Oncirculeerd</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">UNC</string>
+  <string name="visit_homepage">Bezoek de website</string>
+  <string name="filter_all">Alle</string>
+  <string name="filter_empty">Leeg</string>
+  <string name="filter_all_series">Alle uitvoeringen</string>
+  <string name="filter_all_countries">Alle landen</string>
+  <string name="filter_empty_series">Zonder uitvoeringen</string>
+  <string name="filter_field">Sorteren op</string>
+  <string-array name="filter_fields">
+    <item>Land</item>
+    <item>Benaming</item>
+    <item>Uitvoering</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>land</item>
+    <item>eenheid,waarde</item>
+    <item>uitvoering</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Verzameling</item>
+    <item>Statistieken</item>
+  </string-array>
+  <string name="total_count">Totaal</string>
+  <string name="collected_count">Verzameld</string>
+  <string name="coins_count">munten geteld</string>
+  <string name="action_update">Bijwerken</string>
+  <string name="apply_update">Nieuwe udate beschikbaar</string>
+  <string name="apply">Toepassen</string>
+  <string name="no_updates_available">Geen updates beschikbaar</string>
+  <string name="mint">Munthuis</string>
+  <string name="auto_update">automatisch controleren op update\'s</string>
+  <string name="available_update">er is een update beschikbaar</string>
+  <string name="not_connected">Geen internetverbinding beschikbaar</string>
+</resources>

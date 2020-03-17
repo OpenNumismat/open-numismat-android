@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Versión</string>
+  <string name="license">Licencia: GPL v3</string>
+  <string name="title_section_statistics">Estadísticas</string>
+  <string name="navigation_drawer_open">Abrir el cajón de navegación</string>
+  <string name="navigation_drawer_close">Cerrar el cajón de navegación</string>
+  <string name="action_open">Abrir</string>
+  <string name="action_download">Descargar</string>
+  <string name="action_settings">Configuración</string>
+  <string name="action_preferences">Preferencias</string>
+  <string name="action_about">Acerca de</string>
+  <string name="file_chooser">Selecciona un archivo</string>
+  <string name="could_not_open_database">No se puede abrir la base de datos</string>
+  <string name="could_not_download_list">No se puede descargar la lista de catálogos</string>
+  <string name="could_not_download_file">No se puede descargar el catálogo</string>
+  <string name="could_not_create_file">No se puede crear la base de datos</string>
+  <string name="could_not_parse_list">No se pued analizar la lista de catálogos</string>
+  <string name="could_not_open_sd">El acceso a la tarjeta SD está restringido en este dispositivo. Por favor, trate de copiar el archivo a la memoria interna.</string>
+  <string name="country">País</string>
+  <string name="mintage">Tirada</string>
+  <string name="subject_short">Tema</string>
+  <string name="denomination">Denominación</string>
+  <string name="series">Serie</string>
+  <string name="date_of_issue">Fecha de emisión</string>
+  <string name="year">Año</string>
+  <string name="price">Precio</string>
+  <string name="material">Composición</string>
+  <string name="cancel">Cancelar</string>
+  <string name="overwrite">Sobreescribir</string>
+  <string name="save">Guardar</string>
+  <string name="change_count">Cambia el conteo de monedas</string>
+  <string name="not_implemented_for_desktop">Aún no implementado para la versión de escritorio de la colección</string>
+  <string name="downloading">Descargando</string>
+  <string name="download">Descargar</string>
+  <string name="where_first">¿De dónde obtener colección para trabajar?</string>
+  <string name="open">Abrir existente</string>
+  <string name="replace">El archivo ya existe. ¿Quieres sobreescribirlo?</string>
+  <string name="new_db_version">El catálogo está en un nuevo formato. Por favor, actualice la aplicación.</string>
+  <string name="old_db_version">El catálogo está en un formato obsoleto no soportado. Por favor, actualícelo.</string>
+  <string name="upgraded_db_version">Estructura del catálogo actualizada.</string>
+  <string name="new_xml_version">Lista de catálogo en un nuevo formato. Por favor actualice aplicación.</string>
+  <string name="sort_coins">Ordenar monedas</string>
+  <string-array name="sorts">
+    <item>Por fecha (primero las más antiguas)</item>
+    <item>Por fecha (primero las nuevas)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Mostrar el boton de añadir</string>
+  <string name="show_zero_desc">Mostrar \"+\" para monedas no coleccionadas</string>
+  <string name="density">Densidad de la pantalla</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="use_grading">Usa la clasificación</string>
+  <string name="ok">RC</string>
+  <string name="fine">BC</string>
+  <string name="very_fine">MBC</string>
+  <string name="extremely_fine">EBC</string>
+  <string name="about_uncirculated">SC-</string>
+  <string name="uncirculated">SC</string>
+  <string name="F">BC</string>
+  <string name="VF">MBC</string>
+  <string name="XF">EBC</string>
+  <string name="AU">SC-</string>
+  <string name="Unc">SC</string>
+  <string name="visit_homepage">Visita página web</string>
+  <string name="filter_all">Todo</string>
+  <string name="filter_empty">Vacío</string>
+  <string name="filter_all_series">Todas las series</string>
+  <string name="filter_all_countries">Todos los países</string>
+  <string name="filter_empty_series">Sin serie</string>
+  <string name="filter_field">Filtrar por</string>
+  <string-array name="filter_fields">
+    <item>Pais</item>
+    <item>Denominación</item>
+    <item>Series</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>pais</item>
+    <item>unidad,valor</item>
+    <item>series</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Colección</item>
+    <item>Estadísticas</item>
+  </string-array>
+  <string name="total_count">Recuento total</string>
+  <string name="collected_count">Colección</string>
+  <string name="coins_count">Recuento de monedas</string>
+  <string name="action_update">Actualizar</string>
+  <string name="apply_update">Hay una actualización disponible</string>
+  <string name="apply">Actualizar</string>
+  <string name="no_updates_available">No hay actualizaciones disponibles</string>
+  <string name="mint">Ceca</string>
+  <string name="auto_update">Buscar actualizaciones automáticamente</string>
+  <string name="available_update">Actualización disponible</string>
+  <string name="not_connected">No hay conexión a internet</string>
+</resources>

@@ -15,6 +15,7 @@
   <string name="could_not_open_database">Не удалось открыть базу данных</string>
   <string name="could_not_download_list">Не удалось скачать список каталогов</string>
   <string name="could_not_download_file">Не удалось скачать каталог</string>
+  <string name="could_not_create_file">Не удалось создать базу данных</string>
   <string name="could_not_parse_list">Не удалось разобрать список каталогов</string>
   <string name="could_not_open_sd">Доступ к файлам на SD-карте не поддерживается на вашем устройстве. Переместите файл во внутреннюю память.</string>
   <string name="country">Страна</string>
@@ -71,7 +72,7 @@
   <string name="XF">XF</string>
   <string name="AU">AU</string>
   <string name="Unc">Unc</string>
-  <string name="visit_homepage">Домашняя сраница</string>
+  <string name="visit_homepage">Домашняя страница</string>
   <string name="filter_all">Все</string>
   <string name="filter_empty">Пусто</string>
   <string name="filter_all_series">Все серии</string>
@@ -84,9 +85,9 @@
     <item>Серия</item>
   </string-array>
   <string-array name="filter_field_vals">
-    <item>country</item>
-    <item>unit,value</item>
-    <item>series</item>
+    <item>страна</item>
+    <item>стоимость</item>
+    <item>серия</item>
   </string-array>
   <string-array name="navigation_drawer_items">
     <item>Коллекция</item>
@@ -100,4 +101,7 @@
   <string name="apply">Применить</string>
   <string name="no_updates_available">Нет доступных обновлений</string>
   <string name="mint">Двор</string>
+  <string name="auto_update">Проверить обновления</string>
+  <string name="available_update">Доступно обновление</string>
+  <string name="not_connected">Нет соединения с Интернет</string>
 </resources>

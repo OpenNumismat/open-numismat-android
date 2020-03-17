@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">¨Εκδοση</string>
+  <string name="license">Άδεια: GPL v3</string>
+  <string name="title_section_statistics">Στατιστικά</string>
+  <string name="navigation_drawer_open">Άνοιγμα πτυσσόμενου μενού πλοήγησης</string>
+  <string name="navigation_drawer_close">Κλείσιμο πτυσσόμενου μενού πλοήγησης</string>
+  <string name="action_open">Άνοιγμα</string>
+  <string name="action_download">Λήψη</string>
+  <string name="action_settings">Ρυθμίσεις</string>
+  <string name="action_preferences">Προτιμήσεις</string>
+  <string name="action_about">Περί</string>
+  <string name="file_chooser">Επιλέξτε ένα αρχείο</string>
+  <string name="could_not_open_database">Δεν ήταν δυνατό το άνοιγμα της βάσης δεδομένων</string>
+  <string name="could_not_download_list">Δεν ήταν δυνατή η λήψη της λίστας καταλόγων</string>
+  <string name="could_not_download_file">Δεν ήταν δυνατή η λήψη του καταλόγου</string>
+  <string name="could_not_create_file">Δεν ήταν δυνατή η δημιουργία βάσης δεδομένων</string>
+  <string name="could_not_parse_list">Δεν ήταν δυνατή η ανάλυση της λίστας καταλόγων</string>
+  <string name="could_not_open_sd">Η πρόσβαση του αρχείου στην κάρτα SD είναι περιορισμένη στη συσκευή σας. Δοκιμάστε να μετακινήσετε το αρχείο στην εσωτερική μνήμη.</string>
+  <string name="country">Χώρα</string>
+  <string name="mintage">Νομισματοκοπία</string>
+  <string name="subject_short">Θέμα</string>
+  <string name="denomination">Ονομαστική αξία</string>
+  <string name="series">Σειρά</string>
+  <string name="date_of_issue">Ημερ/νία έκδοσης</string>
+  <string name="year">Έτος</string>
+  <string name="price">Τιμή</string>
+  <string name="material">Υλικό</string>
+  <string name="cancel">Άκυρο</string>
+  <string name="overwrite">Αντικατάσταση</string>
+  <string name="save">Αποθήκευση</string>
+  <string name="change_count">Αλλαγή αριθμού νομισμάτων</string>
+  <string name="not_implemented_for_desktop">Δεν έχει ακόμη υλοποιηθεί για τη συλλογή της έκδοσης υπολογιστή</string>
+  <string name="downloading">Λήψη...</string>
+  <string name="download">Λήψη από διαδίκτυο</string>
+  <string name="where_first">Από που θα γίνει λήψη της συλλογής για εργασία;</string>
+  <string name="open">Άνοιγμα υπάρχουσας</string>
+  <string name="replace">Το αρχείο υπάρχει ήδη. Να αντικατασταθεί;</string>
+  <string name="new_db_version">Ο κατάλογος είναι σε νέα μορφή. Ενημερώστε την εφαρμογή.</string>
+  <string name="old_db_version">Ο κατάλογος είναι σε μια παλιά μορφή που δεν υποστηρίζεται. Ενημερώστε την εφαρμογή.</string>
+  <string name="upgraded_db_version">Η δομή του καταλόγου ενημερώθηκε.</string>
+  <string name="new_xml_version">Η λίστα καταλόγων είναι σε νέα μορφή. Ενημερώστε την εφαρμογή.</string>
+  <string name="sort_coins">Ταξινόμηση νομισμάτων</string>
+  <string-array name="sorts">
+    <item>Ανά ημερομηνία (παλαιότερα πρώτα)</item>
+    <item>Ανά ημερομηνία (νεότερα πρώτα)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Εμφάνιση κουμπιού προσθήκης</string>
+  <string name="show_zero_desc">Εμφάνιση \"+\" για μη συλλεγμένα νομίσματα</string>
+  <string name="density">Πυκνότητα οθόνης</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="use_grading">Χρήση διαβάθμισης</string>
+  <string name="ok">Εντάξει</string>
+  <string name="fine">Καλό</string>
+  <string name="very_fine">Πολύ καλό</string>
+  <string name="extremely_fine">Εξαιρετικό</string>
+  <string name="about_uncirculated">Σχεδόν τέλειο</string>
+  <string name="uncirculated">Τέλειο - Ακυκλοφόρητο</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">Unc</string>
+  <string name="visit_homepage">Επίσκεψη στην ιστοσελίδα</string>
+  <string name="filter_all">Όλα</string>
+  <string name="filter_empty">Κενό</string>
+  <string name="filter_all_series">Όλες οι σειρές</string>
+  <string name="filter_all_countries">Όλες οι χώρες</string>
+  <string name="filter_empty_series">Χωρίς σειρά</string>
+  <string name="filter_field">Φίλτρο κατά</string>
+  <string-array name="filter_fields">
+    <item>Χώρα</item>
+    <item>Ονομαστική αξία</item>
+    <item>Σειρά</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>χώρα</item>
+    <item>αξία</item>
+    <item>σειρά</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Συλλογή</item>
+    <item>Στατιστικά</item>
+  </string-array>
+  <string name="total_count">Συνολικός αριθμός</string>
+  <string name="collected_count">Συλλεγμένα</string>
+  <string name="coins_count">Αριθμός νομισμάτων</string>
+  <string name="action_update">Ενημέρωση</string>
+  <string name="apply_update">Μια νέα ενημέρωση είναι διαθέσιμη</string>
+  <string name="apply">Εφαρμογή</string>
+  <string name="no_updates_available">Δεν υπάρχουν διαθέσιμες ενημερώσεις</string>
+  <string name="mint">Νομισματοκοπείο</string>
+  <string name="auto_update">Αυτόματος έλεγχος ενημερώσεων</string>
+  <string name="available_update">Μια ενημέρωση είναι διαθέσιμη</string>
+  <string name="not_connected">Η σύνδεση στο διαδίκτυο δεν είναι διαθέσιμη</string>
+</resources>

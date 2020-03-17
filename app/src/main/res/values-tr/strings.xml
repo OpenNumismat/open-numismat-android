@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Sürüm</string>
+  <string name="license">Lisans: GPL v3</string>
+  <string name="title_section_statistics">İstatistik</string>
+  <string name="action_open">Aç</string>
+  <string name="action_download">İndir</string>
+  <string name="action_settings">Ayarlar</string>
+  <string name="action_preferences">Tercihler</string>
+  <string name="action_about">Hakkında</string>
+  <string name="file_chooser">Bir dosya seç</string>
+  <string name="could_not_open_database">Veritabanı açılamadı</string>
+  <string name="could_not_download_list">Katalog listesi indirilemedi</string>
+  <string name="could_not_download_file">Katalog indirilemedi</string>
+  <string name="could_not_create_file">Veritabanı oluşturulamadı</string>
+  <string name="country">Ülke</string>
+  <string name="mintage">Baskı Adedi</string>
+  <string name="subject_short">Konu</string>
+  <string name="denomination">Nominal Değer</string>
+  <string name="series">Seri</string>
+  <string name="date_of_issue">Basım Yılı</string>
+  <string name="year">Yıl</string>
+  <string name="price">Fiyat</string>
+  <string name="material">Metal</string>
+  <string name="cancel">İptal</string>
+  <string name="overwrite">Üzerine yaz</string>
+  <string name="save">Kaydet</string>
+  <string name="change_count">Madeni para sayısını değiştir</string>
+  <string name="downloading">İndiriliyor</string>
+  <string name="download">Web\'den indir</string>
+  <string name="sort_coins">Madeni paraları sırala</string>
+  <string-array name="sorts">
+    <item>Tarihe göre (önce en eski)</item>
+    <item>Tarihe göre (önce en yeni)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Ekle butonunu göster</string>
+  <string name="density">Ekran yoğunluğu</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="ok">Tamam</string>
+  <string name="fine">İyi</string>
+  <string name="very_fine">Çok İyi</string>
+  <string name="extremely_fine">Çok Çok İyi</string>
+  <string name="uncirculated">Çil</string>
+  <string name="F">İyi</string>
+  <string name="VF">Çok iyi</string>
+  <string name="XF">Çok çok iyi</string>
+  <string name="Unc">Çil</string>
+  <string name="visit_homepage">Giriş sayfasını ziyaret et</string>
+  <string name="filter_all">Tümü</string>
+  <string name="filter_empty">Boş</string>
+  <string name="filter_all_series">Tüm Seriler</string>
+  <string name="filter_all_countries">Tüm Ülkeler</string>
+  <string name="filter_field">Göre filtrele</string>
+  <string-array name="filter_fields">
+    <item>Ülke</item>
+    <item>Nominal Değer</item>
+    <item>Seri</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>ülke</item>
+    <item>birim,değer</item>
+    <item>seri</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Koleksiyon</item>
+    <item>İstatistikler</item>
+  </string-array>
+  <string name="total_count">Toplam sayı</string>
+  <string name="collected_count">Toplanan</string>
+  <string name="coins_count">Madeni para sayısı</string>
+  <string name="action_update">Güncelle</string>
+  <string name="apply_update">Yeni güncelleme mevcut</string>
+  <string name="apply">Uygula</string>
+  <string name="no_updates_available">Güncelleme mevcut değil</string>
+  <string name="mint">Darphane</string>
+  <string name="auto_update">Güncellemeleri otomatik olarak kontrol et</string>
+  <string name="available_update">Güncelleme mevcut</string>
+  <string name="not_connected">İnternet bağlantısı mevcut değil</string>
+</resources>

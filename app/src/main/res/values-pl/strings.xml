@@ -1,59 +1,55 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app_name">Open Numismat</string>
-  <string name="version">Version: 0.4</string>
-  <string name="license">License: GPL v3</string>
-  <string name="title_section_statistics">Statistics</string>
-  <string name="title_section_about">O nas</string>
-  <string name="navigation_drawer_open">Open navigation drawer</string>
-  <string name="navigation_drawer_close">Close navigation drawer</string>
+  <string name="version">Wersja</string>
+  <string name="license">Licencja: GPL v3</string>
+  <string name="title_section_statistics">Statystyki</string>
+  <string name="navigation_drawer_open">Otwórz pasek nawigacji</string>
+  <string name="navigation_drawer_close">Zamknij pasek nawigacji</string>
   <string name="action_open">Otwórz</string>
   <string name="action_download">Pobierz</string>
   <string name="action_settings">Ustawienia</string>
-  <string name="action_preferences">Preferences</string>
+  <string name="action_preferences">Preferencje</string>
   <string name="action_about">O nas</string>
   <string name="file_chooser">Wybierz plik</string>
   <string name="could_not_open_database">Nie można otworzyć bazy danych</string>
   <string name="could_not_download_list">Nie można pobrać listy katalogów</string>
   <string name="could_not_download_file">Nie można pobrać katalogu</string>
-  <string name="could_not_parse_list">Could not parse catalogues list</string>
-  <string name="could_not_open_sd">File access to the SD card is restricted on your device. Try to move file to internal memory.</string>
+  <string name="could_not_create_file">Nie można otworzyć bazy danych</string>
+  <string name="could_not_parse_list">Nie można przeprowadzić analizy listy katalogów</string>
+  <string name="could_not_open_sd">Dostęp do pliku na karcie SD jest zablokowany na Twoim urządzeniu. Spróbuj przenieść plik do pamięci urządzenia. </string>
   <string name="country">Kraj</string>
-  <string name="mintage">Mintage</string>
+  <string name="mintage">Nakład</string>
   <string name="subject_short">Temat</string>
-    <string name="denomination">Denomination</string>
+  <string name="denomination">Denominacja</string>
   <string name="series">Seria</string>
   <string name="date_of_issue">Data wydania</string>
   <string name="year">Rok</string>
-  <string name="mintmark">Mennica</string>
   <string name="price">Cena</string>
-    <string name="material">Material</string>
+  <string name="material">Stop metali</string>
   <string name="cancel">Anuluj</string>
   <string name="overwrite">Nadpisz</string>
   <string name="save">Zapisz</string>
-    <string name="change_count">Change coins count</string>
-    <string name="not_implemented_for_desktop">Not yet implemented for desktop version of collection</string>
+  <string name="change_count">Zmień wartość monet</string>
+  <string name="not_implemented_for_desktop">Nie zaimplementowanie w kolekcji w wersji na PC.</string>
   <string name="downloading">Pobieranie</string>
   <string name="download">Pobierz z sieci</string>
-    <string name="where_first">Where from get collection for working?</string>
+  <string name="where_first">Skąd pobrać kolekcję? </string>
   <string name="open">Otwórz istniejące</string>
   <string name="replace">Plik już istnieje. Nadpisać?</string>
   <string name="new_db_version">Katalog w nowszym formacie. Zaktualizuj aplikację. </string>
-  <string name="old_db_version">Catalog in a old unsupported format. Please update catalog.</string>
-  <string name="upgraded_db_version">Updated catalgue structure.</string>
+  <string name="old_db_version">Katalog w niespieranym formacie. Zaktualizuj katalog.</string>
+  <string name="upgraded_db_version">Zaktualizuj strukturę katalogu.</string>
   <string name="new_xml_version">Lista katalogów w nowszym formacie. Zaktualizuj aplikację.</string>
-    <string name="sort_coins">Sort coins</string>
-    <string-array name="sorts">
-        <item>By date (old first)</item>
-        <item>By date (newest first)</item>
-    </string-array>
+  <string name="sort_coins">Sortuj monety</string>
+  <string-array name="sorts">
+    <item>Po dacie (od najstraszej)</item>
+    <item>Po dacie (od najnowszej)</item>
+  </string-array>
   <string-array name="sort_values">
     <item>0</item>
     <item>1</item>
   </string-array>
-    <string name="show_zero">Show add button</string>
-    <string name="show_zero_desc">Show \"+\" for not collected coins</string>
-    <string name="density">Density of the display</string>
   <string-array name="densities">
     <item>MDPI</item>
     <item>HDPI</item>
@@ -61,45 +57,17 @@
     <item>XXHDPI</item>
     <item>XXXHDPI</item>
   </string-array>
-    <string name="use_grading">Use grading</string>
-    <string name="ok">Ok</string>
-    <string name="fine">Fine</string>
-    <string name="very_fine">Very Fine</string>
-    <string name="extremely_fine">Extremely Fine</string>
-    <string name="about_uncirculated">About Uncirculated</string>
-    <string name="uncirculated">Uncirculated</string>
+  <string name="fine">Stan IV - Piękny</string>
+  <string name="uncirculated">Stan menniczy</string>
   <string name="F">F</string>
   <string name="VF">VF</string>
   <string name="XF">XF</string>
   <string name="AU">AU</string>
   <string name="Unc">Unc</string>
-  <string name="visit_homepage">Visit homepage</string>
-  <string name="filter_all">All</string>
-  <string name="filter_empty">Empty</string>
-  <string name="filter_all_series">All series</string>
-  <string name="filter_all_countries">All countries</string>
-  <string name="filter_empty_series">Without series</string>
-  <string name="filter_field">Filter by</string>
-  <string-array name="filter_fields">
-      <item>Country</item>
-      <item>Denomination</item>
-      <item>Series</item>
-  </string-array>
   <string-array name="filter_field_vals">
     <item>country</item>
     <item>unit,value</item>
     <item>series</item>
   </string-array>
-    <string-array name="navigation_drawer_items">
-        <item>Collection</item>
-        <item>Statistics</item>
-    </string-array>
-    <string name="total_count">Total count</string>
-    <string name="collected_count">Collected</string>
-    <string name="coins_count">Coins count</string>
-    <string name="action_update">Update</string>
-    <string name="apply_update">New update are available</string>
-    <string name="apply">Apply</string>
-    <string name="no_updates_available">No updates available</string>
-    <string name="mint">Mint</string>
+  <string name="mint">Mennica</string>
 </resources>

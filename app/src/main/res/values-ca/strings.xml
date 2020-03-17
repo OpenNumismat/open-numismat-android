@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Versió</string>
+  <string name="license">Llicència: GPL v3</string>
+  <string name="title_section_statistics">Estadístiques</string>
+  <string name="navigation_drawer_open">Obre el calaix de navegació</string>
+  <string name="navigation_drawer_close">Tanca el calaix de navegació</string>
+  <string name="action_open">Obre</string>
+  <string name="action_download">Baixa</string>
+  <string name="action_settings">Configuració</string>
+  <string name="action_preferences">Preferències</string>
+  <string name="action_about">Quant a</string>
+  <string name="file_chooser">Seleccioneu un fitxer</string>
+  <string name="could_not_open_database">No s\'ha pogut obrir la base de dades</string>
+  <string name="could_not_download_list">No s\'ha pogut baixar la llista de catàlegs</string>
+  <string name="could_not_download_file">No s\'ha pogut baixar el catàleg</string>
+  <string name="could_not_create_file">No s\'ha pogut crear la base de dades</string>
+  <string name="could_not_parse_list">No s\'ha pogut analitzar la llista de catàlegs</string>
+  <string name="could_not_open_sd">L\'accés a fitxers de la tarjeta SD està restringit en el vostre dispositiu. Intenteu moure el fitxer a la memòria interna.</string>
+  <string name="country">País</string>
+  <string name="mintage">Encunyació</string>
+  <string name="subject_short">Subjecte</string>
+  <string name="denomination">Denominació</string>
+  <string name="series">Sèrie</string>
+  <string name="date_of_issue">Data d\'emissió</string>
+  <string name="year">Any</string>
+  <string name="price">Preu</string>
+  <string name="material">Material</string>
+  <string name="cancel">Cancel·la</string>
+  <string name="overwrite">Sobreescriu</string>
+  <string name="save">Desa</string>
+  <string name="change_count">Canvia el recompte de monedes</string>
+  <string name="not_implemented_for_desktop">Sense implementar a la versió escriptori de la col·lecció</string>
+  <string name="downloading">Baixant</string>
+  <string name="download">Baixa des de la pàgina web</string>
+  <string name="where_first">Des d\'on voleu obtenir la col·lecció per editar?</string>
+  <string name="open">Obre fitxer existent</string>
+  <string name="replace">Aquest fitxer ja existeix. Voleu sobreescriure\'l?</string>
+  <string name="new_db_version">Nou format de catàleg. Actualitzeu l\'aplicació.</string>
+  <string name="old_db_version">Format de catàleg no compatible. Actualitzeu el catàleg. </string>
+  <string name="upgraded_db_version">Actualitzeu l\'estructura del catàleg.</string>
+  <string name="new_xml_version">Nou format de llista de catàleg. Actualitzeu l\'aplicació.</string>
+  <string name="sort_coins">Ordena les monedes</string>
+  <string-array name="sorts">
+    <item>Per data (antic primer)</item>
+    <item>Per data (nou primer)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Mostra el botó d\'afegir</string>
+  <string name="show_zero_desc">Mostra \"+\" per a monedes sense col·leccionar</string>
+  <string name="density">Densitat de pantalla</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+  </string-array>
+  <string name="use_grading">Utilitza graduació</string>
+  <string name="ok">D\'acord</string>
+  <string name="fine">Bell</string>
+  <string name="very_fine">Molt bell</string>
+  <string name="extremely_fine">Extremadament bell</string>
+  <string name="about_uncirculated">Quasi sense circular</string>
+  <string name="uncirculated">Sense circular</string>
+  <string name="F">BC+</string>
+  <string name="VF">MBC</string>
+  <string name="XF">EBC</string>
+  <string name="AU">QSC</string>
+  <string name="Unc">SC</string>
+  <string name="visit_homepage">Visita la pàgina web</string>
+  <string name="filter_all">Tots</string>
+  <string name="filter_empty">Buit</string>
+  <string name="filter_all_series">Totes les sèries</string>
+  <string name="filter_all_countries">Tots els països</string>
+  <string name="filter_empty_series">Sense sèrie</string>
+  <string name="filter_field">Filtra per</string>
+  <string-array name="filter_fields">
+    <item>País</item>
+    <item>Denominació</item>
+    <item>Sèrie</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>país</item>
+    <item>unitat, valor</item>
+    <item>sèrie</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Collecció</item>
+    <item>Estadístiques</item>
+  </string-array>
+  <string name="total_count">Recompte total</string>
+  <string name="collected_count">Col·leccionades</string>
+  <string name="coins_count">Recompte de monedes</string>
+  <string name="action_update">Actualitza</string>
+  <string name="apply_update">Hi ha actualitzacions disponibles.</string>
+  <string name="apply">Aplica</string>
+  <string name="no_updates_available">No hi ha actualitzacions disponibles</string>
+  <string name="mint">Seca</string>
+  <string name="auto_update">Comprova si hi ha actualitzacions automàticament</string>
+  <string name="available_update">Hi ha actualitzacions disponibles</string>
+  <string name="not_connected">Connexió a Internet no disponible</string>
+</resources>

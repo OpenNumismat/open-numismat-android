@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Open Numismat</string>
+  <string name="version">Версія</string>
+  <string name="license">Ліцензія: GPL v3</string>
+  <string name="title_section_statistics">Статистика</string>
+  <string name="navigation_drawer_open">Показати панель навігації</string>
+  <string name="navigation_drawer_close">Приховати панель навігації</string>
+  <string name="action_open">Відкрити</string>
+  <string name="action_download">Завантажити</string>
+  <string name="action_settings">Налаштування</string>
+  <string name="action_preferences">Уподобання</string>
+  <string name="action_about">Про программу</string>
+  <string name="file_chooser">Вибрати файл</string>
+  <string name="could_not_open_database">Не вдалося відкрити базу данних</string>
+  <string name="could_not_download_list">Не вдалося завантажити перелік каталогів</string>
+  <string name="could_not_download_file">Не вдалося завантажити каталог</string>
+  <string name="could_not_create_file">Не вдалося створити базу даних</string>
+  <string name="could_not_parse_list">Не вдалось аналізувати список каталогів</string>
+  <string name="could_not_open_sd">Доступ до файлів на SD-картці не підтримується на вашому пристрої. Перемістіть файл на пам\'ять пристрою.</string>
+  <string name="country">Країна</string>
+  <string name="mintage">Тираж</string>
+  <string name="subject_short">Тема</string>
+  <string name="denomination">Номінал</string>
+  <string name="series">Серія</string>
+  <string name="date_of_issue">Дата випуску</string>
+  <string name="year">Рік</string>
+  <string name="price">Ціна</string>
+  <string name="material">Матеріал</string>
+  <string name="cancel">Скасувати</string>
+  <string name="overwrite">Замінити</string>
+  <string name="save">Зберегти</string>
+  <string name="change_count">Змінити кількість монет</string>
+  <string name="not_implemented_for_desktop">Не реалізовано для настільної версії колекції</string>
+  <string name="downloading">Завантаження</string>
+  <string name="download">Завантажити з мережі</string>
+  <string name="where_first">Де набути колекцію для роботи?</string>
+  <string name="open">Відкрити наявну</string>
+  <string name="replace">Файл вже існує. Замінити існуючий?</string>
+  <string name="new_db_version">Каталог у новому форматі. Оновіть програму.</string>
+  <string name="old_db_version">Формат каталогу застарілий і не підтримується. Оновіть каталог.</string>
+  <string name="upgraded_db_version">Структура каталогу оновлена</string>
+  <string name="new_xml_version">Перелік каталогів новітнього формату. Оновіть програму.</string>
+  <string name="sort_coins">Сортувати монети</string>
+  <string-array name="sorts">
+    <item>По даті (спочатку старі)</item>
+    <item>По даті (спочатку нові)</item>
+  </string-array>
+  <string-array name="sort_values">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+  <string name="show_zero">Показати кнопку додавання</string>
+  <string name="show_zero_desc">Показати \"+\" якщо монета відсутня</string>
+  <string name="density">Щільність пікселів екрану</string>
+  <string-array name="densities">
+    <item>MDPI</item>
+    <item>HDPI</item>
+    <item>XHDPI</item>
+    <item>XXHDPI</item>
+    <item>XXXHDPI</item>
+  </string-array>
+  <string name="use_grading">Використовувати стан</string>
+  <string name="ok">Гаразд</string>
+  <string name="fine">Fine</string>
+  <string name="very_fine">Very Fine</string>
+  <string name="extremely_fine">Exrtemely Fine</string>
+  <string name="about_uncirculated">About Uncirculated</string>
+  <string name="uncirculated">Uncirculated</string>
+  <string name="F">F</string>
+  <string name="VF">VF</string>
+  <string name="XF">XF</string>
+  <string name="AU">AU</string>
+  <string name="Unc">Unc</string>
+  <string name="visit_homepage">Домашня сторінка</string>
+  <string name="filter_all">Усе</string>
+  <string name="filter_empty">Нічого</string>
+  <string name="filter_all_series">Усі серії</string>
+  <string name="filter_all_countries">Усі країни</string>
+  <string name="filter_empty_series">Без серії</string>
+  <string name="filter_field">Фільтрувати по</string>
+  <string-array name="filter_fields">
+    <item>Країна</item>
+    <item>Номінал</item>
+    <item>Серія</item>
+  </string-array>
+  <string-array name="filter_field_vals">
+    <item>країна</item>
+    <item>вартість</item>
+    <item>серія</item>
+  </string-array>
+  <string-array name="navigation_drawer_items">
+    <item>Колекція</item>
+    <item>Статистика</item>
+  </string-array>
+  <string name="total_count">Усього</string>
+  <string name="collected_count">Зібрано</string>
+  <string name="coins_count">Усього монет</string>
+  <string name="action_update">Оновлення</string>
+  <string name="apply_update">Доступне нове оновлення</string>
+  <string name="apply">Застосувати</string>
+  <string name="no_updates_available">Оновлення відсутні</string>
+  <string name="mint">Літери</string>
+  <string name="auto_update">Перевіряти оновлення автоматично</string>
+  <string name="available_update">Доступно оновлення</string>
+  <string name="not_connected">Підключення до Інтернету недоступне</string>
+</resources>
